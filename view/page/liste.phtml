@@ -4,7 +4,7 @@
 
 <?php $this->add("template/button.phtml"); ?>
 
-                        <div class="cb"></div>                        
+                        <div class="cb"></div>
                         <hr />
 <?php
     foreach ($this->pagesGroup as $keyGroup => $group) {
@@ -13,7 +13,7 @@
 ?>
                         <fieldset id="gab_page_6" class="sort-elmt">
                             <legend title="<?php echo $this->gabarits[$keyGroup]["label"]; ?>  ">
-                                <?php echo $this->gabarits[$keyGroup]["label"]; ?>                    
+                                <?php echo $this->gabarits[$keyGroup]["label"]; ?>
                             </legend>
 <?php
             $this->pages = $group;
@@ -41,16 +41,16 @@
                     && $page->getMeta("rewriting") != ""
                 ) {
 ?>
-                                        <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta("date_modif") != "0000-00-00 00:00:00" ? Slrfw\Library\Tools::RelativeTime(strtotime($page->getMeta("date_modif"))) : ''; ?></span>
+                                        <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta("date_modif") != "0000-00-00 00:00:00" ? Slrfw\Tools::RelativeTime(strtotime($page->getMeta("date_modif"))) : ''; ?></span>
 <?php
                 }
 ?>
-                                        <span class="page-info" style="color: inherit">   
+                                        <span class="page-info" style="color: inherit">
 <?php
                 if ($page->getMeta("id_gabarit") != 1
                     && $page->getMeta("id_gabarit") != 2
                 ) {
-                
+
                     if ($page->getMeta("date_modif") != "0000-00-00 00:00:00"
                         && $page->getMeta("rewriting") != ""
                     ) {
@@ -64,7 +64,7 @@
                 }
 
                 if ($page->getMeta('nbre_enfants') > 0) {
-?> 
+?>
                                             |
                                             <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?></span> page(s)</i>
 <?php
@@ -72,7 +72,7 @@
 ?>
                                         </span>
                                     </legend>
-                    
+
                                     <div class="sort-box" style="display:none;"></div>
                                         <div style="position: relative" class="line cat-modif">
 <?php
@@ -132,7 +132,7 @@
                     }
 
                 }
-?>                                            
+?>
                                         </div>
                                 </fieldset>
 <?php

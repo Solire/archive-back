@@ -1,14 +1,13 @@
 <?php
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
-use Slrfw\Library\Tools;
 
 class Page extends Main
 {
     /**
      *
-     * @var \Slrfw\Model\gabaritPage
+     * @var \Slrfw\Gabarit\gabaritPage
      */
     private $_page = null;
 
@@ -232,7 +231,7 @@ class Page extends Main
 
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
 
-        \Slrfw\Library\Tools::mail_utf8('Modif site <modif@solire.fr>',
+        \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
             $typeSave . ' de contenu sur ' . $this->_mainConfig->get('name', 'project'),
             $contenu, $headers, 'text/html');
 
@@ -461,7 +460,7 @@ class Page extends Main
 
         foreach ($pagesFound as $page) {
             $pages[] = array(
-                "label" => Tools::highlightedSearch($page["label"], $this->filter->wordsAdvanced, true),
+                "label" => \Slrfw\Tools::highlightedSearch($page["label"], $this->filter->wordsAdvanced, true),
                 "id" => $page["id"],
                 "gabarit_label" => $page["gabarit_label"],
                 "url" => $page["url"],

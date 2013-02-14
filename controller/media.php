@@ -1,8 +1,7 @@
 <?php
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
-use Slrfw\Library\Registry;
 
 class Media extends Main {
 
@@ -71,7 +70,7 @@ class Media extends Main {
 
             $file['class'] = 'hoverprevisu vignette';
 
-            if (array_key_exists($ext, \Slrfw\Model\fileManager::$_extensions['image'])) {
+            if (array_key_exists($ext, \Slrfw\Gabarit\fileManager::$_extensions['image'])) {
                 $file['path_mini'] = $prefixPath . $this->_upload_path . DIRECTORY_SEPARATOR
                         . $file['id_gab_page'] . DIRECTORY_SEPARATOR
                         . $this->_upload_vignette . DIRECTORY_SEPARATOR
@@ -379,7 +378,7 @@ class Media extends Main {
             $dir = $id_gab_page ? $id_gab_page : "temp-$id_temp";
 
             foreach ($files as $file) {
-                if (!$tinyMCE || \Slrfw\Model\fileManager::isImage($file['rewriting'])) {
+                if (!$tinyMCE || \Slrfw\Gabarit\fileManager::isImage($file['rewriting'])) {
                     $path = $prefixPath . DIRECTORY_SEPARATOR . $this->_upload_path . DIRECTORY_SEPARATOR
                             . $dir . DIRECTORY_SEPARATOR
                             . $file['rewriting'];
@@ -392,7 +391,7 @@ class Media extends Main {
                             . $file['rewriting'];
 
 //                    $this->_page = $this->_gabaritManager->getPage(BACK_ID_VERSION, $file['id_gab_page']);
-                    $realpath = Registry::get("base") . $dir . '/' . $file['rewriting'];
+                    $realpath = Slrfw\Registry::get("base") . $dir . '/' . $file['rewriting'];
 
 //                    $ext = array_pop(explode(".", $file['rewriting']));
                     if (\Slrfw\Model\fileManager::isImage($file['rewriting'])) {

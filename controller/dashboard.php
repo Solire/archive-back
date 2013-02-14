@@ -1,6 +1,6 @@
 <?php
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
 class Dashboard extends Main
 {
@@ -34,7 +34,7 @@ class Dashboard extends Main
             $this->_view->datatableRender = "";
 
             foreach ($configsName as $configKey => $configName) {
-                $datatableClassName = '\\Slrfw\\Datatable\\' . $configName;
+                $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
 
                 if (class_exists($datatableClassName)) {
                     $datatable = new $datatableClassName(
@@ -42,7 +42,7 @@ class Dashboard extends Main
                         "./datatable/", "img/datatable/"
                     );
                 } else {
-                    $datatable = new \Slrfw\Library\Datatable\Datatable(
+                    $datatable = new \Slrfw\Datatable\Datatable(
                         $_GET, $configName, $this->_db, "./datatable/",
                         "./datatable/", "img/datatable/"
                     );
@@ -51,7 +51,7 @@ class Dashboard extends Main
                 $datatable->start();
                 $datatableString = $datatable;
                 $data = $datatableString;
-                
+
                 if ($configKey == 0 && (!isset($_GET["nomain"]) || $_GET["nomain"] == 0)) {
                     $sBreadCrumbs = $this->_buildBreadCrumbs($datatable->getBreadCrumbs());
                     //On ajoute le chemin de fer
@@ -70,7 +70,7 @@ class Dashboard extends Main
             }
         }
     }
-    
+
     private function _buildBreadCrumbs($additionnalBreadCrumbs) {
         $this->_view->breadCrumbs = array_merge($this->_view->breadCrumbs, $additionnalBreadCrumbs);
         ob_start();

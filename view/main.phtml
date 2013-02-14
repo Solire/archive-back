@@ -123,7 +123,7 @@
     foreach ($this->versions as $version) {
 ?>
                                         <li>
-                                            <a style="cursor:pointer;" onclick="var b = $('base').attr('href'); $.cookie('id_version', <?php echo $version['id'] ?>, {path: '/<?php echo \Slrfw\Library\Registry::get("baseroot"); ?>back/'}); document.location.href = document.location.href; return false;">
+                                            <a style="cursor:pointer;" onclick="var b = $('base').attr('href'); $.cookie('id_version', <?php echo $version['id'] ?>, {path: '/<?php echo \Slrfw\Registry::get("baseroot"); ?>back/'}); document.location.href = document.location.href; return false;">
                                                 <img style="width: 16px; height: 16px;display: block;float: left;margin-top: 1px;" alt="" src="img/flags/all/16/<?php echo strtolower($version['suf']) ?>.png" />&nbsp;&nbsp;<?php echo $version['nom'] ?>
                                             </a>
                                         </li>

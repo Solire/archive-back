@@ -1,8 +1,8 @@
 <?php
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
-use Slrfw\Library\Registry;
+use Slrfw\Registry;
 
 class Board extends Main
 {
@@ -102,15 +102,15 @@ class Board extends Main
     private function _boardDatatable() {
         $nameConfig = "board";
 
-        $datatableClassName = '\\Slrfw\\Datatable\\' . $nameConfig;
-
+        $datatableClassName = '\\App\\Back\\Datatable\\' . $nameConfig;
+        // @todo Chargement des fichiers des differentes app
         try {
             $datatable = new $datatableClassName(
                 $_GET, $nameConfig, $this->_db, "./datatable/",
                 "./datatable/", "img/datatable/"
             );
         } catch (\Exception $exc) {
-            $datatable = new \Slrfw\Library\Datatable\Datatable(
+            $datatable = new \Slrfw\Datatable\Datatable(
                 $_GET, $nameConfig, $this->_db, "./datatable/",
                 "./datatable/", "img/datatable/"
             );

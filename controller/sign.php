@@ -8,7 +8,7 @@
  * @license    Solire http://www.solire.fr/
  */
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
 /**
  * Formulaire de connection à l'admin
@@ -20,7 +20,13 @@ namespace Slrfw\App\Back\Controller;
  */
 class Sign extends Main
 {
-    private $noRedirect = true;
+    /**
+     * Empêche la redirection en cas de non connexion
+     *
+     * @var boolean
+     */
+    protected $noRedirect = true;
+
     /**
      * Affichage du formulaire de connection
      *

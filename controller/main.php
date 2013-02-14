@@ -8,10 +8,7 @@
  * @license    Solire http://www.solire.fr/
  */
 
-namespace Slrfw\App\Back\Controller;
-
-use Slrfw\Library\Registry;
-
+namespace App\Back\Controller;
 
 /**
  * Controller principal du back
@@ -21,13 +18,13 @@ use Slrfw\Library\Registry;
  * @author     Stéphane <smonnot@solire.fr>
  * @license    Solire http://www.solire.fr/
  */
-class Main extends \Slrfw\Library\Controller
+class Main extends \Slrfw\Controller
 {
 
     /**
      * Session en cours
      *
-     * @var \Slrfw\Library\Session
+     * @var \Slrfw\Session
      */
     protected $_utilisateur;
 
@@ -63,7 +60,7 @@ class Main extends \Slrfw\Library\Controller
             $idApi = 1;
         }
 
-        $this->_log = new \Slrfw\Library\Log($this->_db, '', 0, 'back_log');
+        $this->_log = new \Slrfw\Log($this->_db, '', 0, 'back_log');
 
 
         $query = 'SELECT * '
@@ -77,9 +74,9 @@ class Main extends \Slrfw\Library\Controller
 
         if ($this->_api['id'] != 1) {
             $suffixApi = $this->_api['name'] . '/';
-            Registry::set('basehref', Registry::get('basehref') . $suffixApi);
-            $this->_url = Registry::get('basehref');
-            $this->_view->url = Registry::get('basehref');
+            \Slrfw\Registry::set('basehref', \Slrfw\Registry::get('basehref') . $suffixApi);
+            $this->_url = \Slrfw\Registry::get('basehref');
+            $this->_view->url = \Slrfw\Registry::get('basehref');
         }
         define('BACK_ID_API', $this->_api['id']);
 
@@ -105,7 +102,7 @@ class Main extends \Slrfw\Library\Controller
         $this->_css->addLibrary('http://www.solire.fr/style_solire_fw/css/back/newstyle-1.3.css');
         $this->_css->addLibrary('sticky.css');
 
-        $this->_view->site = Registry::get('project-name');
+        $this->_view->site = Slrfw\Registry::get('project-name');
 
         if (isset($_GET['controller'])) {
             $this->_view->controller = $_GET['controller'];
@@ -119,8 +116,8 @@ class Main extends \Slrfw\Library\Controller
             $this->_view->action = '';
         }
 
-        $this->_gabaritManager = new \Slrfw\Model\gabaritManager();
-        $this->_fileManager = new \Slrfw\Model\fileManager();
+        $this->_gabaritManager = new \Slrfw\Gabarit\gabaritManager();
+        $this->_fileManager = new \Slrfw\Gabarit\fileManager();
 
         $query = 'SELECT `version`.id, `version`.* '
                . 'FROM `version` '
@@ -137,7 +134,7 @@ class Main extends \Slrfw\Library\Controller
 
         if (isset($_GET['id_version'])) {
             $id_version = $_GET['id_version'];
-            $url = '/' . Registry::get('baseroot') . '' . $suffixApi;
+            $url = '/' . \Slrfw\Registry::get('baseroot') . '' . $suffixApi;
             setcookie('id_version', $id_version, 0, $url);
             define('BACK_ID_VERSION', $id_version);
         } elseif (isset($_COOKIE['id_version'])
@@ -219,7 +216,7 @@ class Main extends \Slrfw\Library\Controller
         $this->_view->appConfig = $this->_appConfig;
 
         //On recupere la configuration du module pages (Menu + liste)
-        $configMain = Registry::get('mainconfig');
+        $configMain = \Slrfw\Registry::get('mainconfig');
         include_once $configMain->get('back', 'dirs') . 'page.cfg.php';
         $this->_configPageModule = $config;
         $this->_view->menuPage = array();

@@ -15,11 +15,11 @@ if (count($this->pages) > 0) {
                 <?php echo $page->getMeta('titre'); ?>
                 <br />
                 <?php if ($page->getMeta("date_modif") != "0000-00-00 00:00:00" && $page->getMeta("rewriting") != "") { ?>
-                    <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta("date_modif") != "0000-00-00 00:00:00" ? Slrfw\Library\Tools::RelativeTime(strtotime($page->getMeta("date_modif"))) : ''; ?></span>
+                    <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta("date_modif") != "0000-00-00 00:00:00" ? Slrfw\Tools::RelativeTime(strtotime($page->getMeta("date_modif"))) : ''; ?></span>
                     <?php
                 }
                 ?>
-                <span class="page-info" style="color: inherit">    
+                <span class="page-info" style="color: inherit">
                     <?php if ($page->getMeta("id_gabarit") != 1 && $page->getMeta("id_gabarit") != 2) { ?>
                         <?php if ($page->getMeta("date_modif") != "0000-00-00 00:00:00" && $page->getMeta("rewriting") != "") { ?>
                             |
@@ -28,7 +28,7 @@ if (count($this->pages) > 0) {
                         ?>
                         <i>Type : <?php echo $this->gabarits[$page->getMeta("id_gabarit")]["label"] ?></i>
                     <?php } ?>
-                    <?php if ($page->getMeta('nbre_enfants') > 0) { ?> 
+                    <?php if ($page->getMeta('nbre_enfants') > 0) { ?>
                         |
                         <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?></span> page(s)</i>
                     <?php } ?>
@@ -50,7 +50,7 @@ if (count($this->pages) > 0) {
                     <?php } ?>
                     <?php if (($this->utilisateur->get("niveau") == "solire" || $this->gabarits[$page->getMeta("id_gabarit")]["make_hidden"] || $page->getMeta('visible') == 0) && $page->getMeta('rewriting') != "") { ?>
                         <div class="btn-a gradient-blue fl" ><a title="Rendre visible '<?php echo $page->getMeta('titre'); ?>'" style="padding: 8px 15px 6px;"><input type="checkbox" class="rendrevisible"<?php echo $page->getMeta('visible') > 0 ? ' checked="checked"' : ''; ?> /></a></div>
-                    <?php } ?>   
+                    <?php } ?>
                     <?php if ($page->getMeta("rewriting") == "") { ?>
                         <div class="btn-a gradient-red fl" style=""><a href="page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" style="line-height: 16px;">Non traduit</a></div>
                     <?php } ?>
@@ -67,7 +67,7 @@ if (count($this->pages) > 0) {
 
         </fieldset>
 
-                                                                           
+
         <?php
     }
 } else {

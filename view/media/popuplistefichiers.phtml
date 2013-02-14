@@ -3,7 +3,7 @@
         margin-bottom: 0;
         width: auto;
     }
-    
+
     #tableau td {
             overflow: hidden; /* this is what fixes the expansion */
             white-space: normal;
@@ -18,7 +18,7 @@
             margin-bottom: 0px;
         }
 
-        
+
         #tableau_wrapper input {
             height: auto;
             margin-bottom: 0px;
@@ -38,7 +38,7 @@
             box-shadow: none;
             border: none;
             border-radius: 0px;
-            
+
 
         }
 
@@ -126,7 +126,7 @@
             color: #FFF;
         }
 
-    
+
 </style>
         <div>
             <div class="btn-a gradient-green">
@@ -147,9 +147,9 @@
             </thead>
 
             <tbody id="foldercontent">
-                
+
 <?php foreach ($this->files as $file) { ?>
-                
+
                 <tr id="fileid_<?php echo $file['id']; ?>">
                     <td>
                         <a target="_blank" class="previsu" href="<?php echo $file['path']; ?>" title="<?php echo $file['rewriting']; ?>">
@@ -157,16 +157,16 @@
                         </a>
                     </td>
                     <td><?php echo $file['poids']; ?></td>
-                    <td><?php echo \Slrfw\Library\Tools::formate_date_nombre(substr($file['date_crea'], 0, 10), '-', '/'); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
+                    <td><?php echo \Slrfw\Tools::formate_date_nombre(substr($file['date_crea'], 0, 10), '-', '/'); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
                     <td>
                         <div class="btn-a gradient-blue">
                             <a href="<?php echo $file['path']; ?>" target="_blank" class="previsu"><img alt="Voir" src="img/voir.png" /></a>
                         </diV>
-                        
+
                     </td>
                 </tr>
-                
+
 <?php } ?>
-                
+
             </tbody>
         </table>
