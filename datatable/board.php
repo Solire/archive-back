@@ -1,6 +1,6 @@
 <?php
 
-namespace Slrfw\Datatable;
+namespace App\Back\Datatable;
 
 
 /**
@@ -8,7 +8,7 @@ namespace Slrfw\Datatable;
  *
  * @author shin
  */
-class Board extends \Slrfw\Library\Datatable\Datatable {
+class Board extends \Slrfw\Datatable\Datatable {
 
     /**
      * Liste des gabarits
@@ -27,7 +27,7 @@ class Board extends \Slrfw\Library\Datatable\Datatable {
     protected $_utilisateur;
 
     public function datatableAction() {
-        $fieldGabaritTypeKey = \Slrfw\Library\Tools::multidimensional_search($this->config["columns"], array("name" => "id_gabarit", "filter_field" => "select"));
+        $fieldGabaritTypeKey = \Slrfw\Tools::multidimensional_search($this->config["columns"], array("name" => "id_gabarit", "filter_field" => "select"));
         foreach ($this->_gabarits as $gabarit) {
             $idsGabarit[] = $gabarit["id"];
         }

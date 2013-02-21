@@ -62,7 +62,6 @@ class Main extends \Slrfw\Controller
 
         $this->_log = new \Slrfw\Log($this->_db, '', 0, 'back_log');
 
-
         $query = 'SELECT * '
                . 'FROM gab_api '
                . 'WHERE id = ' . $idApi . ' ';
@@ -80,29 +79,29 @@ class Main extends \Slrfw\Controller
         }
         define('BACK_ID_API', $this->_api['id']);
 
-        $this->_javascript->addLibrary('jquery/jquery-1.8.0.min.js');
-        $this->_javascript->addLibrary('jquery/jquery-ui-1.8.23.custom.min.js');
-        $this->_javascript->addLibrary('main.js');
-        $this->_javascript->addLibrary('jquery/jquery.cookie.js');
-        $this->_javascript->addLibrary('jquery/sticky.js');
-        $this->_javascript->addLibrary("jquery/jquery.livequery.min.js");
+        $this->_javascript->addLibrary('back/js/jquery/jquery-1.8.0.min.js');
+        $this->_javascript->addLibrary('back/js/jquery/jquery-ui-1.8.23.custom.min.js');
+        $this->_javascript->addLibrary('back/js/main.js');
+        $this->_javascript->addLibrary('back/js/jquery/jquery.cookie.js');
+        $this->_javascript->addLibrary('back/js/jquery/sticky.js');
+        $this->_javascript->addLibrary("back/js/jquery/jquery.livequery.min.js");
 
-        $this->_javascript->addLibrary('jquery/jquery.stickyPanel.min.js');
+        $this->_javascript->addLibrary('back/js/jquery/jquery.stickyPanel.min.js');
 
-        $this->_javascript->addLibrary('newstyle.js');
-        $this->_css->addLibrary('jquery-ui-1.8.7.custom.css');
+        $this->_javascript->addLibrary('back/js/newstyle.js');
+        $this->_css->addLibrary('back/css/jquery-ui-1.8.7.custom.css');
 
-        $this->_css->addLibrary('jquery-ui/custom-theme/jquery-ui-1.8.22.custom.css');
+        $this->_css->addLibrary('back/css/jquery-ui/custom-theme/jquery-ui-1.8.22.custom.css');
 
         //Inclusion Bootstrap twitter
-        $this->_javascript->addLibrary('bootstrap/bootstrap.min.js');
-        $this->_css->addLibrary('bootstrap/bootstrap.min.css');
-        $this->_css->addLibrary('bootstrap/bootstrap-responsive.min.css');
+        $this->_javascript->addLibrary('back/js/bootstrap/bootstrap.min.js');
+        $this->_css->addLibrary('back/css/bootstrap/bootstrap.min.css');
+        $this->_css->addLibrary('back/css/bootstrap/bootstrap-responsive.min.css');
 
         $this->_css->addLibrary('http://www.solire.fr/style_solire_fw/css/back/newstyle-1.3.css');
-        $this->_css->addLibrary('sticky.css');
+        $this->_css->addLibrary('back/css/sticky.css');
 
-        $this->_view->site = Slrfw\Registry::get('project-name');
+        $this->_view->site = \Slrfw\Registry::get('project-name');
 
         if (isset($_GET['controller'])) {
             $this->_view->controller = $_GET['controller'];
@@ -116,8 +115,8 @@ class Main extends \Slrfw\Controller
             $this->_view->action = '';
         }
 
-        $this->_gabaritManager = new \Slrfw\Gabarit\gabaritManager();
-        $this->_fileManager = new \Slrfw\Gabarit\fileManager();
+        $this->_gabaritManager = new \Slrfw\Model\gabaritManager();
+        $this->_fileManager = new \Slrfw\Model\fileManager();
 
         $query = 'SELECT `version`.id, `version`.* '
                . 'FROM `version` '
@@ -156,7 +155,7 @@ class Main extends \Slrfw\Controller
             exit(json_encode($retour));
         }
 
-        $this->_utilisateur = new \Slrfw\Library\Session('back');
+        $this->_utilisateur = new \Slrfw\Session('back');
 
         if (isset($this->_post['log']) && isset($this->_post['pwd'])
             && !empty($this->_post['log']) && !empty($this->_post['pwd'])
@@ -178,8 +177,7 @@ class Main extends \Slrfw\Controller
         }
 
         if (!$this->_utilisateur->isConnected()
-            && isset($this->noRedirect)
-            && $this->noRedirect === true
+            && (!isset($this->noRedirect) || $this->noRedirect === false)
         ) {
             $this->simpleRedirect('sign/start.html', true);
         }
@@ -190,8 +188,9 @@ class Main extends \Slrfw\Controller
          * Alors On le redirige vers le front
          */
         if ($this->_utilisateur->get("niveau") == "voyeur") {
-            if($_GET["controller"] . "/" . $_GET["action"] != "sign/signout")
+            if($_GET["controller"] . "/" . $_GET["action"] != "sign/signout") {
                 $this->simpleRedirect('../', true);
+            }
         }
 
         $this->_view->utilisateur = $this->_utilisateur;
@@ -215,9 +214,11 @@ class Main extends \Slrfw\Controller
 
         $this->_view->appConfig = $this->_appConfig;
 
-        //On recupere la configuration du module pages (Menu + liste)
+        /**
+         * On recupere la configuration du module pages (Menu + liste)
+         */
         $configMain = \Slrfw\Registry::get('mainconfig');
-        include_once $configMain->get('back', 'dirs') . 'page.cfg.php';
+        include_once $configMain->get('dirs', 'back') . 'page.cfg.php';
         $this->_configPageModule = $config;
         $this->_view->menuPage = array();
         foreach ($this->_configPageModule as $configPage) {

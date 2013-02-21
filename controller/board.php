@@ -2,14 +2,8 @@
 
 namespace App\Back\Controller;
 
-use Slrfw\Registry;
-
 class Board extends Main
 {
-
-    private $_cache = null;
-    private $_config = null;
-
     /**
      * Toujours executé avant l'action.
      *
@@ -18,7 +12,7 @@ class Board extends Main
     public function start() {
         parent::start();
 
-        if (!$this->_appConfig->get("active", "board")) {
+        if (!$this->_appConfig->get('board', 'active')) {
             exit();
         }
     }
@@ -28,74 +22,74 @@ class Board extends Main
      * @return void
      */
     public function startAction() {
-        $this->_javascript->addLibrary("jquery/inettuts.js");
-        $this->_css->addLibrary("inettuts.css");
-        $this->_view->action = "board";
+        $this->_javascript->addLibrary('back/js/jquery/inettuts.js');
+        $this->_css->addLibrary('back/css/inettuts.css');
+        $this->_view->action = 'board';
 
         $this->_boardDatatable();
 
         $idUtilisateur = $this->_utilisateur->id;
-        $query = "SELECT board_state.cookie FROM `board_state` WHERE `board_state`.id_utilisateur = $idUtilisateur AND `id_api` = " . $this->_api["id"];
+        $query = 'SELECT board_state.cookie FROM `board_state` WHERE `board_state`.id_utilisateur = ' . $idUtilisateur . ' AND `id_api` = ' . $this->_api['id'];
         $boardStateCookie = $this->_db->query($query)->fetchColumn();
 
         if ($boardStateCookie) {
-            setcookie("inettuts-widget-preferences", urldecode($boardStateCookie), time() + 60 * 60 * 24 * 30);
+            setcookie('inettuts-widget-preferences', urldecode($boardStateCookie), time() + 60 * 60 * 24 * 30);
         }
 
 
 
-        $query = "
+        $query = '
             SELECT `gab_gabarit`.id, count(DISTINCT gab_page.id) nbpages, `gab_gabarit`.*
             FROM `gab_gabarit` LEFT JOIN gab_page ON gab_page.id_gabarit = gab_gabarit.id AND gab_page.suppr = 0
-            WHERE `gab_gabarit`.`id_api` = " . $this->_api["id"] . " AND `gab_gabarit`.id NOT IN (1,2)
+            WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'] . ' AND `gab_gabarit`.id NOT IN (1,2)
             GROUP BY gab_gabarit.id
-            ORDER BY gab_gabarit.id";
+            ORDER BY gab_gabarit.id';
         $this->_gabarits2 = $this->_db->query($query)->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
         $pages = array();
 
         $colorWidget = array(
-            "color-yellow",
-            "color-red",
-            "color-blue",
-            "color-white",
-            "color-orange",
-            "color-green",
+            'color-yellow',
+            'color-red',
+            'color-blue',
+            'color-white',
+            'color-orange',
+            'color-green',
         );
         $indexColor = 0;
         $lastGabaritId = -1;
 
         foreach ($this->_gabarits2 as $gabarit) {
-            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], false, $gabarit["id"], false, "date_crea", "desc", 0, 3);
+            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api['id'], false, $gabarit['id'], false, 'date_crea', 'desc', 0, 3);
             if (count($pagesMeta) == 0)
                 continue;
-            $pages[$gabarit["id"]]["gabarit"] = $gabarit;
+            $pages[$gabarit['id']]['gabarit'] = $gabarit;
             foreach ($pagesMeta as $pageMeta) {
-                $pages[$gabarit["id"]]["pages"][] = $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, $pageMeta->getMeta("id"));
+                $pages[$gabarit['id']]['pages'][] = $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, $pageMeta->getMeta('id'));
             }
 
-            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], false, $gabarit["id"], false, "date_modif", "desc", 0, 3);
+            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api['id'], false, $gabarit['id'], false, 'date_modif', 'desc', 0, 3);
             if (count($pagesMeta) == 0)
                 continue;
 
-            if ($gabarit["id_parent"] == $lastGabaritId)
+            if ($gabarit['id_parent'] == $lastGabaritId)
                 $indexColor--;
-            $lastGabaritId = $gabarit["id"];
+            $lastGabaritId = $gabarit['id'];
 
-            $pages[$gabarit["id"]]["gabarit"] = $gabarit;
+            $pages[$gabarit['id']]['gabarit'] = $gabarit;
             if (!isset($colorWidget[$indexColor]))
                 $indexColor = 0;
-            $pages[$gabarit["id"]]["color"] = $colorWidget[$indexColor];
+            $pages[$gabarit['id']]['color'] = $colorWidget[$indexColor];
 
             $indexColor++;
             foreach ($pagesMeta as $pageMeta) {
-                $pages[$gabarit["id"]]["pages_mod"][] = $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, $pageMeta->getMeta("id"));
+                $pages[$gabarit['id']]['pages_mod'][] = $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, $pageMeta->getMeta('id'));
             }
         }
         $this->_view->pages = $pages;
 
         $this->_view->breadCrumbs[] = array(
-            "label" => "Tableau de bord",
-            "url" => "board/start.html",
+            'label' => 'Tableau de bord',
+            'url' => 'board/start.html',
         );
     }
 
@@ -117,7 +111,7 @@ class Board extends Main
         }
 
         //On cré notre object datatable
-        $datatable = new $datatableClassName($_GET, $nameConfig, $this->_db, "./datatable/", "./datatable/", "img/datatable/");
+        $datatable = new $datatableClassName($_GET, $nameConfig, $this->_db, "/back/css/datatable/", "/back/js/datatable/", "img/datatable/");
 
         $datatable->setUtilisateur($this->_utilisateur);
         $datatable->setGabarits($this->_gabarits);

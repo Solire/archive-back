@@ -34,14 +34,15 @@ class Sign extends Main
      */
     public function startAction()
     {
-        $this->_javascript->addLibrary('form.js');
+        $this->_javascript->addLibrary('back/js/form.js');
+        $this->_javascript->addLibrary('back/js/jquery/vibrate.js');
 
         $this->_view->main(false);
 
-        $this->_view->action = $this->_appConfig->get('page-default', 'general');
+        $this->_view->action = $this->_appConfig->get('general', 'page-default');
 
         if ($this->_utilisateur->isConnected()) {
-            $this->simpleRedirect ($this->_appConfig->get('page-default', 'general'), true);
+            $this->simpleRedirect ($this->_appConfig->get('general', 'page-default'), true);
         }
     }
 
