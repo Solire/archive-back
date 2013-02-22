@@ -13,7 +13,7 @@ foreach ($this->pages as $idGabarit => $pagesGabarit) {
         continue;
     ?>
                             <div class="btn-a btn-shortcut fl">
-                                <a href="page/display.html?id_gabarit=<?php echo $pagesGabarit["gabarit"]["id"] ?>" class="" title="">
+                                <a href="back/page/display.html?id_gabarit=<?php echo $pagesGabarit["gabarit"]["id"] ?>" class="" title="">
                                     <img src="img/gray_dark/document_alt_stroke_24x32.png" alt="">
                                     <b>Créer un<?php echo $pagesGabarit["gabarit"]["genre"] == "f" ? 'e' : '' ?> <?php echo $pagesGabarit["gabarit"]["label"] ?></b>
                                 </a>

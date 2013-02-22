@@ -79,7 +79,7 @@
                 if ($page->getMeta("id_gabarit") == 1) {
 ?>
                                             <div style="float:left;">
-                                                <div class="btn-a gradient-blue" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
+                                                <div class="btn-a gradient-blue" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
                                             </div>
 <?php
                 }
@@ -98,7 +98,7 @@
                         || $this->gabarits[$page->getMeta("id_gabarit")]["editable"]
                     ) {
 ?>
-                                                <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
+                                                <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
 <?php
                     }
                     if ((
@@ -114,7 +114,7 @@
                     }
                     if ($page->getMeta("rewriting") == "") {
 ?>
-                                                <div class="btn-a gradient-red fl" style=""><a href="page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" style="line-height: 16px;">Non traduit</a></div>
+                                                <div class="btn-a gradient-red fl" style=""><a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" style="line-height: 16px;">Non traduit</a></div>
 <?php
                     }
 ?>

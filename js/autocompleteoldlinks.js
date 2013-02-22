@@ -1,14 +1,14 @@
 var timer = null;
 
 $(function(){
-    
-    $("input[name=new], table td:nth-child(2) input").livequery(function(){ 
-        var $input = $(this); 
+
+    $("input[name=new], table td:nth-child(2) input").livequery(function(){
+        var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
-                
-            $.getJSON( 
-                "../sitemap.xml?json=1&visible=0", 
+
+            $.getJSON(
+                "../sitemap.xml?json=1&visible=0",
                 {
                 term : request.term
                 }, function( data, status, xhr ) {
@@ -21,7 +21,7 @@ $(function(){
                 return false;
             }
             }).focus( function() {
-            
+
             if (this.value == "")
             {
             clearTimeout(timer);
@@ -31,7 +31,7 @@ $(function(){
                 $input.autocomplete('search', '');
                 }
                 },220);
-                
+
             }
             }).data( "autocomplete" )._renderItem = function( ul, item ) {
             return $( "<li></li>" )
@@ -41,17 +41,17 @@ $(function(){
             .appendTo( ul );
         };
     });
-    
-    $("input[name=old], table td:first-child input").livequery(function(){ 
-        var $input = $(this); 
+
+    $("input[name=old], table td:first-child input").livequery(function(){
+        var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
-                
-                
-                $.getJSON( 
-                    "page/autocomplete-old-links.html", 
+
+
+                $.getJSON(
+                    "back/page/autocompleteoldlinks.html",
                     {
-                        
+
                         term : request.term
                     }, function( data, status, xhr ) {
                         response( data );
@@ -61,9 +61,9 @@ $(function(){
             select: function(e, ui) {
                 $(this).val(ui.item.label)
             }
-                
+
         }).focus( function() {
-            
+
             if (this.value == "")
             {
                 clearTimeout(timer);
@@ -73,14 +73,14 @@ $(function(){
                         $input.autocomplete('search', '');
                     }
                 },220);
-                
+
             }
         })
-        
-    });
-    
-    
- 
 
-    
+    });
+
+
+
+
+
 });

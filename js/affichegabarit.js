@@ -40,7 +40,7 @@ var initTinyMCE = function () {
         //        remove_script_host : false,
         convert_urls : true,
         document_base_url : "../../../../",
-        content_css : "css/back/style-tinymce.css",
+        content_css : "back/css/style-tinymce.css",
         external_image_list_url : "back/media/autocomplete.html?tinyMCE",
         external_link_list_url : "back/page/autocomplete-link.html"
     });
@@ -621,7 +621,7 @@ $(function(){
                         data.extensions = tthis.siblings('.extensions').val();
 
                     $.getJSON(
-                        'media/autocomplete.html',
+                        'back/media/autocomplete.html',
                         data,
                         function( data, status, xhr ) {
                             response( data );
@@ -745,7 +745,7 @@ $(function(){
         browse_button : 'pickfiles',
         max_file_size : '1000mb',
         chunk_size : '2mb',
-        url : basehref + 'media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
+        url : basehref + 'back/media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
         flash_swf_url : basehref + 'js/admin/plupload/plupload.flash.swf',
         silverlight_xap_url : basehref + 'js/admin/plupload/plupload.silverlight.xap',
         filters : [
@@ -882,7 +882,7 @@ $(function(){
 
     var uploader_popup = $('<div>', {
         id : 'uploader_popup'
-    }).load('media/popuplistefichiers.html?id_gab_page=' + $('[name=id_gab_page]').val(), function(){
+    }).load('back/media/popuplistefichiers.html?id_gab_page=' + $('[name=id_gab_page]').val(), function(){
         $(this).dialog({
             title : "Fichiers",
             autoOpen : false,
@@ -914,7 +914,7 @@ $(function(){
             checked = $this.is(':checked');
 
         $.post(
-            'page/visible.html',
+            'back/page/visible.html',
             {
                 id_gab_page : id_gab_page,
                 visible     : checked ? 1 : 0

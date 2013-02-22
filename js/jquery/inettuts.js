@@ -253,7 +253,7 @@ var iNettuts = {
                 cookieString += $(settings.contentSelector,this).parents(settings.widgetSelector).hasClass("collapsed") ? 'collapsed' : 'not-collapsed';
             });
         });
-        $.post("board/save-state.html", {
+        $.post("back/board/savestate.html", {
             cookie : cookieString
         })
         $.cookie(settings.saveToCookie,cookieString,{

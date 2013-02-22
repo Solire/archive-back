@@ -1,7 +1,7 @@
 <?php
     if (isset($this->gabaritsBtn) && count($this->gabaritsBtn)) {
         foreach ($this->gabaritsBtn as $gabaritGroup) {
-?>        
+?>
                         <div style="float:left;">
 <?php
             /** Group */
@@ -18,13 +18,13 @@
                                 <ul class="dropdown-menu">
 <?php
                 foreach ($gabaritGroup["gabarit"] as $gabarit) {
-                    
+
                     if ($this->utilisateur->get("niveau") != "solire" && !$gabarit["creable"]) {
                         continue;
                     }
-?>        
+?>
                                     <li>
-                                        <a href="page/display.html?id_gabarit=<?php echo $gabarit['id'] ?>"><?php echo $gabarit['label'] ?></a>
+                                        <a href="back/page/display.html?id_gabarit=<?php echo $gabarit['id'] ?>"><?php echo $gabarit['label'] ?></a>
                                     </li>
 <?php
                 }
@@ -38,7 +38,7 @@
             else {
 ?>
                             <div class="btn-a gradient-green" style="float:left;margin-right:10px;">
-                                <a href="page/display.html?id_gabarit=<?php echo $gabaritGroup['gabarit'][0]['id'] ?>">
+                                <a href="back/page/display.html?id_gabarit=<?php echo $gabaritGroup['gabarit'][0]['id'] ?>">
                                     <?php echo $gabaritGroup['label'] . $gabaritGroup['gabarit'][0]["label"] ?>
                                 </a>
                             </div>

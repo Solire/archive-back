@@ -1,8 +1,8 @@
 var timer = null;
 
 $(function(){
-    $(".autocomplete-join").livequery(function(){ 
-        var $input = $(this); 
+    $(".autocomplete-join").livequery(function(){
+        var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
                 var table = $input.parent().find("input.join-table").val();
@@ -11,9 +11,9 @@ $(function(){
                 var queryFilter = $input.parent().find("input.join-query_filter").val();
                 var idGabPage = $("input[name='id_gab_page']").val();
                 var idVersion = $input.parents("form:first").find("input[name='id_version']").val();
-                
-                $.getJSON( 
-                    "page/autocomplete-join.html", 
+
+                $.getJSON(
+                    "back/page/autocompletejoin.html",
                     {
                         table : table,
                         id_field : idField,
@@ -30,9 +30,9 @@ $(function(){
             select: function(e, ui) {
                 $(this).parent().find(".join").val(ui.item.id)
             }
-                
+
         }).focus( function() {
-            
+
             if (this.value == "")
             {
                 clearTimeout(timer);
@@ -42,20 +42,20 @@ $(function(){
                         $input.autocomplete('search', '');
                     }
                 },220);
-                
+
             }
         }).keyup(function(){
             $(this).parent().find(".join").val('')
-        }); 
+        });
     });
-    
-    $(".autocomplete-link").livequery(function(){ 
-        var $input = $(this); 
+
+    $(".autocomplete-link").livequery(function(){
+        var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
-                
-            $.getJSON( 
-                "../sitemap.xml?json=1&visible=0", 
+
+            $.getJSON(
+                "../sitemap.xml?json=1&visible=0",
                 {
                 term : request.term
                 }, function( data, status, xhr ) {
@@ -68,7 +68,7 @@ $(function(){
                 return false;
             }
             }).focus( function() {
-            
+
             if (this.value == "")
             {
             clearTimeout(timer);
@@ -78,7 +78,7 @@ $(function(){
                 $input.autocomplete('search', '');
                 }
                 },220);
-                
+
             }
             }).data( "autocomplete" )._renderItem = function( ul, item ) {
             return $( "<li></li>" )
@@ -88,8 +88,8 @@ $(function(){
             .appendTo( ul );
         };
     });
-    
-    
 
-    
+
+
+
 });
