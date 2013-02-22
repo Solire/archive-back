@@ -7,7 +7,7 @@ namespace Slrfw\Datatable;
  *
  * @author shin
  */
-class Translate extends \Slrfw\Library\Datatable\Datatable {
+class Translate extends \Slrfw\Datatable\Datatable {
 
     public function start() {
         parent::start();
