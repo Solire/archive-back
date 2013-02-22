@@ -38,13 +38,13 @@ class Dashboard extends Main
 
                 if (class_exists($datatableClassName)) {
                     $datatable = new $datatableClassName(
-                        $_GET, $configName, $this->_db, "./datatable/",
-                        "./datatable/", "img/datatable/"
+                        $_GET, $configName, $this->_db, "back/datatable/",
+                        "back/datatable/", "back/img/datatable/"
                     );
                 } else {
                     $datatable = new \Slrfw\Datatable\Datatable(
-                        $_GET, $configName, $this->_db, "./datatable/",
-                        "./datatable/", "img/datatable/"
+                        $_GET, $configName, $this->_db, 'back/dataddtable/',
+                        'back/js/datatable/', 'back/img/dataddtable/'
                     );
                 }
 

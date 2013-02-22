@@ -21,23 +21,29 @@ class Media extends Main {
         $this->_upload_apercu = $upload['apercu'];
     }
 
-    public function startAction() {
+    /**
+     * Affichage du gestionnaire de fichiers
+     *
+     * @return void
+     */
+    public function startAction()
+    {
 
-        $extensionsImage = array("jpeg", "jpg", "png", "gif");
+        $extensionsImage = array('jpeg', 'jpg', 'png', 'gif');
 
-        $this->_javascript->addLibrary("jquery/jquery.hotkeys.js");
-        $this->_javascript->addLibrary("jstree/jquery.jstree.js");
-        $this->_javascript->addLibrary("jquery/jquery.dataTables.min.js");
-        $this->_javascript->addLibrary("plupload/plupload.full.min.js");
-        $this->_javascript->addLibrary("listefichiers.js");
-        $this->_javascript->addLibrary("jquery/jquery.scroller-1.0.min.js");
+        $this->_javascript->addLibrary('back/js/jquery/jquery.hotkeys.js');
+        $this->_javascript->addLibrary('back/js/jstree/jquery.jstree.js');
+        $this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
+        $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
+        $this->_javascript->addLibrary('back/js/listefichiers.js');
+        $this->_javascript->addLibrary('back/js/jquery/jquery.scroller-1.0.min.js');
 
-        $this->_css->addLibrary("demo_table_jui.css");
-        $this->_css->addLibrary("jquery.scroller.css");
+        $this->_css->addLibrary('back/css/demo_table_jui.css');
+        $this->_css->addLibrary('back/css/jquery.scroller.css');
 
         $this->_view->breadCrumbs[] = array(
-            "label" => "Gestion des fichiers",
-            "url" => "",
+            'label' => 'Gestion des fichiers',
+            'url' => '',
         );
     }
 

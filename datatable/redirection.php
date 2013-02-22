@@ -8,7 +8,7 @@ namespace Slrfw\Datatable;
  *
  * @author shin
  */
-class Redirection extends \Slrfw\Library\Datatable\Datatable {
+class Redirection extends \Slrfw\Datatable\Datatable {
 
     public function start() {
         parent::start();
