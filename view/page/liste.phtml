@@ -79,7 +79,7 @@
                 if ($page->getMeta("id_gabarit") == 1) {
 ?>
                                             <div style="float:left;">
-                                                <div class="btn-a gradient-blue" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
+                                                <div class="btn-a gradient-blue" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_16x16.png" /></a></div>
                                             </div>
 <?php
                 }
@@ -91,14 +91,14 @@
                         || $this->gabarits[$page->getMeta("id_gabarit")]["sortable"]
                     ) {
 ?>
-                                                <div class="btn-a gradient-blue fl" ><a class="sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'" href="#"><img alt="Déplacer" src="img/deplacer.png" /></a></div>
+                                                <div class="btn-a gradient-blue fl" ><a class="sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'" href="#"><img alt="Déplacer" src="app/back/img/deplacer.png" /></a></div>
 <?php
                     }
                     if ($this->utilisateur->get("niveau") == "solire"
                         || $this->gabarits[$page->getMeta("id_gabarit")]["editable"]
                     ) {
 ?>
-                                                <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
+                                                <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_16x16.png" /></a></div>
 <?php
                     }
                     if ((
@@ -126,7 +126,7 @@
                     ) {
 ?>
                                             <div style="float:right;">
-                                                <div class="btn-a gradient-blue" ><a title="Supprimer '<?php echo $page->getMeta('titre'); ?>'" style="float:right; display:<?php echo $page->getMeta('nbre_enfants') > 0 ? 'none' : 'block'; ?>;" class="supprimer" href="#"><img alt="Supprimer" src="img/white/trash_stroke_16x16.png"></a></div>
+                                                <div class="btn-a gradient-blue" ><a title="Supprimer '<?php echo $page->getMeta('titre'); ?>'" style="float:right; display:<?php echo $page->getMeta('nbre_enfants') > 0 ? 'none' : 'block'; ?>;" class="supprimer" href="#"><img alt="Supprimer" src="app/back/img/white/trash_stroke_16x16.png"></a></div>
                                             </div>
 <?php
                     }

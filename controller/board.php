@@ -89,7 +89,7 @@ class Board extends Main
 
         $this->_view->breadCrumbs[] = array(
             'label' => 'Tableau de bord',
-            'url' => 'board/start.html',
+            'url' => 'back/board/start.html',
         );
     }
 

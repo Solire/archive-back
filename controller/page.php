@@ -260,12 +260,12 @@ class Page extends Main
         if($json["status"] == "error") {
             $this->_log->logThis(   "$typeSave de page échouée",
                                     $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
+                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
                                     . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
         } else {
             $this->_log->logThis(   "$typeSave de page réussie",
                                     $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
+                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
                                     . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a>');
         }
 
@@ -501,12 +501,12 @@ class Page extends Main
             $query = "UPDATE `gab_page` SET `visible` = " . $_POST['visible'] . " WHERE id_version =  " . $idVersion . " AND `id` = " . $_POST['id_gab_page'];
             if ($this->_db->query($query)) {
                 $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
-                $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');
                 $json['status'] = "success";
                 $json['debug'] = $query;
             } else {
-                $this->_log->logThis("$type échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $this->_log->logThis("$type échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" /><br /><span style="color:red;">Error</span>');
             }
         }

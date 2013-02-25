@@ -88,7 +88,7 @@ class Media extends Main {
                 $file['height'] = $sizes[1];
             } else {
                 $file['class'] = 'vignette';
-                $file['path_mini'] = "img/filetype/$ext.png";
+                $file['path_mini'] = "app/back/img/filetype/$ext.png";
             }
 
 //            $file['poids'] = (round((100 * $file['taille']) / (8 * 1024)) / 100) . " Ko";

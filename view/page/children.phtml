@@ -46,7 +46,7 @@ if (count($this->pages) > 0) {
                         <div class="btn-a gradient-blue fl" ><a class="sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'" href="#"><img alt="Déplacer" src="img/deplacer.png" /></a></div>
                     <?php } ?>
                     <?php if ($this->utilisateur->get("niveau") == "solire" || $this->gabarits[$page->getMeta("id_gabarit")]["editable"]) { ?>
-                        <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="img/white/pen_alt_stroke_16x16.png" /></a></div>
+                        <div class="btn-a gradient-blue fl" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_16x16.png" /></a></div>
                     <?php } ?>
                     <?php if (($this->utilisateur->get("niveau") == "solire" || $this->gabarits[$page->getMeta("id_gabarit")]["make_hidden"] || $page->getMeta('visible') == 0) && $page->getMeta('rewriting') != "") { ?>
                         <div class="btn-a gradient-blue fl" ><a title="Rendre visible '<?php echo $page->getMeta('titre'); ?>'" style="padding: 8px 15px 6px;"><input type="checkbox" class="rendrevisible"<?php echo $page->getMeta('visible') > 0 ? ' checked="checked"' : ''; ?> /></a></div>

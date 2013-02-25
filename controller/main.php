@@ -207,7 +207,7 @@ class Main extends \Slrfw\Controller
         );
         $this->_view->breadCrumbs = array();
         $this->_view->breadCrumbs[] = array(
-            'label' => '<img src="img/gray_dark/home_12x12.png"> '
+            'label' => '<img src="app/back/img/gray_dark/home_12x12.png"> '
                     . $this->_view->site,
             'url' => './',
         );
