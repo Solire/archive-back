@@ -39,10 +39,10 @@ class Sign extends Main
 
         $this->_view->main(false);
 
-        $this->_view->action = $this->_appConfig->get('general', 'page-default');
+        $this->_view->action = 'back/' . $this->_appConfig->get('general', 'page-default');
 
         if ($this->_utilisateur->isConnected()) {
-            $this->simpleRedirect ($this->_appConfig->get('general', 'page-default'), true);
+            $this->simpleRedirect ('back/' . $this->_appConfig->get('general', 'page-default'), true);
         }
     }
 
