@@ -161,6 +161,8 @@ class Media extends Main {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
 
+        $_REQUEST["name"] = $_FILES["file"]["name"];
+
         $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
 
         $prefixPath = $this->_api["id"] == 1 ? "" : ".." . DIRECTORY_SEPARATOR;
@@ -176,6 +178,9 @@ class Media extends Main {
             $json = $this->_fileManager->uploadGabPage($id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
             if (isset($json["minipath"])) {
                 $json["minipath"] = $prefixPath . $json["minipath"];
+                $json["image"] = array(
+                    "url"   =>  $id_gab_page . DIRECTORY_SEPARATOR . $json["filename"]
+                );
                 $json["path"] = $prefixPath . $json["path"];
                 $json["size"] = \Slrfw\Library\Tools::format_taille($json["size"]);
             }
@@ -331,6 +336,7 @@ class Media extends Main {
 
         $json["path"] = $prefixPath . $targetDir . DIRECTORY_SEPARATOR . $target;
         $json["filename"] = $target;
+        $json["filename_front"] = $id_gab_page . "/" . $target;
 
 
         exit(json_encode($json));
@@ -392,12 +398,12 @@ class Media extends Main {
                             . $dir . DIRECTORY_SEPARATOR
                             . $this->_upload_vignette . DIRECTORY_SEPARATOR
                             . $file['rewriting'];
-                    $serverpath = ".." . DIRECTORY_SEPARATOR . $this->_upload_path . DIRECTORY_SEPARATOR
+                    $serverpath = $this->_upload_path . DIRECTORY_SEPARATOR
                             . $dir . DIRECTORY_SEPARATOR
                             . $file['rewriting'];
 
 //                    $this->_page = $this->_gabaritManager->getPage(BACK_ID_VERSION, $file['id_gab_page']);
-                    $realpath = Slrfw\Registry::get("base") . $dir . '/' . $file['rewriting'];
+                    $realpath = \Slrfw\Registry::get('basehref') . $dir . '/' . $file['rewriting'];
 
 //                    $ext = array_pop(explode(".", $file['rewriting']));
                     if (\Slrfw\Model\fileManager::isImage($file['rewriting'])) {

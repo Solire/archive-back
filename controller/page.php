@@ -217,6 +217,69 @@ class Page extends Main
         $this->_view->main(FALSE);
         $this->_view->enable(FALSE);
 
+        if (isset($_GET["edit-front"]) && $_GET["edit-front"] == 1) {
+
+            $dataRaw = json_decode($_POST["content"], true);
+            $data = array(
+                "id_version"    =>  $dataRaw["id_version"]["value"],
+                "id_gab_page"    =>  $dataRaw["id_gab_page"]["value"],
+                "id_api"    =>  $dataRaw["id_api"]["value"],
+            );
+            $page = $this->_gabaritManager->getPage($dataRaw["id_version"]["value"], $dataRaw["id_api"]["value"], $dataRaw['id_gab_page']["value"], 0);
+            $pageSave = false;
+
+            foreach ($dataRaw as $k => $d) {
+                $val = isset($d["value"]) ? $d["value"] : false;
+                if ($val === false) {
+                    if (isset($d["attributes"]["src"])) {
+                        $filePathPart = explode("/", $d["attributes"]["src"]);
+                        $val = $filePathPart[1];
+                    }
+                }
+
+                if ($val !== false) {
+
+                    if (strpos($k, "-") !== false) {
+                        $fieldPart = explode('-', $k);
+                        if (!isset($data[$fieldPart[0]])) {
+                            $data[$fieldPart[0]] = array();
+                        }
+
+
+                        $blocTableName = $fieldPart[2];
+                        $idBlocLine = $fieldPart[1];
+                        $idChamp = substr($fieldPart[0], 5);
+
+                        if (!isset($data['id_' . $blocTableName])) {
+                            $data['id_' . $blocTableName] = array();
+                        }
+                        $data['id_' . $blocTableName][$idBlocLine] = $idBlocLine;
+
+                        $data[$fieldPart[0]][] = $val;
+                    } else {
+                        if (substr($k, 0, 5) == "champ") {
+                            $pageSave = true;
+                            $data[$k] = array(
+                                $val
+                            );
+                        }
+                    }
+                }
+            }
+
+            if ($pageSave) {
+                $this->_gabaritManager->savePage($page, $data, true);
+            }
+
+            $blocs = $page->getBlocs();
+            foreach ($blocs as $bloc) {
+                $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']["value"], $dataRaw["id_version"]["value"], $data, true);
+            }
+            exit("1");
+        }
+
+
+
         $this->_page = $this->_gabaritManager->save($_POST);
 
         $contenu    = '<a href="' . \Slrfw\Library\Registry::get('basehref')
