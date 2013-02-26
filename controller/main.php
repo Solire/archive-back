@@ -179,7 +179,7 @@ class Main extends \Slrfw\Controller
         if (!$this->_utilisateur->isConnected()
             && (!isset($this->noRedirect) || $this->noRedirect === false)
         ) {
-            $this->simpleRedirect('sign/start.html', true);
+            $this->simpleRedirect('back/sign/start.html', true);
         }
 
         /**
