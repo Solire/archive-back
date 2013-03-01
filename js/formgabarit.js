@@ -22,15 +22,15 @@ var json;
 
 function verifieForm(elmt){
     val = elmt.val();
-	
+
     if (!elmt.hasClass('form-controle'))
         return true;
-	
+
     var testdonnee = false;
     var classes = elmt.attr('class').split(' ');
     var oblig = classes[$.inArray('form-controle', classes) + 1] == 'form-oblig' || val != '';
     var typeDonnee = classes[$.inArray('form-controle', classes) + 2].replace('form-', '');
-	
+
     if (oblig) {
         if (typeDonnee in expressions) {
             expcourrante = expressions[typeDonnee];
@@ -44,7 +44,7 @@ function verifieForm(elmt){
                     testdonnee = (val != '' && val != '0');
             }
         }
-		
+
         if(testdonnee==false){
             elmt.parent().addClass('error');
             return false;
@@ -61,11 +61,11 @@ $(function(){
     $('.form-controle').live('focusout', function(){
         if(typeof tinyMCE=="object")
             tinyMCE.triggerSave(true, true);
-		
+
         verifieForm($(this));
     });
 
-	
+
 
     var enregistrement = $('<div>', {
         id : 'enregistrement'
@@ -74,35 +74,35 @@ $(function(){
         title : "Enregistrement",
         height : "auto"
     });
-    
+
     var enregistrement_open = function(string){
         enregistrement.html(string).dialog("open");
     }
-    
+
     var enregistrement_change = function(string){
         enregistrement.html(string);
     }
-    
+
     var enregistrement_close = function(){
         enregistrement.dialog("close");
     }
 
     $('.formajaxsubmit:visible').live('click', function(){
-                
+
         json = {};
         var tthis = $(this);
         var ok = true;
         var formu = tthis.parents('form').first();
-		
+
         if(typeof tinyMCE == "object")
             tinyMCE.triggerSave(true, true);
-		
+
         $('input, select, textarea', formu).each(function(){
             if ($(this).attr('name') != "") {
                 if (!verifieForm($(this)) && this.type != 'checkbox') {
                     var $this = $(this);
                     if ($(this).is('textarea')) $this = $(this).next();
-					
+
                     if(ok){
                         ok = false;
                         var haut = $(this).parent().position().top - 10;
@@ -126,27 +126,27 @@ $(function(){
                 }
             }
         });
-		
+
         if (ok) {
             $('.formajaxsubmit:visible').unbind("click");
             json = formu.serialize();
-			
+
             //            enregistrement_open('<p>...</p>');
 
             $.sticky("Enregistrement en cours, veuillez patientez ...", {
                 type:"notice"
             });
-                        
-                        
-                        
+
+
+
 
             $.post(
                 formu.attr('action'),
                 json,
                 function(data){
-                    $(formu).delay(500).queue(function(){ 
+                    $(formu).delay(500).queue(function(){
                         $("body").find(".sticky-queue").html("")
-                        
+
                         if(data.status == "success") {
                             var message = "La page a été enregistrée avec succès";
                             if(data.message) {
@@ -156,7 +156,7 @@ $(function(){
                                 type:"success"
                             });
                             if(data.javascript) {
-                                $(formu).delay(500).queue(function(){ 
+                                $(formu).delay(500).queue(function(){
                                     eval(data.javascript)
                                     $(formu).dequeue()
                                 });
@@ -172,20 +172,20 @@ $(function(){
                         }
                         $(formu).dequeue()
                     })
-                    
+
                     //					enregistrement_change('<p>' + (data.status == "success" ? "Succès" : "Echec") + '</p>');
                     //                    window.setTimeout(enregistrement_close, 2000);
-                    $("body").delay(1500).queue(function(){ 
+                    $("body").delay(1500).queue(function(){
                         if (data.status == "success") {
-                        
+
                             if (typeof data.id_gab_page != "undefined") {
                                 $.cookie("id_gab_page", data.id_gab_page, {
                                     path : '/'
                                 });
                                 $('[name=id_gab_page]').val(data.id_gab_page);
-                            
+
                             }
-                        
+
                             if (typeof uploader == "object" && uploader.files.length > 0) {
                                 uploader.start();
                                 formsubmit.done = true;
@@ -199,22 +199,22 @@ $(function(){
                             }
                         }
                         $("body").dequeue()
-                    });                        
-                    
+                    });
+
                 },
                 'json'
                 );
         }
-		
+
         return false;
     });
-	
+
 
     $('.formprev').click(function(){
         var formu = $(this).parents('form').first();
         formu.attr('target', '_blank');
         var oldaction =  formu.attr('action');
-        formu.attr('action', '../');
+        formu.attr('action', './');
 
         if(typeof tinyMCE=="object")
             tinyMCE.triggerSave(true, true);
@@ -226,5 +226,5 @@ $(function(){
 
         return false;
     });
-	
+
 });
