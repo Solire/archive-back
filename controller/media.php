@@ -362,7 +362,7 @@ class Media extends Main {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
 
-        $prefixPath = $this->_api["id"] == 1 ? ".." . DIRECTORY_SEPARATOR : ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR;
+        $prefixPath = $this->_api["id"] == 1 ? "." . DIRECTORY_SEPARATOR : ".." . DIRECTORY_SEPARATOR . "." . DIRECTORY_SEPARATOR;
 
         $id_gab_page = isset($_GET['id_gab_page']) && $_GET['id_gab_page'] ? $_GET['id_gab_page'] : (isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0);
 
