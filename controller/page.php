@@ -282,13 +282,13 @@ class Page extends Main
 
         $this->_page = $this->_gabaritManager->save($_POST);
 
-        $contenu    = '<a href="' . \Slrfw\Library\Registry::get('basehref')
+        $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
                     . 'page/display.html?id_gab_page='
                     . $this->_page->getMeta('id') . '">'
                     . $this->_page->getMeta('titre') . '</a>';
 
-        $headers    = 'From: ' . \Slrfw\Library\Registry::get('mail-contact') . "\r\n"
-                    . 'Reply-To: ' . \Slrfw\Library\Registry::get('mail-contact') . "\r\n"
+        $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                    . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
                     . 'Bcc: contact@solire.fr ' . "\r\n"
                     . 'X-Mailer: PHP/' . phpversion();
 
