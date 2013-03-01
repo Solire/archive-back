@@ -240,7 +240,7 @@ class Media extends Main {
         $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
 
 
-        $newImageName = \Slrfw\Library\Tools::friendlyURL($_POST["image-name"]);
+        $newImageName = \Slrfw\Tools::friendlyURL($_POST["image-name"]);
 
         /* Dimensions de recadrage */
         $x = $_POST["x"];
@@ -327,7 +327,7 @@ class Media extends Main {
             if (isset($json["minipath"])) {
                 $json["minipath"] = $prefixPath . $json["minipath"];
                 $json["path"] = $prefixPath . $json["path"];
-                $json["size"] = \Slrfw\Library\Tools::format_taille($json["size"]);
+                $json["size"] = \Slrfw\Tools::format_taille($json["size"]);
                 $json["id_temp"] = $id_temp;
             }
         }

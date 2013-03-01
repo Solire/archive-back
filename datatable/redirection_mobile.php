@@ -8,7 +8,7 @@ namespace Slrfw\Datatable;
  *
  * @author shin
  */
-class Redirection_mobile extends \Slrfw\Library\Datatable\Datatable {
+class Redirection_mobile extends \Slrfw\Datatable\Datatable {
 /** @todo Changer le nom de Redirection_mobile pour qu'il respect la notation camel */
     public function start() {
         parent::start();
