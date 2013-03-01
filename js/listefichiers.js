@@ -302,7 +302,7 @@ $(function () {
             ligne += '<td>' + response.width + '</td>';
             ligne += '<td>' + response.height + '</td>';
             ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-            ligne += '<td><div class="btn-a gradient-blue"><a href="' + response.path + '" class="previsu"><img alt="supprimer" src="img/back/voir.png" /></a></div></td>';
+            ligne += '<td><div class="btn-a gradient-blue"><a href="' + response.path + '" class="previsu"><img alt="supprimer" src="app/back/img/back/voir.png" /></a></div></td>';
 
             file.tr.attr("id", "fileid_" + response.id);
             file.tr.html(ligne);

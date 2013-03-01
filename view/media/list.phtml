@@ -10,7 +10,7 @@
                     <td><?php if (isset($file['height'])) echo $file['height']; ?></td>
                     <td><?php echo Slrfw\Tools::formate_date_nombre(substr($file['date_crea'], 0, 10), '-', '/'); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
                     <td>
-                        <div class="btn-a gradient-blue"><a href="<?php echo $file['path']; ?>" class="previsu"><img alt="Gérer" src="img/voir.png" /></a></div>
+                        <div class="btn-a gradient-blue"><a href="<?php echo $file['path']; ?>" class="previsu"><img alt="Prévisualisation" src="app/back/img/voir.png" /></a></div>
                         <div class="btn-a gradient-blue"><a href="" class="delete-file"><img alt="Supprimer" src="app/back/img/white/trash_stroke_16x16.png" /></a></div>
                     </td>
                 </tr>
