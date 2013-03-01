@@ -130,7 +130,7 @@ class Page extends Main
         $id_gab_page = isset($_GET['id_gab_page']) ? $_GET['id_gab_page'] : 0;
         $id_gabarit = isset($_GET['id_gabarit']) ? $_GET['id_gabarit'] : 1;
 
-        $this->_view->upload_path = $this->_mainConfig->get('path', 'upload');
+        $this->_view->upload_path = $this->_mainConfig->get('upload', 'path');
         $this->_view->action = 'liste';
 
         $this->_form = '';
@@ -305,10 +305,10 @@ class Page extends Main
         );
 
         if (isset($_POST['id_temp']) && $_POST['id_temp']) {
-            $upload_path = $this->_mainConfig->get('path', 'upload');
+            $upload_path = $this->_mainConfig->get('upload', 'path');
 
-            $tempDir    = '../' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
-            $targetDir  = '../' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta("id");
+            $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
+            $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta("id");
 
             $succes = rename($tempDir, $targetDir);
 
