@@ -958,7 +958,7 @@ $(function(){
             var id = $(this).attr("id").split("_");
             var name = id[0];
             var contentRule = [];
-            var content = '<img style="float:left;" src="img/back/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
+            var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
             if($(this).hasClass("form-oblig"))
                 contentRule.push('<span style="color:red">Obligatoire</span>');
             else {
@@ -991,7 +991,7 @@ $(function(){
             var id = $(this).attr("id").split("_");
             var name = id[0];
             var contentRule = [];
-            var content = '<img style="float:left;" src="img/back/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
+            var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
             if($(this).siblings('textarea').hasClass("form-oblig"))
                 contentRule.push('<span style="color:red">Obligatoire</span>');
             else {
