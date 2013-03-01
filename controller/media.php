@@ -65,18 +65,18 @@ class Media extends Main {
 
         foreach ($this->_files as &$file) {
             $ext = strtolower(array_pop(explode(".", $file['rewriting'])));
-            $prefixPath = $this->_api["id"] == 1 ? ".." . DIRECTORY_SEPARATOR : ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR;
+            $prefixPath = $this->_api["id"] == 1 ? "" : ".." . DIRECTORY_SEPARATOR;
             $file['path'] = $prefixPath . $this->_upload_path . DIRECTORY_SEPARATOR
                     . $file['id_gab_page'] . DIRECTORY_SEPARATOR
                     . $file['rewriting'];
 
-            $serverpath = ".." . DIRECTORY_SEPARATOR . $this->_upload_path . DIRECTORY_SEPARATOR
+            $serverpath = $this->_upload_path . DIRECTORY_SEPARATOR
                     . $file['id_gab_page'] . DIRECTORY_SEPARATOR
                     . $file['rewriting'];
 
             $file['class'] = 'hoverprevisu vignette';
 
-            if (array_key_exists($ext, \Slrfw\Gabarit\fileManager::$_extensions['image'])) {
+            if (array_key_exists($ext, \Slrfw\Model\fileManager::$_extensions['image'])) {
                 $file['path_mini'] = $prefixPath . $this->_upload_path . DIRECTORY_SEPARATOR
                         . $file['id_gab_page'] . DIRECTORY_SEPARATOR
                         . $this->_upload_vignette . DIRECTORY_SEPARATOR
@@ -92,7 +92,7 @@ class Media extends Main {
             }
 
 //            $file['poids'] = (round((100 * $file['taille']) / (8 * 1024)) / 100) . " Ko";
-            $file['poids'] = \Slrfw\Library\Tools::format_taille($file['taille']);
+            $file['poids'] = \Slrfw\Tools::format_taille($file['taille']);
         }
 
         $this->_view->files = $this->_files;
@@ -170,10 +170,10 @@ class Media extends Main {
         if ($id_gab_page) {
 //            $this->_page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, $id_gab_page);
 //            if ($this->_page) {
-            $targetTmp = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
-            $targetDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page;
-            $vignetteDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_vignette;
-            $apercuDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_apercu;
+            $targetTmp = $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
+            $targetDir = $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page;
+            $vignetteDir = $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_vignette;
+            $apercuDir = $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_apercu;
 
             $json = $this->_fileManager->uploadGabPage($id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
             if (isset($json["minipath"])) {
@@ -203,22 +203,22 @@ class Media extends Main {
             } else {
                 $id_temp = 1;
                 $target = "temp-$id_temp";
-                while (file_exists("../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target)) {
+                while (file_exists($this->_upload_path . DIRECTORY_SEPARATOR . $target)) {
                     $id_temp++;
                     $target = "temp-$id_temp";
                 }
             }
 
-            $targetTmp = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
-            $targetDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target;
-            $vignetteDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_vignette;
-            $apercuDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_apercu;
+            $targetTmp = $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
+            $targetDir = $this->_upload_path . DIRECTORY_SEPARATOR . $target;
+            $vignetteDir = $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_vignette;
+            $apercuDir = $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_apercu;
 
             $json = $this->_fileManager->uploadGabPage(0, $id_temp, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
             if (isset($json["minipath"])) {
                 $json["minipath"] = $prefixPath . $json["minipath"];
                 $json["path"] = $prefixPath . $json["path"];
-                $json["size"] = \Slrfw\Library\Tools::format_taille($json["size"]);
+                $json["size"] = \Slrfw\Tools::format_taille($json["size"]);
                 $json["id_temp"] = $id_temp;
             }
         }
