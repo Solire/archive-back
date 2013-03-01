@@ -17,7 +17,7 @@
                             <div style="height: 54px;float: left;">
                                 <div class="btn-a gradient-blue" style="margin-bottom: 5px;display:block;">
                                     <a title="<?php echo $version['nom']; ?>" class="openlang <?php echo $id_version == BACK_ID_VERSION ? 'active' : 'translucide'; ?>">
-                                        Langue : <img src="img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
+                                        Langue : <img src="app/back/img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
                                     </a>
                                 </div>
 
@@ -111,7 +111,7 @@
                 || !$page->getMeta('visible')
             ) {
 ?>
-                                    <dt>Gérer la visibité :</dt><br /><dd><img src="img/flags/png/<?php echo strtolower($this->versions[BACK_ID_VERSION]['suf']); ?>.png" alt="" />
+                                    <dt>Gérer la visibité :</dt><br /><dd><img src="app/back/img/flags/png/<?php echo strtolower($this->versions[BACK_ID_VERSION]['suf']); ?>.png" alt="" />
                                     <input class="visible-lang visible-lang-<?php echo $page->getMeta("id") . '-' . BACK_ID_VERSION; ?>" style="margin:0;" value="<?php echo $page->getMeta('id') . '|' . BACK_ID_VERSION; ?>" id="visible-<?php echo BACK_ID_VERSION; ?>" style="margin:0;" <?php echo ($page->getMeta('visible') ? 'checked="checked"' : ''); ?> type="checkbox" /><dd>
 <?php
             }
