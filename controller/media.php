@@ -259,10 +259,10 @@ class Media extends Main {
 
         /* Cas d'une édition de page */
         if ($id_gab_page) {
-            $targetDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page;
+            $targetDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page;
             $prefixPath = $this->_api["id"] == 1 ? "" : ".." . DIRECTORY_SEPARATOR;
-            $vignetteDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_vignette;
-            $apercuDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_apercu;
+            $vignetteDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_vignette;
+            $apercuDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $id_gab_page . DIRECTORY_SEPARATOR . $this->_upload_apercu;
         } else {
             /* Cas d'une création de page */
             if (isset($_COOKIE['id_temp']) && $_COOKIE['id_temp'] && is_numeric($_COOKIE['id_temp'])) {
@@ -270,10 +270,10 @@ class Media extends Main {
                 $target = "temp-$id_temp";
             }
 
-            $targetTmp = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
-            $targetDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target;
-            $vignetteDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_vignette;
-            $apercuDir = "../" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_apercu;
+            $targetTmp = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $this->_upload_temp;
+            $targetDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $target;
+            $vignetteDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_vignette;
+            $apercuDir = "./" . $this->_upload_path . DIRECTORY_SEPARATOR . $target . DIRECTORY_SEPARATOR . $this->_upload_apercu;
         }
 
         $id_temp = 1;
