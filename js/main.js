@@ -7,7 +7,7 @@ $(function() {
         var id_version = parseInt(value[1]);
         var checked = $this.is(':checked');
         $.post(
-            'page/visible.html',
+            'back/page/visible.html',
             {
                 id_gab_page : id_gab_page,
                 id_version : id_version,
