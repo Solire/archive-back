@@ -182,7 +182,7 @@ class Media extends Main {
                     "url"   =>  $id_gab_page . DIRECTORY_SEPARATOR . $json["filename"]
                 );
                 $json["path"] = $prefixPath . $json["path"];
-                $json["size"] = \Slrfw\Library\Tools::format_taille($json["size"]);
+                $json["size"] = \Slrfw\Tools::format_taille($json["size"]);
             }
 //            }
 //            else {
