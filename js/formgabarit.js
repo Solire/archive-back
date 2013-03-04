@@ -58,6 +58,9 @@ function verifieForm(elmt){
  * Gestion des evenements
  */
 $(function(){
+    $('.form-date.form-controle').live('change', function(){
+        verifieForm($(this));
+    });
     $('.form-controle').live('focusout', function(){
         if(typeof tinyMCE=="object")
             tinyMCE.triggerSave(true, true);
