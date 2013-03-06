@@ -117,7 +117,7 @@ $(function(){
     });
 
     $(".form-crop-submit").bind("click", function() {
-        var action = $(".form-crop").attr("action");
+        var action = "back/" + $(".form-crop").attr("action");
         var data = $(".form-crop").serialize();
         $.post(action, data, function(response) {
             $('#modalCrop').modal("hide");

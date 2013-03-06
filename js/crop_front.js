@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-
+var idGabarit
 $(function(){
     /**
      * Redimensionnement et recadrage des images
@@ -69,7 +69,7 @@ $(function(){
     });
 
     $(".form-crop-submit").bind("click", function() {
-        var action = "back/" + $(".form-crop").attr("action");
+        var action = "back/" + $(".form-crop").attr("action") + "?id_gab_page=" + idGabarit;
         var data = $(".form-crop").serialize();
         $.post(action, data, function(response) {
             $('#modalCrop').modal("hide");
@@ -143,6 +143,7 @@ $(function(){
             var imageExtension = imageNameInfos.pop();
             var imageName = imageNameInfos.join("");
             var filename = imageName.substr(imageName.indexOf('/') + 1);
+            idGabarit = imageName.substr(0, imageName.indexOf('/'));
 
 
             $("#image-name").val(filename);
