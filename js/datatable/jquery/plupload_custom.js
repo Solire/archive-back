@@ -72,7 +72,7 @@ var uploaderInit = function(idBtn){
                 if (uploader[idBtn].settings.multi_selection == false) {
                     var infoField = uploader[idBtn].name.split("-")
                     var $myForm = $("#" + idBtn).parents("form");
-                    console.log($("#" + infoField[1], $myForm))
+//                    console.log($("#" + infoField[1], $myForm))
                     $("#" + infoField[1], $myForm).val(file.name)
                 }
                 $("#" + idBtn).parents(".control-group:first").find('.filelist tbody').append(

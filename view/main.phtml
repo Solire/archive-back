@@ -167,7 +167,8 @@
                 $mobile = true;
             }
 ?>
-                                            <li><a href="<?php echo $prefix; ?><?php echo $idApi == 1 ? '' : $api["name"] . "/"; ?>" style="font-weight:bold;" href="#"><img style="float:left;margin-top: 5px;" width="28" src="app/back/img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>
+                                            <li><a href="" style="font-weight:bold;" onclick="$.cookie('api', <?php echo $api['name']; ?>, {path : '/'});"><img style="float:left;margin-top: 5px;" width="28" src="app/back/img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>
+                                            <!--<li><a href="<?php echo $prefix; ?><?php echo $idApi == 1 ? '' : $api["name"] . "/"; ?>" style="font-weight:bold;" href="#"><img style="float:left;margin-top: 5px;" width="28" src="app/back/img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>-->
 <?php
         }
 ?>

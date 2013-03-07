@@ -144,7 +144,7 @@ $(function () {
             "ajax" : {
                 "url" : "back/media/folderlist.html",
                 "data" : function (n) {
-                    console.log(n)
+//                    console.log(n)
                     return {
                         "id" : n.attr ? n.attr("id").replace("node_","") : ""
                     };

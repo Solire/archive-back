@@ -850,12 +850,12 @@ $(function(){
                     if ($.inArray(ext, extensionsImage) != -1) {
                         ligne += '<img class="vignette img-polaroid" src="' + response.minipath + '" alt="' + ext + '" /></a></td>';
                     } else {
-                        ligne += '<img class="vignette" src="img/back/filetype/' + ext + '.png" alt="' + ext + '" /></a></td>';
+                        ligne += '<img class="vignette" src="app/back/img/filetype/' + ext + '.png" alt="' + ext + '" /></a></td>';
                     }
 
                     ligne += '<td>' + response.size + '</td>';
                     ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-                    ligne += '<td><div class="btn-a gradient-blue"><a target="_blank" href="' + response.path + '" class="previsu"><img alt="Voir" src="app/back/img/back/voir.png" /></a></a></td>';
+                    ligne += '<td><div class="btn-a gradient-blue"><a target="_blank" href="' + response.path + '" class="previsu"><img alt="Voir" src="app/back/img/voir.png" /></a></a></td>';
 
                     file.tr.attr("id", "fileid_" + response.id);
                     file.tr.html(ligne);

@@ -35,6 +35,12 @@ class Main extends \Slrfw\Controller
     protected $_api;
 
     /**
+     *
+     * @var \Slrfw\Model\gabaritManager
+     */
+    protected $_gabaritManager = null;
+
+    /**
      * Always execute before other method in controller
      *
      * @return void
@@ -44,11 +50,16 @@ class Main extends \Slrfw\Controller
         parent::start();
 
         $suffixApi = '';
-        if (isset($_GET['api'])) {
-            $nameApi = $_GET['api'];
+        if (isset($_COOKIE['api'])) {
+            $nameApi = $_COOKIE['api'];
         } else {
             $nameApi = 'main';
         }
+//        if (isset($_GET['api'])) {
+//            $nameApi = $_GET['api'];
+//        } else {
+//            $nameApi = 'main';
+//        }
 
         $query = 'SELECT id '
                . 'FROM gab_api '

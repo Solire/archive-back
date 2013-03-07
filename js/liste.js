@@ -201,7 +201,7 @@ $(function(){
                         id_parent : id
                     },
                     success: function(data){
-                        console.log(id)
+//                        console.log(id)
                         $divToLoad.html(data)
                         $divToLoad.addClass('children-loaded');
                         if (data != '') {
