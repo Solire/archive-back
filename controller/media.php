@@ -163,7 +163,11 @@ class Media extends Main {
 
         $_REQUEST["name"] = $_FILES["file"]["name"];
 
-        $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
+        if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {
+            $id_gab_page = $_GET['id_gab_page'];
+        } else {
+            $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
+        }
 
         $prefixPath = $this->_api["id"] == 1 ? "" : ".." . DIRECTORY_SEPARATOR;
 
@@ -237,7 +241,11 @@ class Media extends Main {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
 
-        $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
+        if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {
+            $id_gab_page = $_GET['id_gab_page'];
+        } else {
+            $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
+        }
 
 
         $newImageName = \Slrfw\Tools::friendlyURL($_POST["image-name"]);

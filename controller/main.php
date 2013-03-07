@@ -82,12 +82,12 @@ class Main extends \Slrfw\Controller
                . 'FROM gab_api ';
         $this->_apis = $this->_db->query($query)->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
 
-        if ($this->_api['id'] != 1) {
-            $suffixApi = $this->_api['name'] . '/';
-            \Slrfw\Registry::set('basehref', \Slrfw\Registry::get('basehref') . $suffixApi);
-            $this->_url = \Slrfw\Registry::get('basehref');
-            $this->_view->url = \Slrfw\Registry::get('basehref');
-        }
+//        if ($this->_api['id'] != 1) {
+//            $suffixApi = $this->_api['name'] . '/';
+//            \Slrfw\Registry::set('basehref', \Slrfw\Registry::get('basehref') . $suffixApi);
+//            $this->_url = \Slrfw\Registry::get('basehref');
+//            $this->_view->url = \Slrfw\Registry::get('basehref');
+//        }
         define('BACK_ID_API', $this->_api['id']);
 
         $this->_javascript->addLibrary('back/js/jquery/jquery-1.8.0.min.js');
