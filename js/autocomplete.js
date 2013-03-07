@@ -55,7 +55,7 @@ $(function(){
             source: function( request, response ) {
 
             $.getJSON(
-                "../sitemap.xml?json=1&visible=0",
+                "sitemap.xml?json=1&visible=0",
                 {
                 term : request.term
                 }, function( data, status, xhr ) {
