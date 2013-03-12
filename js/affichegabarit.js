@@ -7,44 +7,26 @@ var initTinyMCE = function () {
     tinyMCE.init({
         mode: "none",
         theme : "advanced",
-        //      valid_elements : "a[href],em/i,strike,u,strong/b,div[align],br,#p[align],-ol[type|compact],-ul[type|compact],-li",
         language : "fr",
         plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
         width:"500px",
         height:"290px",
-        //      height:hauteur,
-
-        // ne transforme plus les en html_entities
         entity_encoding : "raw",
-
-        //      // Sauts de ligne en <br/>
-        //      forced_root_block : false,
-        //      force_br_newlines : true,
-        //      force_p_newlines : false,
-
-        // Theme options
-        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink,image",
+        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink",
         theme_advanced_buttons2 : "",
         theme_advanced_buttons3 : "",
-
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_resizing : true,
-
         theme_advanced_blockformats : "h1,h2,h3,h4,h5,h6",
-
-        //        external_image_list_url : "../media/autocomplete.html?tinyMCE"
-
-
         relative_urls : true,
-        //        remove_script_host : false,
         convert_urls : true,
         document_base_url : "../../../../",
         content_css : "back/css/style-tinymce.css",
         external_image_list_url : "back/media/autocomplete.html?tinyMCE",
         external_link_list_url : "back/page/autocomplete-link.html"
     });
-}
+};
 
 initTinyMCE();
 
@@ -273,86 +255,7 @@ $(function(){
         return this;
     };
 
-    var tinyMethods = {
-        disable : function(){
-            //var base = this;
-            $('#tempId').attr('id','');
-            if (this.$el.attr('id') == '') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            tinyMCE.execCommand('mceFocus', false, tinyId);
-            tinyMCE.execCommand('mceRemoveControl', false, tinyId);
-            tinyMCE.triggerSave(true, true);
-        },
-        enable : function(){
-            //var base = this;
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-            tinyMCE.execCommand('mceAddControl',false,tinyId);
-        },
-        change : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(tinyMCE.getInstanceById(tinyId))
-                tinyMethods['disable'].apply(this);
-            else
-                tinyMethods['enable'].apply(this);
-
-        //			tinyMCE.execCommand('mceToggleEditor',false,tinyId);
-        },
-        disableOnly : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(tinyMCE.getInstanceById(tinyId)){
-                tinyMethods['disable'].apply(this);
-                this.$el.addClass('tinymce-tmp-disabled');
-            }
-        },
-        enableOnly : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(!tinyMCE.getInstanceById(tinyId))
-                tinyMethods['enable'].apply(this);
-
-            this.$el.removeClass('tinymce-tmp-disabled');
-        }
-    };
-
-    $.tinymce = function(method, el){
-        var base=this;
-        base.$el = $(el);
-        base.el = el;
-
-        return tinyMethods[method].apply(this);
-    };
-
-    $.fn.tinymce = function(method){
-        var tab = [];
-
-        this.each(function(){
-            tab.push(new $.tinymce(method, this));
-        });
-        return tab;
-    };
-
-    $('textarea.tiny').tinymce('enable');
+    $('textarea.tiny').tinymce('enableOnly');
 
     $('label > .switch-editor').live('click', function(e){
         e.preventDefault();
@@ -371,15 +274,11 @@ $(function(){
         }
     });
 
-    //// GESTION DU TRI
     $('.sort-box').each(function(){
         $(this).sortable({
             placeholder: 'empty',
             items: '.sort-elmt',
             handle: '.sort-move',
-            deactivate: function() {
-            //callback();
-            },
             start: function(e, ui){
                 $('textarea', ui.item).tinymce('disableOnly');
             },
@@ -486,9 +385,8 @@ $(function(){
         id: 'previsu'
     }).dialog({
         title : "Prévisualisation",
-
         autoOpen: false,
-        close: function(event, ui){
+        close: function(){
             image = $(null);
         },
         height: "auto",
@@ -500,16 +398,11 @@ $(function(){
         "max-width" : $(window).width()-180
     });
 
-
-    ///////////////////////////////
-    //// GESTION DES EVENMENTS ////
-
     $('.changevisible').live('click', function(){
         if($(this).is(':checked')){
             $(this).next().val(1);
             $(this).parent().first().next().removeClass('translucide');
-        }
-        else{
+        } else {
             $(this).next().val(0);
             $(this).parent().first().next().addClass('translucide');
         }
@@ -539,21 +432,20 @@ $(function(){
         }
     });
 
-
-    $(".expand").live("click", function(e) {
+    $('.expand').live('click', function(e) {
         e.preventDefault();
-        $(this).parent().nextAll("fieldset").each(function() {
-            if($(this).find("div:first").is(":hidden")) {
-                $(this).find("legend:first").click();
+        $(this).parent().nextAll('fieldset').each(function() {
+            if ($('div', this).first().is(':hidden')) {
+                $('legend', this).first().click();
             }
         });
     });
 
-    $(".collapse").live("click", function(e) {
+    $('.collapse').live('click', function(e) {
         e.preventDefault();
-        $(this).parent().nextAll("fieldset").each(function() {
-            if($(this).find("div:first").is(":visible")) {
-                $(this).find("legend:first").click();
+        $(this).parent().nextAll('fieldset').each(function() {
+            if ($('div', this).first().is(":visible")) {
+                $('legend', this).first().click();
             }
         });
     });
@@ -588,7 +480,7 @@ $(function(){
 
     var openingLegend = [];
 
-    $('legend').bind('click', function(e){
+    $('legend').live('click', function(e){
         e.preventDefault();
 
         var indexLegend = $(this).index("legend");
@@ -844,11 +736,11 @@ $(function(){
 
                     var ligne = '';
 
-                    ligne += '<td><a href="' + response.path + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
+                    ligne += '<td><a href="' + response.url + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
 
                     var ext = file.name.split('.').pop().toLowerCase();
                     if ($.inArray(ext, extensionsImage) != -1) {
-                        ligne += '<img class="vignette img-polaroid" src="' + response.minipath + '" alt="' + ext + '" /></a></td>';
+                        ligne += '<img class="vignette img-polaroid" src="' + response.mini_url + '" alt="' + ext + '" /></a></td>';
                     } else {
                         ligne += '<img class="vignette" src="app/back/img/filetype/' + ext + '.png" alt="' + ext + '" /></a></td>';
                     }

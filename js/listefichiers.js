@@ -289,11 +289,11 @@ $(function () {
         if(response.status != "error") {
             var ligne = '';
 
-            ligne += '<td><a href="' + response.path + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
+            ligne += '<td><a href="' + response.url + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
 
             var ext = file.name.split('.').pop().toLowerCase();
             if (extensionsImage.indexOf(ext) != -1)
-                ligne += '<img class="vignette" src="' + response.minipath + '" alt="' + ext + '" /></a></td>';
+                ligne += '<img class="vignette" src="' + response.mini_url + '" alt="' + ext + '" /></a></td>';
             else
                 ligne += '<img class="vignette" src="img/back/' + ext + '.png" alt="' + ext + '" /></a></td>';
 
@@ -302,7 +302,9 @@ $(function () {
             ligne += '<td>' + response.width + '</td>';
             ligne += '<td>' + response.height + '</td>';
             ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-            ligne += '<td><div class="btn-a gradient-blue"><a href="' + response.path + '" class="previsu"><img alt="supprimer" src="app/back/img/back/voir.png" /></a></div></td>';
+            ligne += '<td><div class="btn-a gradient-blue"><a class="previsu" href="' + response.path + '"><img src="app/back/img/voir.png" alt="Prévisualisation"></a></div>';
+            ligne += '<div class="btn-a gradient-blue"><a class="delete-file" href="#"><img src="app/back/img/white/trash_stroke_16x16.png" alt="Supprimer"></a></div></td>'
+
 
             file.tr.attr("id", "fileid_" + response.id);
             file.tr.html(ligne);
@@ -321,7 +323,7 @@ $(function () {
             text : "Supprimer",
             click : function(){
                 var tr = image.parents('tr').first();
-                $.post('media/delete.html', {
+                $.post('back/media/delete.html', {
                     id_media_fichier : tr.attr('id').split('_').pop()
                 }, function(data){
                     if(data.status == 'success'){

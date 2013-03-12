@@ -179,14 +179,13 @@
     }
 
     /** Si le tableau de board est activé */
-    if ($this->appConfig->get("active", "board")) {
+//    if ($this->appConfig->get("active", "board")) {
 ?>
                                     <li<?php echo $this->controller == "board" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/board/start.html">Tableau de bord</a></li>
-
-<?php
-    }
-?>
                                     <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
+<?php
+//    }
+?>
 <?php
     if (count($this->menuPage) > 1) {
 ?>

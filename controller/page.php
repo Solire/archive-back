@@ -100,6 +100,7 @@ class Page extends Main
     public function displayAction()
     {
         $this->_javascript->addLibrary('back/js/tiny_mce/tiny_mce.js');
+        $this->_javascript->addLibrary('back/js/tiny_mce/jquery.solire.tiny_mce.js');
 
         $this->_javascript->addLibrary('back/js/autocomplete.js');
         $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
@@ -130,7 +131,7 @@ class Page extends Main
         $id_gab_page = isset($_GET['id_gab_page']) ? $_GET['id_gab_page'] : 0;
         $id_gabarit = isset($_GET['id_gabarit']) ? $_GET['id_gabarit'] : 1;
 
-        $this->_view->upload_path = $this->_mainConfig->get('upload', 'path');
+//        $this->_view->upload_path = $this->_mainConfig->get('upload', 'path');
         $this->_view->action = 'liste';
 
         $this->_form = '';

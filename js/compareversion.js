@@ -1,19 +1,17 @@
 $(function(){
     var showVersion = function(current, otherId) {
-        var tab = otherId.split('|'),
+        var tab     = otherId.split('|'),
             other   = $('#langue_' + tab[0]);
 
         var version_suf = tab[1];
 
-        $('.form-other-flag').html('<img src="img/flags/png/' + version_suf + '.png" />');
+        $('.form-other-flag').html('<img src="app/back/img/flags/png/' + version_suf + '.png" />');
 
         $('.form-line', current).each(function(i){
             /** Variable selon l'élément */
-            var div        = $('.form-line', other).eq(i),
-
+            var div       = $('.form-line', other).eq(i),
                 otherElmt = $('.form-controle', div),
                 otherValue = getVersionValue(otherElmt),
-
                 printLine  = $('.form-other-line', this),
                 printElmt  = $('.form-other-elmt', this);
 
