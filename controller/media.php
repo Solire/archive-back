@@ -262,14 +262,13 @@ class Media extends Main {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
 
-        if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {
+        if (isset($_GET['id_gab_page']) && $_GET['id_gab_page'] > 0) {
             $id_gab_page = $_GET['id_gab_page'];
+        } elseif (isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] > 0) {
+            $id_gab_page = $_COOKIE['id_gab_page'];
         } else {
-            $id_gab_page = isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page'] ? $_COOKIE['id_gab_page'] : 0;
+            $id_gab_page = 0;
         }
-
-
-        $newImageName = \Slrfw\Tools::friendlyURL($_POST['image-name']);
 
         /* Dimensions de recadrage */
         $x = $_POST['x'];
@@ -278,37 +277,39 @@ class Media extends Main {
         $h = $_POST['h'];
 
         /* Information sur le fichier */
-        $filepath = $_POST['filepath'];
-        $filename                 = pathinfo($filepath, PATHINFO_BASENAME);
-        $ext                      = pathinfo($filename, PATHINFO_EXTENSION);
-        $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);
-        $prefixPath = '';
-        $newFilename = $newImageName . '.' . $ext;
-        $newFilenameWithoutExtension = $newImageName;
+        $newImageName   = \Slrfw\Tools::friendlyURL($_POST['image-name']);
+        $filepath       = $_POST['filepath'];
+        $filename       = pathinfo($filepath, PATHINFO_BASENAME);
+        $ext            = pathinfo($filename, PATHINFO_EXTENSION);
 
-        /* Cas d'une édition de page */
         if ($id_gab_page) {
-            $targetDir      = $this->_upload_path . DS . $id_gab_page;
-            $vignetteDir    = $this->_upload_path . DS . $id_gab_page . DS . $this->_upload_vignette;
-            $apercuDir      = $this->_upload_path . DS . $id_gab_page . DS . $this->_upload_apercu;
-        } else {
-            /* Cas d'une création de page */
-            if (isset($_COOKIE['id_temp']) && $_COOKIE['id_temp'] && is_numeric($_COOKIE['id_temp'])) {
-                $id_temp = (int) $_COOKIE['id_temp'];
-                $target = 'temp-' . $id_temp;
-            }
+            /** Cas d'une édition de page */
 
-            $targetTmp      = $this->_upload_path . DS . $this->_upload_temp;
-            $targetDir      = $this->_upload_path . DS . $target;
-            $vignetteDir    = $this->_upload_path . DS . $target . DS . $this->_upload_vignette;
-            $apercuDir      = $this->_upload_path . DS . $target . DS . $this->_upload_apercu;
+            $targetDir      = $id_gab_page;
+            $vignetteDir    = $id_gab_page . DS . $this->_upload_vignette;
+            $apercuDir      = $id_gab_page . DS . $this->_upload_apercu;
+        } elseif (isset($_COOKIE['id_temp'])
+            && $_COOKIE['id_temp']
+            && is_numeric($_COOKIE['id_temp'])
+        ) {
+            /** Cas d'une création de page */
+
+            $id_temp = (int) $_COOKIE['id_temp'];
+            $target = 'temp-' . $id_temp;
+
+//            $targetTmp      = $this->_upload_temp;
+            $targetDir      = $target;
+            $vignetteDir    = $target . DS . $this->_upload_vignette;
+            $apercuDir      = $target . DS . $this->_upload_apercu;
+        } else {
+            exit();
         }
 
-        $id_temp = 1;
-        $target = $newFilenameWithoutExtension . '.' . $ext;
-        while (file_exists($targetDir . DS . $target)) {
-            $id_temp++;
-            $target = $newFilenameWithoutExtension . '-' . $id_temp . '.' . $ext;
+        $count_temp = 1;
+        $target     = $newImageName . '.' . $ext;
+        while (file_exists($this->_upload_path . DS . $targetDir . DS . $target)) {
+            $count_temp++;
+            $target = $newImageName . '-' . $count_temp . '.' . $ext;
         }
 
         switch ($_POST['force-width']) {
@@ -319,8 +320,8 @@ class Media extends Main {
             case 'height' :
                 $th = $_POST['minheight'];
                 $tw = ($_POST['minheight'] / $h) * $w;
-
                 break;
+
             case 'width-height' :
                 $tw = $_POST['minwidth'];
                 $th = $_POST['minheight'];
@@ -332,18 +333,23 @@ class Media extends Main {
                 break;
         }
 
-        if(intval($tw) <= 0) {
+        if (intval($tw) <= 0) {
             $tw = false;
         }
 
-        if(intval($th) <= 0) {
+        if (intval($th) <= 0) {
             $th = false;
         }
 
         if ($id_gab_page) {
-            $this->_fileManager->crop($this->_upload_path . DS . $filepath, $ext, $targetDir, $target, $id_gab_page, 0, $vignetteDir, $apercuDir, $x, $y, $w, $h, $tw, $th);
+            $this->_fileManager->crop($this->_upload_path, $filepath, $ext,
+                $targetDir, $target, $id_gab_page, 0, $vignetteDir, $apercuDir,
+                $x, $y, $w, $h, $tw, $th);
         } else {
-            $json = $this->_fileManager->crop($this->_upload_path . DS . $filepath, $ext, $targetDir, $target, 0, $id_temp, $vignetteDir, $apercuDir, $x, $y, $w, $h, $tw, $th);
+            $json = $this->_fileManager->crop($this->_upload_path, $filepath,
+                $ext, $targetDir, $target, 0, $id_temp, $vignetteDir,
+                $apercuDir, $x, $y, $w, $h, $tw, $th);
+
             if (isset($json['minipath'])) {
                 $json['minipath'] = $json['minipath'];
                 $json['path'] = $json['path'];
@@ -353,9 +359,9 @@ class Media extends Main {
         }
 
         $json = array();
-        $json['path'] = $targetDir . DS . $target;
-        $json['filename'] = $target;
-        $json['filename_front'] = $id_gab_page . '/' . $target;
+        $json['path']           = $targetDir . DS . $target;
+        $json['filename']       = $target;
+        $json['filename_front'] = $targetDir . '/' . $target;
 
         exit(json_encode($json));
     }
@@ -416,16 +422,14 @@ class Media extends Main {
 
             foreach ($files as $file) {
                 if (!$tinyMCE || \Slrfw\Gabarit\fileManager::isImage($file['rewriting'])) {
-                    $path = $prefixPath . DS . $this->_upload_path . DS
-                            . $dir . DS
-                            . $file['rewriting'];
-                    $vignette = $prefixPath . DS . $this->_upload_path . DS
-                            . $dir . DS
-                            . $this->_upload_vignette . DS
-                            . $file['rewriting'];
+                    $path       = $dir . DS
+                                . $file['rewriting'];
+                    $vignette   = $dir . DS
+                                . $this->_upload_vignette . DS
+                                . $file['rewriting'];
                     $serverpath = $this->_upload_path . DS
-                            . $dir . DS
-                            . $file['rewriting'];
+                                . $dir . DS
+                                . $file['rewriting'];
 
                     $realpath = \Slrfw\Registry::get('basehref') . $dir . '/' . $file['rewriting'];
                     if (\Slrfw\Model\fileManager::isImage($file['rewriting'])) {
