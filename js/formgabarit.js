@@ -21,15 +21,23 @@ var expressions = {
 var json;
 
 function verifieForm(elmt){
-    val = elmt.val();
+    var val = elmt.val(),
+        testdonnee,
+        classes,
+        oblig,
+        typeDonnee;
 
-    if (!elmt.hasClass('form-controle'))
+    if (!elmt.hasClass('form-controle')) {
         return true;
+    }
 
-    var testdonnee = false;
-    var classes = elmt.attr('class').split(' ');
-    var oblig = classes[$.inArray('form-controle', classes) + 1] == 'form-oblig' || val != '';
-    var typeDonnee = classes[$.inArray('form-controle', classes) + 2].replace('form-', '');
+    testdonnee  = false;
+    classes     = elmt.attr('class').split(' ');
+    if (classes.length < 3) {
+        return true;
+    }
+    oblig       = classes[$.inArray('form-controle', classes) + 1] === 'form-oblig' || val !== '';
+    typeDonnee  = classes[$.inArray('form-controle', classes) + 2].replace('form-', '');
 
     if (oblig) {
         if (typeDonnee in expressions) {

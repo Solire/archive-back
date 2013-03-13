@@ -209,11 +209,11 @@ class Main extends \Slrfw\Controller
         $this->_view->api = $this->_api;
         $this->_view->javascript = $this->_javascript;
         $this->_view->css = $this->_css;
-        $this->_view->versions = $this->_versions;
+        $this->_view->mainVersions = $this->_versions;
         $query = 'SELECT `version`.id, `version`.* '
                . 'FROM `version` '
                . 'WHERE `version`.id_api = ' . $this->_api['id'] . ' ';
-        $this->_view->versions = $this->_db->query($query)->fetchAll(
+        $this->_view->mainVersions = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
         );
         $this->_view->breadCrumbs = array();

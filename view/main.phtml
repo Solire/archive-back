@@ -116,11 +116,11 @@
                             <li class="divider-vertical hidden-phone hidden-tablet"></li>
 
                             <li class="dropdown">
-                                <a data-toggle="dropdown" style="padding-bottom: 0;" class="dropdown-toggle nav_condensed" href="#"><img alt="<?php echo $this->versions[BACK_ID_VERSION]['nom'] ?>" src="app/back/img/flags/all/24/<?php echo strtolower($this->versions[BACK_ID_VERSION]['suf']) ?>.png" /> <b class="caret"></b></a>
+                                <a data-toggle="dropdown" style="padding-bottom: 0;" class="dropdown-toggle nav_condensed" href="#"><img alt="<?php echo $this->mainVersions[BACK_ID_VERSION]['nom'] ?>" src="app/back/img/flags/all/24/<?php echo strtolower($this->mainVersions[BACK_ID_VERSION]['suf']) ?>.png" /> <b class="caret"></b></a>
 
                                 <ul class="dropdown-menu">
 <?php
-    foreach ($this->versions as $version) {
+    foreach ($this->mainVersions as $version) {
 ?>
                                         <li>
                                             <a style="cursor:pointer;" onclick="$.cookie('id_version', <?php echo $version['id'] ?>, {path: 'back/'}); document.location.href = document.location.href; return false;">

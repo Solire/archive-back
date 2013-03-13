@@ -5,26 +5,26 @@ var basehref = '';
 
 var initTinyMCE = function () {
     tinyMCE.init({
-        mode: "none",
-        theme : "advanced",
-        language : "fr",
-        plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
-        width:"500px",
-        height:"290px",
-        entity_encoding : "raw",
-        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink",
-        theme_advanced_buttons2 : "",
-        theme_advanced_buttons3 : "",
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_toolbar_align : "left",
+        mode: 'none',
+        theme : 'advanced',
+        language : 'fr',
+        plugins : 'safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template',
+        width:'500px',
+        height:'290px',
+        entity_encoding : 'raw',
+        theme_advanced_buttons1 : 'bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink',
+        theme_advanced_buttons2 : '',
+        theme_advanced_buttons3 : '',
+        theme_advanced_toolbar_location : 'top',
+        theme_advanced_toolbar_align : 'left',
         theme_advanced_resizing : true,
-        theme_advanced_blockformats : "h1,h2,h3,h4,h5,h6",
+        theme_advanced_blockformats : 'h1,h2,h3,h4,h5,h6',
         relative_urls : true,
         convert_urls : true,
-        document_base_url : "../../../../",
-        content_css : "back/css/style-tinymce.css",
-        external_image_list_url : "back/media/autocomplete.html?tinyMCE",
-        external_link_list_url : "back/page/autocomplete-link.html"
+        document_base_url : '../../../../',
+        content_css : 'app/back/css/style-tinymce.css',
+        external_image_list_url : 'app/back/media/autocomplete.html?tinyMCE',
+        external_link_list_url : 'app/back/page/autocomplete-link.html'
     });
 };
 
