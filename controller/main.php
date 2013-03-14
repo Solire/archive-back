@@ -51,7 +51,6 @@ class Main extends \Slrfw\Controller
     {
         parent::start();
 
-        $suffixApi = '';
         if (isset($_COOKIE['api'])) {
             $nameApi = $_COOKIE['api'];
         } else {
@@ -135,7 +134,12 @@ class Main extends \Slrfw\Controller
 
         if (isset($_GET['id_version'])) {
             $id_version = $_GET['id_version'];
-            $url = '/' . \Slrfw\Registry::get('baseroot') . '' . $suffixApi;
+            $url = '/' . \Slrfw\Registry::get('baseroot');
+            setcookie('id_version', $id_version, 0, $url);
+            define('BACK_ID_VERSION', $id_version);
+        } elseif (isset($_POST['id_version'])) {
+            $id_version = $_POST['id_version'];
+            $url = '/' . \Slrfw\Registry::get('baseroot');
             setcookie('id_version', $id_version, 0, $url);
             define('BACK_ID_VERSION', $id_version);
         } elseif (isset($_COOKIE['id_version'])
@@ -189,7 +193,7 @@ class Main extends \Slrfw\Controller
          * Alors On le redirige vers le front
          */
         if ($this->_utilisateur->get("niveau") == "voyeur") {
-            if($_GET["controller"] . "/" . $_GET["action"] != "sign/signout") {
+            if($_GET['controller'] . "/" . $_GET['action'] != 'back/sign/signout') {
                 $this->simpleRedirect('../', true);
             }
         }
@@ -210,7 +214,7 @@ class Main extends \Slrfw\Controller
         $this->_view->breadCrumbs[] = array(
             'label' => '<img src="app/back/img/gray_dark/home_12x12.png"> '
                     . $this->_view->site,
-            'url' => './',
+            'url'   => './',
         );
 
         $this->_view->appConfig = $this->_appConfig;
