@@ -35,7 +35,7 @@ var iNettuts = {
     },
 
     init : function () {
-        this.attachStylesheet('css/inettuts.js.css');
+        this.attachStylesheet('app/back/css/inettuts.css');
         this.sortWidgets();
         this.addWidgetControls();
         this.makeSortable();

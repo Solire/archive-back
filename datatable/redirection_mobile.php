@@ -18,4 +18,3 @@ class Redirection_mobile extends \Slrfw\Datatable\Datatable {
 
 }
 
-?>

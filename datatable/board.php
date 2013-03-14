@@ -130,4 +130,3 @@ class Board extends \Slrfw\Datatable\Datatable {
     }
 }
 
-?>

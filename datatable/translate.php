@@ -19,4 +19,3 @@ class Translate extends \Slrfw\Datatable\Datatable {
 
 }
 
-?>
