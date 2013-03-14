@@ -80,8 +80,8 @@
 ?>
 
                         <div style="margin-top:0" class="clearin"></div>
-<?php
-        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $this->redirections[$id_version]);
+<?php        
+        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $this->redirections[$page->getMeta('id_version')]);
 ?>
                         </div>
 
