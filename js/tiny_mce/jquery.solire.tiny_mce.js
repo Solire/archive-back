@@ -1,12 +1,34 @@
+/**
+ * @author thansen <thansen@solire.fr>
+ * @licence solire.fr
+ * 
+ * @param jQuery $
+ * 
+ * @returns jQuery
+ */
 (function($) {
+    /**
+     * 
+     * @param {string} method
+     * 
+     * @returns jQuery
+     */
     $.fn.tinymce = function(method) {
-        var base = this,
-            publicMethods = {}, aaa;
+        var base = this;
+            publicMethods = {};
 
+        /**
+         * 
+         * @param {int} length
+         * 
+         * @returns {String}
+         */
         function randomString(length)
         {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var text = '';
+            var possible    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                            + 'abcdefghijklmnopqrstuvwxyz'
+                            + '0123456789';
 
             for( var i=0; i < length; i++ )
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -14,6 +36,11 @@
             return text;
         }
 
+        /**
+         * Génére un attribut id unique (pour element HTML)
+         * 
+         * @returns {String}
+         */
         function randomId()
         {
             do{
@@ -33,98 +60,101 @@
          * @return {void}
          */
 		function addMethod(name, func) {
-			if (publicMethods[name]) {
-				publicMethods[name].push(func);
-			} else {
-				// No function, lets first make an array in the publicMethods object.
-				publicMethods[name] = [func];
-				// Defining the method that is actually called. Its only responsibility is to call the specified methods and make sure to return something meaningful.
-				base[name] = function () {
-					var functions = publicMethods[name],
-                        returnvar,
-                        numberofreturns = 0,
-                        i,
-                        tmpReturn;
-					for (i = 0; i < functions.length; i++)
-					{
-						// Arguments is already defined, they are the arguments this method was called with.
-						tmpReturn = functions[i].apply(base, arguments);
-						if (tmpReturn != undefined) {
-							numberofreturns++;
-							if (numberofreturns == 1) {
-								returnvar = tmpReturn;
-							} else if (numberofreturns == 2) {
-								returnvar = [returnvar, tmpReturn];
-							} else {
-								returnvar.push(tmpReturn);
-							}
-						}
-					}
-					if (numberofreturns == 0) {
-						return base;
-					}
-					return returnvar;
-				};
-			}
+            publicMethods[name] = func;
+            if (!(name in base)) {
+                base[name] = function(){
+                    base.each(function(){
+                        func.apply($(this));
+                    });
+                };
+            }
 		}
 
-        base = this.each(function(){
+        /**
+         * 
+         * 
+         * @returns void
+         */
+        function enable()
+        {
+            tinyMCE.execCommand('mceAddControl', false, this[0].id);
+        }
+
+        /**
+         * 
+         * 
+         * @returns void
+         */
+        function disable()
+        {
+            tinyMCE.execCommand('mceFocus', false, this[0].id);
+            tinyMCE.execCommand('mceRemoveControl', false, this[0].id);
+            tinyMCE.triggerSave(true, true);
+        }
+
+        /**
+         * 
+         * 
+         * @returns void
+         */
+        function change()
+        {
+            if(typeof tinyMCE.getInstanceById(this[0].id) !== 'undefined') {
+                this.disable();
+            } else {
+                this.enable();
+            }
+
+            // tinyMCE.execCommand('mceToggleEditor',false,this.id);
+        };
+
+        /**
+         * 
+         * 
+         * @returns void
+         */
+        function disableOnly()
+        {
+            if (typeof tinyMCE.getInstanceById(this[0].id) !== 'undefined') {
+                this.disable();
+            }
+        }
+
+        /**
+         * 
+         * 
+         * @returns void
+         */
+        function enableOnly()
+        {
+            if (typeof tinyMCE.getInstanceById(this[0].id) === 'undefined') {
+                this.enable();
+            }
+        }
+        
+        function isFunc(func)
+        {
+            return $.isFunction(func);
+        }
+
+        addMethod('disable', disable);
+        addMethod('enable', enable);
+        addMethod('disableOnly', disableOnly);
+        addMethod('enableOnly', enableOnly);
+        addMethod('change', change);
+
+        if (method in publicMethods && isFunc(publicMethods[method])) {
+            publicMethods[method].apply(base);
+        }
+
+        return base.each(function(){
             if (this.id === null || this.id === ''
                 || $('[id=' + this.id + ']').length > 1
             ) {
                 this.id = randomId();
-                $(this).prop('tynimce-id', this.id);
+                $(this).attr('tynimce-id', this.id);
             }
-
-            function enable()
-            {
-                tinyMCE.execCommand('mceAddControl', false, this[0].id);
-            }
-
-            function disable()
-            {
-                tinyMCE.execCommand('mceFocus', false, this[0].id);
-                tinyMCE.execCommand('mceRemoveControl', false, this[0].id);
-                tinyMCE.triggerSave(true, true);
-            }
-
-            function change()
-            {
-                if(tinyMCE.getInstanceById(this[0].id)) {
-                    this.disable();
-                } else {
-                    this.enable();
-                }
-
-                // tinyMCE.execCommand('mceToggleEditor',false,this.id);
-            };
-
-            function disableOnly()
-            {
-                if (tinyMCE.getInstanceById(this[0].id)) {
-                    this.disable();
-                }
-            }
-
-            function enableOnly()
-            {
-                if (!tinyMCE.getInstanceById(this[0].id)) {
-                    this.enable();
-                }
-            }
-
-            addMethod('disable', disable);
-            addMethod('enable', enable);
-            addMethod('disableOnly', disableOnly);
-            addMethod('enableOnly', enableOnly);
-            addMethod('change', change);
         });
-
-        if (method in publicMethods) {
-            eval('this.' + method + '()');
-        };
-
-        return base;
     };
 })(jQuery);
 
