@@ -12,7 +12,7 @@ var initTinyMCE = function () {
         width:'500px',
         height:'290px',
         entity_encoding : 'raw',
-        theme_advanced_buttons1 : 'bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink',
+        theme_advanced_buttons1 : 'pasteword,|,bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink',
         theme_advanced_buttons2 : '',
         theme_advanced_buttons3 : '',
         theme_advanced_toolbar_location : 'top',
@@ -260,7 +260,9 @@ $(function(){
     $('label > .switch-editor').live('click', function(e){
         e.preventDefault();
 
-        if($(this).parent().next().is('textarea')){
+        var textarea = $(this).parent().next();
+
+        if(textarea.is('textarea')){
             if($(this).children().eq(0).hasClass('translucide')) {
                 $(this).children().eq(0).removeClass('translucide');
                 $(this).children().eq(1).addClass('translucide');
@@ -270,7 +272,7 @@ $(function(){
                 $(this).children().eq(1).removeClass('translucide');
             }
 
-            $(this).parent().next().tinymce('change');
+            textarea.tinymce('change');
         }
     });
 
