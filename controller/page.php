@@ -80,10 +80,13 @@ class Page extends Main
     public function childrenAction()
     {
         $this->_view->main(FALSE);
-        $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], $_REQUEST['id_parent']);
+        $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION,
+            $this->_api["id"], $_REQUEST['id_parent']);
+        
         if (count($this->_pages) == 0) {
             exit();
         }
+        
         $this->_view->pages = $this->_pages;
 
         $query  = 'SELECT `gab_gabarit`.id, `gab_gabarit`.*'
@@ -127,16 +130,15 @@ class Page extends Main
 
         $this->_css->addLibrary('back/css/affichegabarit.css');
 
-
         $id_gab_page = isset($_GET['id_gab_page']) ? $_GET['id_gab_page'] : 0;
         $id_gabarit = isset($_GET['id_gabarit']) ? $_GET['id_gabarit'] : 1;
 
 //        $this->_view->upload_path = $this->_mainConfig->get('upload', 'path');
         $this->_view->action = 'liste';
 
-        $this->_form = '';
-        $this->_pages = array();
-        $this->_redirections = array();
+        $this->_form            = '';
+        $this->_pages           = array();
+        $this->_redirections    = array();
 
         if ($id_gab_page) {
             $query = 'SELECT * FROM `version` WHERE `id_api` = ' . $this->_api['id'];
