@@ -17682,7 +17682,7 @@ Showdown.converter = function() {
             if (this.previewing) {
                 this.element.get(0).contentEditable = true;
                 this.element.css({
-                    overflow: 'auto'
+                    overflow: 'inherit'
                 });
             } else {
                 this.content(this.content());
