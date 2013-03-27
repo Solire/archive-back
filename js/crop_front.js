@@ -74,7 +74,7 @@ $(function(){
         $.post(action, data, function(response) {
             $('#modalCrop').modal("hide");
             $inputFile.val(response.filename_front);
-            $inputFile.parent().find(".previsu").attr("href", response.path.substr(3));
+            $inputFile.parent().find(".previsu").attr("href", response.filename_front);
             loadSelectImages($inputFile.parents("#mercury_media:first")[0])
         }, "json");
     });
@@ -149,7 +149,7 @@ $(function(){
             $("#image-name").val(filename);
             $("#image-extension").val(imageExtension);
             $("#modalCrop table tr:first td:first ").html('<img src="" class="img-polaroid" id="crop-target" alt="" />');
-            $("#modalCrop #filepath").val($("base").attr("href") + "public_html/medias/" + src);
+            $("#modalCrop #filepath").val(src);
             $("#crop-target").add("#crop-preview").attr("src", src);
             $(".jcrop-holder").remove();
             $('#modalCrop').modal("show");

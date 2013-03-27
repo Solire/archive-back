@@ -2,10 +2,10 @@
  * Mercury Editor is a CoffeeScript and jQuery based WYSIWYG editor.  Documentation and other useful information can be
  * found at https://github.com/jejacks0n/mercury
  *
-
+ 
  *
  * Minimum jQuery requirements are 1.7
-
+ 
  *
  * You can include the Rails jQuery ujs script here to get some nicer behaviors in modals, panels and lightviews when
  * using :remote => true within the contents rendered in them.
@@ -15,7 +15,7 @@
  * require mercury/support/history
  *
  * Require Mercury Editor itself.
-
+ 
  *
  * Require any localizations you wish to support
  * Example: es.locale, or fr.locale -- regional dialects are in each language file so never en_US for instance.
@@ -92,92 +92,84 @@ window.Mercury = {
         // the properties of the given node.  You can see examples of contexts in, and add your own to:
         // `Mercury.Toolbar.Button.contexts` and `Mercury.Toolbar.ButtonGroup.contexts`
         toolbars: {
-            primary: {
-                save: ['Save', 'Save this page'],
-                preview: ['Preview', 'Preview this page', {toggle: true, mode: true}],
-                sep1: ' ',
-                undoredo: {
-                    undo: ['Undo', 'Undo your last action'],
-                    redo: ['Redo', 'Redo your last action'],
-                    sep: ' '
+            action: {
+                preview: {
+                    preview: ['Masquer les contours', 'Masquer les contours', {toggle: true, mode: true}]
                 },
-                insertLink: ['Link', 'Insert Link', {modal: '/mercury/modals/link.html', regions: ['full', 'markdown']}],
-                insertMedia: ['Media', 'Insert Media (images and videos)', {modal: '/mercury/modals/media.html', regions: ['full', 'markdown']}],
-                insertTable: ['Table', 'Insert Table', {modal: '/mercury/modals/table.html', regions: ['full', 'markdown']}],
-                insertCharacter: ['Character', 'Special Characters', {modal: '/mercury/modals/character.html', regions: ['full', 'markdown']}],
-                snippetPanel: ['Snippet', 'Snippet Panel', {panel: '/mercury/panels/snippets.html'}],
-                sep2: ' ',
-                historyPanel: ['History', 'Page Version History', {panel: '/mercury/panels/history.html'}],
-                sep3: ' ',
-                notesPanel: ['Notes', 'Page Notes', {panel: '/mercury/panels/notes.html'}]
+                save: {
+                    save: ['Valider', 'Sauvegarder la page'],
+                    sep: ' '
+                }
             },
             editable: {
-                _regions: ['full', 'markdown'],
-                predefined: {
-                    style: ['Style', null, {select: '/mercury/selects/style.html', preload: true}],
-                    sep1: ' ',
-                    formatblock: ['Block Format', null, {select: '/mercury/selects/formatblock.html', preload: true}],
-                    sep2: '-'
-                },
-                colors: {
-                    backColor: ['Background Color', null, {palette: '/mercury/palettes/backcolor.html', context: true, preload: true, regions: ['full']}],
-                    sep1: ' ',
-                    foreColor: ['Text Color', null, {palette: '/mercury/palettes/forecolor.html', context: true, preload: true, regions: ['full']}],
-                    sep2: '-'
-                },
                 decoration: {
-                    bold: ['Bold', null, {context: true}],
-                    italic: ['Italicize', null, {context: true}],
-                    overline: ['Overline', null, {context: true, regions: ['full']}],
-                    strikethrough: ['Strikethrough', null, {context: true, regions: ['full']}],
+                    bold: ['Bold', null, {context: true, regions: ['full', 'markdown']}],
+                    italic: ['Italicize', null, {context: true, regions: ['full', 'markdown']}],
                     underline: ['Underline', null, {context: true, regions: ['full']}],
+                    strikethrough: ['Strikethrough', null, {context: true, regions: ['full']}],
                     sep: '-'
                 },
-                script: {
-                    subscript: ['Subscript', null, {context: true}],
-                    superscript: ['Superscript', null, {context: true}],
+                predefined: {
+                    formatblock: ['Format', null, {select: '/mercury/selects/formatblock.html', preload: true, regions: ['full', 'markdown']}],
                     sep: '-'
                 },
-                justify: {
-                    justifyLeft: ['Align Left', null, {context: true, regions: ['full']}],
-                    justifyCenter: ['Center', null, {context: true, regions: ['full']}],
-                    justifyRight: ['Align Right', null, {context: true, regions: ['full']}],
-                    justifyFull: ['Justify Full', null, {context: true, regions: ['full']}],
-                    sep: '-'
-                },
+//                colors: {
+//                    backColor: ['Background Color', null, {palette: '/mercury/palettes/backcolor.html', context: true, preload: true, regions: ['full']}],
+//                    sep1: ' ',
+//                    foreColor: ['Text Color', null, {palette: '/mercury/palettes/forecolor.html', context: true, preload: true, regions: ['full']}],
+//                    sep2: '-'
+//                },
+
+//                script: {
+//                    subscript: ['Subscript', null, {context: true,regions: ['full', 'markdown']}],
+//                    superscript: ['Superscript', null, {context: true,regions: ['full', 'markdown']}],
+//                    sep: '-'
+//                },
+//                justify: {
+//                    justifyLeft: ['Align Left', null, {context: true, regions: ['full']}],
+//                    justifyCenter: ['Center', null, {context: true, regions: ['full']}],
+//                    justifyRight: ['Align Right', null, {context: true, regions: ['full']}],
+//                    justifyFull: ['Justify Full', null, {context: true, regions: ['full']}],
+//                    sep: '-'
+//                },
                 list: {
-                    insertUnorderedList: ['Unordered List', null, {context: true}],
-                    insertOrderedList: ['Numbered List', null, {context: true}],
+                    insertUnorderedList: ['Unordered List', null, {context: true, regions: ['full', 'markdown']}],
+                    insertOrderedList: ['Numbered List', null, {context: true, regions: ['full', 'markdown']}],
                     sep: '-'
                 },
-                indent: {
-                    outdent: ['Decrease Indentation'],
-                    indent: ['Increase Indentation'],
+                undoredo: {
+                    undo: ['Annuler', 'Annuler'],
+                    redo: ['Rétablir', 'Rétablir'],
                     sep: '-'
                 },
-                table: {
-                    _context: true,
-                    insertRowBefore: ['Insert Table Row', 'Insert a table row before the cursor', {regions: ['full']}],
-                    insertRowAfter: ['Insert Table Row', 'Insert a table row after the cursor', {regions: ['full']}],
-                    deleteRow: ['Delete Table Row', 'Delete this table row', {regions: ['full']}],
-                    insertColumnBefore: ['Insert Table Column', 'Insert a table column before the cursor', {regions: ['full']}],
-                    insertColumnAfter: ['Insert Table Column', 'Insert a table column after the cursor', {regions: ['full']}],
-                    deleteColumn: ['Delete Table Column', 'Delete this table column', {regions: ['full']}],
-                    sep1: ' ',
-                    increaseColspan: ['Increase Cell Columns', 'Increase the cells colspan'],
-                    decreaseColspan: ['Decrease Cell Columns', 'Decrease the cells colspan and add a new cell'],
-                    increaseRowspan: ['Increase Cell Rows', 'Increase the cells rowspan'],
-                    decreaseRowspan: ['Decrease Cell Rows', 'Decrease the cells rowspan and add a new cell'],
-                    sep2: '-'
-                },
-                rules: {
-                    horizontalRule: ['Horizontal Rule', 'Insert a horizontal rule'],
-                    sep1: '-'
-                },
-                formatting: {
-                    removeFormatting: ['Remove Formatting', 'Remove formatting for the selection', {regions: ['full']}],
-                    sep2: ' '
-                },
+//                indent: {
+//                    outdent: ['Decrease Indentation', null, {regions: ['full', 'markdown']}],
+//                    indent: ['Increase Indentation', null, {regions: ['full', 'markdown']}],
+//                    sep: '-'
+//                },
+//                table: {
+//                    _context: true,
+//                    insertRowBefore: ['Insert Table Row', 'Insert a table row before the cursor', {regions: ['full']}],
+//                    insertRowAfter: ['Insert Table Row', 'Insert a table row after the cursor', {regions: ['full']}],
+//                    deleteRow: ['Delete Table Row', 'Delete this table row', {regions: ['full']}],
+//                    insertColumnBefore: ['Insert Table Column', 'Insert a table column before the cursor', {regions: ['full']}],
+//                    insertColumnAfter: ['Insert Table Column', 'Insert a table column after the cursor', {regions: ['full']}],
+//                    deleteColumn: ['Delete Table Column', 'Delete this table column', {regions: ['full']}],
+//                    sep1: ' ',
+//                    increaseColspan: ['Increase Cell Columns', 'Increase the cells colspan'],
+//                    decreaseColspan: ['Decrease Cell Columns', 'Decrease the cells colspan and add a new cell'],
+//                    increaseRowspan: ['Increase Cell Rows', 'Increase the cells rowspan'],
+//                    decreaseRowspan: ['Decrease Cell Rows', 'Decrease the cells rowspan and add a new cell'],
+//                    sep2: '-'
+//                },
+//                rules: {
+//                    horizontalRule: ['Horizontal Rule', 'Insert a horizontal rule', {regions: ['full', 'markdown']}],
+//                    sep1: '-'
+//                },
+//                formatting: {
+//                    removeFormatting: ['Remove Formatting', 'Remove formatting for the selection', {regions: ['full']}],
+//                    sep2: ' '
+//                },
                 editors: {
                     htmlEditor: ['Edit HTML', 'Edit the HTML content', {regions: ['full']}]
                 }
@@ -1451,117 +1443,117 @@ window.Mercury = {
                 },
                         // Actual Callbacks object
                         self = {
-                // Add a callback or a collection of callbacks to the list
-                add: function() {
-                    if (list) {
-                        var length = list.length;
-                        add(arguments);
-                        // Do we need to add the callbacks to the
-                        // current firing batch?
-                        if (firing) {
-                            firingLength = list.length;
-                            // With memory, if we're not firing then
-                            // we should call right away, unless previous
-                            // firing was halted (stopOnFalse)
-                        } else if (memory && memory !== true) {
-                            firingStart = length;
-                            fire(memory[ 0 ], memory[ 1 ]);
+                    // Add a callback or a collection of callbacks to the list
+                    add: function() {
+                        if (list) {
+                            var length = list.length;
+                            add(arguments);
+                            // Do we need to add the callbacks to the
+                            // current firing batch?
+                            if (firing) {
+                                firingLength = list.length;
+                                // With memory, if we're not firing then
+                                // we should call right away, unless previous
+                                // firing was halted (stopOnFalse)
+                            } else if (memory && memory !== true) {
+                                firingStart = length;
+                                fire(memory[ 0 ], memory[ 1 ]);
+                            }
                         }
-                    }
-                    return this;
-                },
-                        // Remove a callback from the list
-                        remove: function() {
-                    if (list) {
-                        var args = arguments,
-                                argIndex = 0,
-                                argLength = args.length;
-                        for (; argIndex < argLength; argIndex++) {
-                            for (var i = 0; i < list.length; i++) {
-                                if (args[ argIndex ] === list[ i ]) {
-                                    // Handle firingIndex and firingLength
-                                    if (firing) {
-                                        if (i <= firingLength) {
-                                            firingLength--;
-                                            if (i <= firingIndex) {
-                                                firingIndex--;
+                        return this;
+                    },
+                    // Remove a callback from the list
+                    remove: function() {
+                        if (list) {
+                            var args = arguments,
+                                    argIndex = 0,
+                                    argLength = args.length;
+                            for (; argIndex < argLength; argIndex++) {
+                                for (var i = 0; i < list.length; i++) {
+                                    if (args[ argIndex ] === list[ i ]) {
+                                        // Handle firingIndex and firingLength
+                                        if (firing) {
+                                            if (i <= firingLength) {
+                                                firingLength--;
+                                                if (i <= firingIndex) {
+                                                    firingIndex--;
+                                                }
                                             }
                                         }
-                                    }
-                                    // Remove the element
-                                    list.splice(i--, 1);
-                                    // If we have some unicity property then
-                                    // we only need to do this once
-                                    if (flags.unique) {
-                                        break;
+                                        // Remove the element
+                                        list.splice(i--, 1);
+                                        // If we have some unicity property then
+                                        // we only need to do this once
+                                        if (flags.unique) {
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    return this;
-                },
-                        // Control if a given callback is in the list
-                        has: function(fn) {
-                    if (list) {
-                        var i = 0,
-                                length = list.length;
-                        for (; i < length; i++) {
-                            if (fn === list[ i ]) {
-                                return true;
+                        return this;
+                    },
+                    // Control if a given callback is in the list
+                    has: function(fn) {
+                        if (list) {
+                            var i = 0,
+                                    length = list.length;
+                            for (; i < length; i++) {
+                                if (fn === list[ i ]) {
+                                    return true;
+                                }
                             }
                         }
-                    }
-                    return false;
-                },
-                        // Remove all callbacks from the list
-                        empty: function() {
-                    list = [];
-                    return this;
-                },
-                        // Have the list do nothing anymore
-                        disable: function() {
-                    list = stack = memory = undefined;
-                    return this;
-                },
-                        // Is it disabled?
-                        disabled: function() {
-                    return !list;
-                },
-                        // Lock the list in its current state
-                        lock: function() {
-                    stack = undefined;
-                    if (!memory || memory === true) {
-                        self.disable();
-                    }
-                    return this;
-                },
-                        // Is it locked?
-                        locked: function() {
-                    return !stack;
-                },
-                        // Call all callbacks with the given context and arguments
-                        fireWith: function(context, args) {
-                    if (stack) {
-                        if (firing) {
-                            if (!flags.once) {
-                                stack.push([context, args]);
-                            }
-                        } else if (!(flags.once && memory)) {
-                            fire(context, args);
+                        return false;
+                    },
+                    // Remove all callbacks from the list
+                    empty: function() {
+                        list = [];
+                        return this;
+                    },
+                    // Have the list do nothing anymore
+                    disable: function() {
+                        list = stack = memory = undefined;
+                        return this;
+                    },
+                    // Is it disabled?
+                    disabled: function() {
+                        return !list;
+                    },
+                    // Lock the list in its current state
+                    lock: function() {
+                        stack = undefined;
+                        if (!memory || memory === true) {
+                            self.disable();
                         }
+                        return this;
+                    },
+                    // Is it locked?
+                    locked: function() {
+                        return !stack;
+                    },
+                    // Call all callbacks with the given context and arguments
+                    fireWith: function(context, args) {
+                        if (stack) {
+                            if (firing) {
+                                if (!flags.once) {
+                                    stack.push([context, args]);
+                                }
+                            } else if (!(flags.once && memory)) {
+                                fire(context, args);
+                            }
+                        }
+                        return this;
+                    },
+                    // Call all the callbacks with the given arguments
+                    fire: function() {
+                        self.fireWith(this, arguments);
+                        return this;
+                    },
+                    // To know if the callbacks have already been called at least once
+                    fired: function() {
+                        return !!memory;
                     }
-                    return this;
-                },
-                        // Call all the callbacks with the given arguments
-                        fire: function() {
-                    self.fireWith(this, arguments);
-                    return this;
-                },
-                        // To know if the callbacks have already been called at least once
-                        fired: function() {
-                    return !!memory;
-                }
                 };
 
                 return self;
@@ -2300,7 +2292,7 @@ window.Mercury = {
                     } else {
                         return this.each(function() {
                             var $this = jQuery(this),
-                                    args = [ parts[0], value ];
+                                    args = [parts[0], value];
 
                             $this.triggerHandler("setData" + parts[1] + "!", args);
                             jQuery.data(this, key, value);
@@ -5616,10 +5608,10 @@ window.Mercury = {
                     POS = jQuery.expr.match.POS,
                     // methods guaranteed to produce a unique set when starting from a unique set
                     guaranteedUnique = {
-            children: true,
-                    contents: true,
-                    next: true,
-                    prev: true
+                children: true,
+                contents: true,
+                next: true,
+                prev: true
             };
 
             jQuery.fn.extend({
@@ -6583,7 +6575,6 @@ window.Mercury = {
                             var hasBody = rtbody.test(elem),
                                     tbody = tag === "table" && !hasBody ?
                                     div.firstChild && div.firstChild.childNodes :
-
                                     // String was a bare <thead> or <tfoot>
                                     wrap[1] === "<table>" && !hasBody ?
                                     div.childNodes :
@@ -7497,51 +7488,50 @@ window.Mercury = {
                     i,
                     // Fake xhr
                     jqXHR = {
-
-            readyState: 0,
-                    // Caches the header
-                    setRequestHeader: function(name, value) {
-                if (!state) {
-                    var lname = name.toLowerCase();
-                    name = requestHeadersNames[ lname ] = requestHeadersNames[ lname ] || name;
-                    requestHeaders[ name ] = value;
-                }
-                return this;
-            },
-                    // Raw string
-                    getAllResponseHeaders: function() {
-                return state === 2 ? responseHeadersString : null;
-            },
-                    // Builds headers hashtable if needed
-                    getResponseHeader: function(key) {
-                var match;
-                if (state === 2) {
-                    if (!responseHeaders) {
-                        responseHeaders = {};
-                        while ((match = rheaders.exec(responseHeadersString))) {
-                            responseHeaders[ match[1].toLowerCase() ] = match[ 2 ];
-                        }
+                readyState: 0,
+                // Caches the header
+                setRequestHeader: function(name, value) {
+                    if (!state) {
+                        var lname = name.toLowerCase();
+                        name = requestHeadersNames[ lname ] = requestHeadersNames[ lname ] || name;
+                        requestHeaders[ name ] = value;
                     }
-                    match = responseHeaders[ key.toLowerCase() ];
+                    return this;
+                },
+                // Raw string
+                getAllResponseHeaders: function() {
+                    return state === 2 ? responseHeadersString : null;
+                },
+                // Builds headers hashtable if needed
+                getResponseHeader: function(key) {
+                    var match;
+                    if (state === 2) {
+                        if (!responseHeaders) {
+                            responseHeaders = {};
+                            while ((match = rheaders.exec(responseHeadersString))) {
+                                responseHeaders[ match[1].toLowerCase() ] = match[ 2 ];
+                            }
+                        }
+                        match = responseHeaders[ key.toLowerCase() ];
+                    }
+                    return match === undefined ? null : match;
+                },
+                // Overrides response content-type header
+                overrideMimeType: function(type) {
+                    if (!state) {
+                        s.mimeType = type;
+                    }
+                    return this;
+                },
+                // Cancel the request
+                abort: function(statusText) {
+                    statusText = statusText || "abort";
+                    if (transport) {
+                        transport.abort(statusText);
+                    }
+                    done(0, statusText);
+                    return this;
                 }
-                return match === undefined ? null : match;
-            },
-                    // Overrides response content-type header
-                    overrideMimeType: function(type) {
-                if (!state) {
-                    s.mimeType = type;
-                }
-                return this;
-            },
-                    // Cancel the request
-                    abort: function(statusText) {
-                statusText = statusText || "abort";
-                if (transport) {
-                    transport.abort(statusText);
-                }
-                done(0, statusText);
-                return this;
-            }
             };
 
             // Callback for when everything is done
@@ -9295,7 +9285,7 @@ window.Mercury = {
                             offsetParent = this.offsetParent(),
                             // Get correct offsets
                             offset = this.offset(),
-                            parentOffset = rroot.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset();
+                            parentOffset = rroot.test(offsetParent[0].nodeName) ? {top: 0, left: 0} : offsetParent.offset();
 
                     // Subtract element margins
                     // note: when an element has margin: auto the offsetLeft and marginLeft
@@ -9535,8 +9525,8 @@ window.Mercury = {
                 });
                 return g
             }
-            var e = b === "Width" ? ["Left", "Right"] : ["Top", "Bottom"], h = b.toLowerCase(), i = {innerWidth:c.fn.innerWidth, innerHeight:c.fn.innerHeight, outerWidth:c.fn.outerWidth,
-                    outerHeight:c.fn.outerHeight};
+            var e = b === "Width" ? ["Left", "Right"] : ["Top", "Bottom"], h = b.toLowerCase(), i = {innerWidth: c.fn.innerWidth, innerHeight: c.fn.innerHeight, outerWidth: c.fn.outerWidth,
+                outerHeight: c.fn.outerHeight};
             c.fn["inner" + b] = function(f) {
                 if (f === j)
                     return i["inner" + b].call(this);
@@ -9656,7 +9646,7 @@ window.Mercury = {
             if (e && d.charAt(0) === "_")
                 return h;
             e ? this.each(function() {
-                var g = b.data(this, a), i = g && b.isFunction(g[d])?g[d].apply(g, f):g;
+                var g = b.data(this, a), i = g && b.isFunction(g[d]) ? g[d].apply(g, f) : g;
                 if (i !== g && i !== j) {
                     h = i;
                     return false
@@ -10139,7 +10129,7 @@ window.Mercury = {
         }});
     d.extend(d.ui.draggable, {version: "1.8.13"});
     d.ui.plugin.add("draggable", "connectToSortable", {start: function(a, b) {
-            var c = d(this).data("draggable"), f = c.options, e = d.extend({}, b, {item:c.element});
+            var c = d(this).data("draggable"), f = c.options, e = d.extend({}, b, {item: c.element});
             c.sortables = [];
             d(f.connectToSortable).each(function() {
                 var h = d.data(this, "sortable");
@@ -10150,7 +10140,7 @@ window.Mercury = {
                 }
             })
         }, stop: function(a, b) {
-            var c = d(this).data("draggable"), f = d.extend({}, b, {item:c.element});
+            var c = d(this).data("draggable"), f = d.extend({}, b, {item: c.element});
             d.each(c.sortables, function() {
                 if (this.instance.isOver) {
                     this.instance.isOver =
@@ -11711,15 +11701,15 @@ jQuery.extend(jQuery.easing, {
  HTML Clean for jQuery
  Anthony Johnston
  http://www.antix.co.uk
-
+ 
  version 1.2.3
-
+ 
  $Revision: 51 $
-
+ 
  requires jQuery http://jquery.com
-
+ 
  Use and distibution http://www.opensource.org/licenses/bsd-license.php
-
+ 
  2010-04-02 allowedTags/removeTags added (white/black list) thanks to David Wartian (Dwartian)
  2010-06-30 replaceStyles added for replacement of bold, italic, super and sub styles on a tag
  2010-07-01 notRenderedTags added, where tags are to be removed but their contents are kept
@@ -12850,10 +12840,10 @@ Showdown.converter = function() {
          )*
          )
          \]
-
+         
          [ ]?					// one optional space
          (?:\n[ ]*)?				// one optional newline followed by spaces
-
+         
          \[
          (.*?)					// id = $3
          \]
@@ -12976,10 +12966,10 @@ Showdown.converter = function() {
          !\[
          (.*?)				// alt text = $2
          \]
-
+         
          [ ]?				// one optional space
          (?:\n[ ]*)?			// one optional newline followed by spaces
-
+         
          \[
          (.*?)				// id = $3
          \]
@@ -14131,7 +14121,7 @@ Showdown.converter = function() {
             var height, toolbarHeight, width;
             width = jQuery(window).width();
             height = this.statusbar.top();
-            toolbarHeight = this.toolbar.height();
+            toolbarHeight = this.toolbar.height() + 42;
             Mercury.displayRect = {
                 top: toolbarHeight,
                 left: 0,
@@ -15165,7 +15155,7 @@ Showdown.converter = function() {
             }
             if (this.options.content) {
                 return setTimeout(500, function() {
-                    return _this.loadContent(_this.options.content);
+                    _this.loadContent(_this.options.content);
                 });
             }
         },
@@ -15179,16 +15169,17 @@ Showdown.converter = function() {
         build: function() {
             var _ref, _ref2;
             this.element = jQuery('<div>', {
-                "class": 'mercury-modal loading'
+                "class": 'modal loading',
+                "style":  'z-index: 10050; margin:0px;'
             });
-            this.element.html('<h1 class="mercury-modal-title"><span></span><a>&times;</a></h1>');
-            this.element.append('<div class="mercury-modal-content-container"><div class="mercury-modal-content"></div></div>');
+            this.element.html('<div class="modal-header"><a class="close">×</a><h4></h4></div>');
+            this.element.append('<div class="m-modal-body"><div class="m-modal-content"></div></div>');
             this.overlay = jQuery('<div>', {
                 "class": 'mercury-modal-overlay'
             });
-            this.titleElement = this.element.find('.mercury-modal-title');
-            this.contentContainerElement = this.element.find('.mercury-modal-content-container');
-            this.contentElement = this.element.find('.mercury-modal-content');
+            this.titleElement = this.element.find('.modal-header');
+            this.contentContainerElement = this.element.find('.m-modal-body');
+            this.contentElement = this.element.find('.m-modal-content');
             this.element.appendTo((_ref = jQuery(this.options.appendTo).get(0)) != null ? _ref : 'body');
             return this.overlay.appendTo((_ref2 = jQuery(this.options.appendTo).get(0)) != null ? _ref2 : 'body');
         },
@@ -15278,14 +15269,14 @@ Showdown.converter = function() {
                     });
                     controlHeight = _this.contentControl.length ? _this.contentControl.outerHeight() : 0;
                     _this.contentPane.css({
-                        height: height - titleHeight - controlHeight - 40
+//                        height: height - titleHeight - controlHeight - 40
                     });
                     return _this.contentPane.find('.mercury-display-pane').css({
                         width: width - 40
                     });
                 } else {
                     return _this.contentElement.css({
-                        height: height - titleHeight,
+//                        height: height - titleHeight,
                         overflow: 'auto'
                     });
                 }
@@ -15318,19 +15309,19 @@ Showdown.converter = function() {
             titleHeight = this.titleElement.outerHeight();
             if (this.contentPane && this.contentPane.length) {
                 this.contentElement.css({
-                    height: height - titleHeight,
+//                    height: height - titleHeight,
                     overflow: 'visible'
                 });
                 controlHeight = this.contentControl.length ? this.contentControl.outerHeight() : 0;
                 this.contentPane.css({
-                    height: height - titleHeight - controlHeight - 40
+//                    height: height - titleHeight - controlHeight - 40
                 });
                 this.contentPane.find('.mercury-display-pane').css({
                     width: width - 40
                 });
             } else {
                 this.contentElement.css({
-                    height: height - titleHeight,
+//                    height: height - titleHeight,
                     overflow: 'auto'
                 });
             }
@@ -15403,7 +15394,7 @@ Showdown.converter = function() {
         },
         setTitle: function() {
             var closeButton;
-            this.titleElement.find('span').html(Mercury.I18n(this.options.title));
+            this.titleElement.find('h4').html(Mercury.I18n(this.options.title));
             closeButton = this.titleElement.find('a');
             if (this.options.closeButton === false) {
                 return closeButton.hide();
@@ -15412,7 +15403,7 @@ Showdown.converter = function() {
             }
         },
         reset: function() {
-            this.titleElement.find('span').html('');
+            this.titleElement.find('h4').html('');
             return this.contentElement.html('');
         },
         hide: function() {
@@ -15452,9 +15443,9 @@ Showdown.converter = function() {
                 this.appear();
             }
             if (this.options.content) {
-                return setTimeout(500, function() {
+                return setTimeout(function() {
                     return _this.loadContent(_this.options.content);
-                });
+                },500);
             }
         },
         initialize: function() {
@@ -15467,18 +15458,19 @@ Showdown.converter = function() {
         build: function() {
             var _ref, _ref2;
             this.element = jQuery('<div>', {
-                "class": 'mercury-lightview loading'
+                "class": 'mercury-lightview modal loading',
+                "style":  'z-index: 10050; margin:0px;overflow:hidden'
             });
-            this.element.html('<h1 class="mercury-lightview-title"><span></span></h1>');
-            this.element.append('<div class="mercury-lightview-content"></div>');
+            this.element.html('<div class="modal-header"><h4></h4></div>');
+            this.element.append('<div class="modal-body">&nbsp;</div>');
             this.overlay = jQuery('<div>', {
                 "class": 'mercury-lightview-overlay'
             });
-            this.titleElement = this.element.find('.mercury-lightview-title');
+            this.titleElement = this.element.find('.modal-header');
             if (this.options.closeButton) {
-                this.titleElement.append('<a class="mercury-lightview-close"></a>');
+                this.titleElement.prepend('<a class="close mercury-lightview-close" type="button">×</a>');
             }
-            this.contentElement = this.element.find('.mercury-lightview-content');
+            this.contentElement = this.element.find('.modal-body');
             this.element.appendTo((_ref = jQuery(this.options.appendTo).get(0)) != null ? _ref : 'body');
             return this.overlay.appendTo((_ref2 = jQuery(this.options.appendTo).get(0)) != null ? _ref2 : 'body');
         },
@@ -15556,8 +15548,8 @@ Showdown.converter = function() {
             if (height > viewportHeight - 20 || this.options.fullSize) {
                 height = viewportHeight - 20;
             }
-            if (width < 300)
-                width = 300;
+            if (width < 530)
+                width = 530;
             if (height < 150)
                 height = 150;
             return this.element.stop().animate({
@@ -15585,7 +15577,7 @@ Showdown.converter = function() {
                     });
                 } else {
                     return _this.contentElement.css({
-                        height: height - titleHeight - 30,
+                        height: height - titleHeight - 40,
                         overflow: 'auto'
                     });
                 }
@@ -15617,8 +15609,8 @@ Showdown.converter = function() {
             if (height > viewportHeight - 20 || this.options.fullSize) {
                 height = viewportHeight - 20;
             }
-            if (width < 300)
-                width = 300;
+            if (width < 530)
+                width = 530;
             if (height < 150)
                 height = 150;
             titleHeight = this.titleElement.outerHeight();
@@ -15636,7 +15628,7 @@ Showdown.converter = function() {
                 });
             } else {
                 this.contentElement.css({
-                    height: height - titleHeight - 30,
+                    height: height - titleHeight - 40,
                     overflow: 'auto'
                 });
             }
@@ -15709,7 +15701,7 @@ Showdown.converter = function() {
             return this.resize();
         },
         setTitle: function() {
-            return this.titleElement.find('span').html(Mercury.I18n(this.options.title));
+            return this.titleElement.find('h4').html(Mercury.I18n(this.options.title));
         },
         reset: function() {
             this.titleElement.find('span').html('');
@@ -15721,8 +15713,8 @@ Showdown.converter = function() {
             this.options = {};
             this.initialized = false;
             Mercury.trigger('focus:frame');
-            this.element.hide();
-            this.overlay.hide();
+            this.element.hide("fade", 400);
+            this.overlay.hide("fade", 400);
             this.reset();
             return this.visible = false;
         }
@@ -15795,7 +15787,7 @@ Showdown.converter = function() {
                 element = elements[_i];
                 path.push("<a>" + (element.tagName.toLowerCase()) + "</a>");
             }
-            return this.pathElement.html("<span><strong>" + (Mercury.I18n('Path:')) + " </strong>" + (path.reverse().join(' &raquo; ')) + "</span>");
+            return this.pathElement.html("<span><strong>" + (Mercury.I18n('Chemin:')) + " </strong>" + (path.reverse().join(' &raquo; ')) + "</span>");
         };
 
         Statusbar.prototype.show = function() {
@@ -15975,11 +15967,11 @@ Showdown.converter = function() {
         Toolbar.prototype.show = function() {
             this.visible = true;
             this.element.css({
-                top: -this.element.outerHeight(),
+                top: -this.element.outerHeight() - 42,
                 display: 'block'
             });
             return this.element.animate({
-                top: 0
+                top: '42'
             }, 200, 'easeInOutSine');
         };
 
@@ -18188,7 +18180,7 @@ Showdown.converter = function() {
                 event.preventDefault();
                 _this.focus();
                 var target = $(this);
-                Mercury.modal('/mercury/modals/imageconfigurator.html', {title: 'Image Attributes', fullHeight: false, handler: 'imageConfigurator', item: target});
+                Mercury.modal('middleoffice/imageconfigurator.html', {title: 'Visuel', fullHeight: false, handler: 'imageConfigurator', item: target});
 
             });
             this.element.on('drop', function(event) {
