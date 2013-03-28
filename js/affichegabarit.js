@@ -300,7 +300,7 @@ $(function(){
         clone.insertBefore($this);
         clone.find("legend").html("Nouvel élément");
         $this.parents('.sort-box').sortable('refresh');
-        $this.siblings('.sort-elmt').find('.delBloc').removeClass('translucide');
+        $this.siblings('.sort-elmt').find('.delBloc').show();
         $this.find('.form-date').datepicker($.datepicker.regional['fr']);
 
         initAutocompletePat();
@@ -365,7 +365,7 @@ $(function(){
 
                 sort_elmt.slideUp('fast', function(){
                     if ($(this).siblings('.sort-elmt').length < 2)
-                        $(this).siblings('.sort-elmt').find('.delBloc').addClass('translucide');
+                        $(this).siblings('.sort-elmt').find('.delBloc').hide();
                     $(this).remove();
                     sortpar.sortable('refresh');
                 });
