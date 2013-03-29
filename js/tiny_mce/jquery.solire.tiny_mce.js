@@ -144,6 +144,9 @@
         addMethod('change', change);
 
         if (method in publicMethods && isFunc(publicMethods[method])) {
+            if (base.length == 0) {
+                return
+            }
             publicMethods[method].apply(base);
         }
 
