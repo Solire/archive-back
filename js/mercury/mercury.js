@@ -15231,9 +15231,11 @@ Showdown.converter = function() {
             });
         },
         resize: function(keepVisible) {
-            var height, titleHeight, visibility, width,
+            var height, titleHeight, visibility, viewportHeight, viewportWidth, width,
                     _this = this;
             visibility = keepVisible ? 'visible' : 'hidden';
+            viewportWidth = Mercury.displayRect.width;
+            viewportHeight = Mercury.displayRect.fullHeight;
             titleHeight = this.titleElement.outerHeight();
             width = this.contentElement.outerWidth();
             if (this.contentPane) {
@@ -15253,6 +15255,7 @@ Showdown.converter = function() {
                 height = Mercury.displayRect.fullHeight - 20;
             }
             return this.element.stop().animate({
+                top: ((viewportHeight - height) / 2) + 10,
                 left: (Mercury.displayRect.width - width) / 2,
                 width: width,
                 height: height
@@ -15283,8 +15286,9 @@ Showdown.converter = function() {
             });
         },
         position: function() {
-            var controlHeight, height, titleHeight, viewportWidth, width;
+            var controlHeight, height, titleHeight, viewportHeight, viewportWidth, width;
             viewportWidth = Mercury.displayRect.width;
+            viewportHeight = Mercury.displayRect.fullHeight;
             if (this.contentPane) {
                 this.contentPane.css({
                     height: 'auto'
@@ -15326,6 +15330,7 @@ Showdown.converter = function() {
                 });
             }
             return this.element.css({
+                top: ((viewportHeight - height) / 2) + 10,
                 left: (viewportWidth - width) / 2,
                 width: width,
                 height: height,
