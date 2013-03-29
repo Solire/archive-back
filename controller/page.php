@@ -454,6 +454,7 @@ class Page extends Main
         $searchTab = array();
 
         //Variable qui contient la chaine de recherche
+        $this->filter = new \stdClass();
         $stringSearch = strip_tags(trim($qSearch));
         $this->filter->stringSearch = $stringSearch;
 
