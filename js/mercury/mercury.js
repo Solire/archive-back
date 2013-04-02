@@ -13,7 +13,7 @@
  *
  * Add any requires for the support libraries that integrate nicely with Mercury Editor.
  * require mercury/support/history
- *
+ *c
  * Require Mercury Editor itself.
  
  *
@@ -294,7 +294,7 @@ window.Mercury = {
         behaviors: {
             //foreColor: function(selection, options) { selection.wrap('<span style="color:' + options.value.toHex() + '">', true) },
             htmlEditor: function() {
-                Mercury.modal('/mercury/modals/htmleditor.html', {title: 'HTML Editor', fullHeight: true, handler: 'htmlEditor'});
+                Mercury.modal('middleoffice/htmleditor.html', {title: 'Éditeur HTML', fullHeight: false, handler: 'htmlEditor'});
             }
         },
         // ## Global Behaviors
