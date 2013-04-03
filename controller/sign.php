@@ -56,7 +56,7 @@ class Sign extends Main
         $this->_view->enable(false);
 
         $this->_utilisateur->disconnect();
-        $this->simpleRedirect ('sign/start.html', true);
+        $this->simpleRedirect ('back/sign/start.html', true);
     }
 }
 
