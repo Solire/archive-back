@@ -20,8 +20,10 @@ $(function(){
         });
     },
     getVersionValue = function(elmt){
-        var tagName = String.toUpperCase(elmt[0].tagName),
+        var tagName = elmt[0].tagName,
             value;
+
+        tagName = tagName.toUpperCase();
 
         switch (tagName) {
             case 'SELECT' :
@@ -36,7 +38,8 @@ $(function(){
         return value;
     },
     printVersionValue = function(elmt, value){
-        var tagName = String.toUpperCase(elmt[0].tagName);
+        var tagName = elmt[0].tagName;
+        tagName = tagName.toUpperCase();
 
         switch (tagName) {
             case 'IFRAME' :
