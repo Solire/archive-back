@@ -565,13 +565,11 @@ class Page extends Main
         }
 
         if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
-            $query = "UPDATE `gab_page` SET `visible` = " . $_POST['visible'] . " WHERE id_version =  " . $idVersion . " AND `id` = " . $_POST['id_gab_page'];
-            if ($this->_db->query($query)) {
+            if ($this->_gabaritManager->setVisible($idVersion, ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
                 $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
                 $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');
                 $json['status'] = "success";
-                $json['debug'] = $query;
             } else {
                 $this->_log->logThis("$type échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" /><br /><span style="color:red;">Error</span>');
@@ -593,9 +591,7 @@ class Page extends Main
         $json = array('status' => "error");
 
         if (is_numeric($_POST['id_gab_page'])) {
-            $query = "UPDATE `gab_page` SET `suppr` = 1, `date_modif` = NOW() WHERE `id` = " . $_POST['id_gab_page'];
-            $json['query'] = $query;
-            if ($this->_db->exec($query)) {
+            if ($this->_gabaritManager->delete($id_gab_page)) {
                 $this->_log->logThis("Suppression de page réussie", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page']);
                 $json['status'] = "success";
             } else {
