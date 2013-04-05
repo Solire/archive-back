@@ -19942,3 +19942,797 @@ Showdown.converter = function() {
     jQuery(window).trigger('mercury:loaded');
 
 }).call(this);
+
+(function() {
+    var __hasProp = Object.prototype.hasOwnProperty,
+            __extends = function(child, parent) {
+        for (var key in parent) {
+            if (__hasProp.call(parent, key))
+                child[key] = parent[key];
+        }
+        function ctor() {
+            this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor;
+        child.__super__ = parent.prototype;
+        return child;
+    },
+            __indexOf = Array.prototype.indexOf || function(item) {
+        for (var i = 0, l = this.length; i < l; i++) {
+            if (i in this && this[i] === item)
+                return i;
+        }
+        return -1;
+    };
+
+    this.Mercury.Regions.Textarea = (function(_super) {
+        var type;
+
+        __extends(Textarea, _super);
+
+        Textarea.supported = document.designMode && !jQuery.browser.konqueror && !jQuery.browser.msie;
+
+        Textarea.supportedText = "Chrome 10+, Firefox 4+, Safari 5+";
+
+        type = 'Textarea';
+
+        Textarea.prototype.type = function() {
+            return type;
+        };
+
+        function Textarea(element, window, options) {
+            this.element = element;
+            this.window = window;
+            this.options = options != null ? options : {};
+            Textarea.__super__.constructor.apply(this, arguments);
+        }
+
+        Textarea.prototype.build = function() {
+            var element, _i, _len, _ref;
+            if (jQuery.browser.mozilla && this.content() === '')
+                this.content('&nbsp;');
+            this.element.data({
+                originalOverflow: this.element.css('overflow')
+            });
+            this.element.css({
+                overflow: 'auto'
+            });
+            this.specialContainer = jQuery.browser.mozilla && this.element.get(0).tagName !== 'DIV';
+            this.element.get(0).contentEditable = true;
+            _ref = this.element.find('[data-snippet]');
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                element = _ref[_i];
+                element.contentEditable = false;
+                jQuery(element).attr('data-version', '1');
+            }
+            if (!this.document.mercuryEditing) {
+                this.document.mercuryEditing = true;
+                try {
+                    this.document.execCommand('styleWithCSS', false, false);
+                    this.document.execCommand('insertBROnReturn', false, true);
+                    this.document.execCommand('enableInlineTableEditing', false, false);
+                    return this.document.execCommand('enableObjectResizing', false, false);
+                } catch (e) {
+
+                }
+            }
+        };
+
+        Textarea.prototype.bindEvents = function() {
+            var _this = this;
+            Textarea.__super__.bindEvents.apply(this, arguments);
+            Mercury.on('region:update', function() {
+                var anchor, currentElement, table;
+                if (_this.previewing || Mercury.region !== _this)
+                    return;
+                setTimeout((function() {
+                    return _this.selection().forceSelection(_this.element.get(0));
+                }), 1);
+                currentElement = _this.currentElement();
+                if (currentElement.length) {
+                    table = currentElement.closest('table', _this.element);
+                    if (table.length) {
+                        Mercury.tableEditor(table, currentElement.closest('tr, td'), '<br/>');
+                    }
+                    anchor = currentElement.closest('a', _this.element);
+                    if (anchor.length && anchor.attr('href')) {
+                        return Mercury.tooltip(anchor, "<a href=\"" + (anchor.attr('href')) + "\" target=\"_blank\">" + (anchor.attr('href')) + "</a>", {
+                            position: 'below'
+                        });
+                    } else {
+                        return Mercury.tooltip.hide();
+                    }
+                }
+            });
+            this.element.on('dragenter', function(event) {
+                if (_this.previewing)
+                    return;
+                if (!Mercury.snippet)
+                    event.preventDefault();
+                return event.originalEvent.dataTransfer.dropEffect = 'copy';
+            });
+            this.element.on('dragover', function(event) {
+                if (_this.previewing)
+                    return;
+                if (!Mercury.snippet)
+                    event.preventDefault();
+                event.originalEvent.dataTransfer.dropEffect = 'copy';
+                if (jQuery.browser.webkit) {
+                    clearTimeout(_this.dropTimeout);
+                    return _this.dropTimeout = setTimeout((function() {
+                        return _this.element.trigger('possible:drop');
+                    }), 10);
+                }
+            });
+            this.element.on('drop', function(event) {
+                if (_this.previewing)
+                    return;
+                clearTimeout(_this.dropTimeout);
+                _this.dropTimeout = setTimeout((function() {
+                    return _this.element.trigger('possible:drop');
+                }), 1);
+                if (!event.originalEvent.dataTransfer.files.length)
+                    return;
+                event.preventDefault();
+                _this.focus();
+                return Mercury.uploader(event.originalEvent.dataTransfer.files[0]);
+            });
+            this.element.on('possible:drop', function() {
+                var snippetPlaceHolder;
+                if (_this.previewing)
+                    return;
+                if (snippetPlaceHolder = _this.element.find('img[data-snippet]').get(0)) {
+                    _this.focus();
+                    Mercury.Snippet.displayOptionsFor(jQuery(snippetPlaceHolder).data('snippet'));
+                    return _this.document.execCommand('undo', false, null);
+                }
+            });
+            this.element.on('paste', function(event) {
+                if (_this.previewing || Mercury.region !== _this)
+                    return;
+                if (_this.specialContainer) {
+                    event.preventDefault();
+                    return;
+                }
+                if (_this.pasting)
+                    return;
+                Mercury.changes = true;
+                return _this.handlePaste(event.originalEvent);
+            });
+            this.element.on('focus', function() {
+                if (_this.previewing)
+                    return;
+                Mercury.region = _this;
+                setTimeout((function() {
+                    return _this.selection().forceSelection(_this.element.get(0));
+                }), 1);
+                return Mercury.trigger('region:focused', {
+                    region: _this
+                });
+            });
+            this.element.on('blur', function() {
+                if (_this.previewing)
+                    return;
+                Mercury.trigger('region:blurred', {
+                    region: _this
+                });
+                return Mercury.tooltip.hide();
+            });
+            this.element.on('click', function(event) {
+                if (_this.previewing) {
+                    return jQuery(event.target).closest('a').attr('target', '_parent');
+                }
+            });
+            this.element.on('dblclick', function(event) {
+                var image;
+                if (_this.previewing)
+                    return;
+                image = jQuery(event.target).closest('img', _this.element);
+                if (image.length) {
+                    _this.selection().selectNode(image.get(0), true);
+                    return Mercury.trigger('button', {
+                        action: 'insertMedia'
+                    });
+                }
+            });
+            this.element.on('mouseup', function() {
+                if (_this.previewing)
+                    return;
+                _this.pushHistory();
+                return Mercury.trigger('region:update', {
+                    region: _this
+                });
+            });
+            this.element.on('keydown', function(event) {
+                var container;
+                if (_this.previewing)
+                    return;
+                switch (event.keyCode) {
+                    case 90:
+                        if (!event.metaKey)
+                            return;
+                        event.preventDefault();
+                        if (event.shiftKey) {
+                            _this.execCommand('redo');
+                        } else {
+                            _this.execCommand('undo');
+                        }
+                        return;
+                    case 13:
+                        if (jQuery.browser.webkit && _this.selection().commonAncestor().closest('li, ul, ol', _this.element).length === 0) {
+                            event.preventDefault();
+                            _this.document.execCommand('insertParagraph', false, null);
+                        } else if (_this.specialContainer || jQuery.browser.opera) {
+                            event.preventDefault();
+                            _this.document.execCommand('insertHTML', false, '<br/>');
+                        }
+                        break;
+                    case 9:
+                        event.preventDefault();
+                        container = _this.selection().commonAncestor();
+                        if (container.closest('li', _this.element).length) {
+                            if (!event.shiftKey) {
+                                _this.execCommand('indent');
+                            } else if (container.parents('ul, ol').length > 1) {
+                                _this.execCommand('outdent');
+                            }
+                        } else {
+                            _this.execCommand('insertHTML', {
+                                value: '&nbsp;&nbsp;'
+                            });
+                        }
+                }
+                if (event.metaKey) {
+                    switch (event.keyCode) {
+                        case 66:
+                            _this.execCommand('bold');
+                            event.preventDefault();
+                            break;
+                        case 73:
+                            _this.execCommand('italic');
+                            event.preventDefault();
+                            break;
+                        case 85:
+                            _this.execCommand('underline');
+                            event.preventDefault();
+                    }
+                }
+                return _this.pushHistory(event.keyCode);
+            });
+            return this.element.on('keyup', function() {
+                if (_this.previewing)
+                    return;
+                Mercury.trigger('region:update', {
+                    region: _this
+                });
+                return Mercury.changes = true;
+            });
+        };
+
+        Textarea.prototype.focus = function() {
+            var _this = this;
+            if (Mercury.region !== this) {
+                setTimeout((function() {
+                    return _this.element.focus();
+                }), 10);
+                try {
+                    this.selection().selection.collapseToStart();
+                } catch (e) {
+
+                }
+            } else {
+                setTimeout((function() {
+                    return _this.element.focus();
+                }), 10);
+            }
+            Mercury.trigger('region:focused', {
+                region: this
+            });
+            return Mercury.trigger('region:update', {
+                region: this
+            });
+        };
+
+        Textarea.prototype.content = function(value, filterSnippets, includeMarker) {
+            var container, content, element, index, selection, snippet, version, _i, _len, _len2, _ref, _ref2;
+            if (value == null)
+                value = null;
+            if (filterSnippets == null)
+                filterSnippets = true;
+            if (includeMarker == null)
+                includeMarker = false;
+            if (value !== null) {
+                container = jQuery('<div>').appendTo(this.document.createDocumentFragment());
+                container.html(value);
+                _ref = container.find('[data-snippet]');
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    element = _ref[_i];
+                    element.contentEditable = false;
+                    element = jQuery(element);
+                    if (snippet = Mercury.Snippet.find(element.data('snippet'))) {
+                        if (!element.data('version')) {
+                            try {
+                                version = parseInt(element.html().match(/\/(\d+)\]/)[1]);
+                                if (version) {
+                                    snippet.setVersion(version);
+                                    element.attr({
+                                        'data-version': version
+                                    });
+                                    element.html(snippet.data);
+                                }
+                            } catch (error) {
+
+                            }
+                        }
+                    }
+                }
+                this.element.html(container.html());
+                return this.selection().selectMarker(this.element);
+            } else {
+                this.element.find('meta').remove();
+                if (includeMarker) {
+                    selection = this.selection();
+                    selection.placeMarker();
+                }
+                container = jQuery('<div>').appendTo(this.document.createDocumentFragment());
+                container.html(this.element.html().replace(/^\s+|\s+$/g, ''));
+                if (filterSnippets) {
+                    _ref2 = container.find('[data-snippet]');
+                    for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
+                        element = _ref2[index];
+                        element = jQuery(element);
+                        if (snippet = Mercury.Snippet.find(element.data("snippet"))) {
+                            snippet.data = element.html();
+                        }
+                        element.html("[" + (element.data("snippet")) + "/" + (element.data("version")) + "]");
+                        element.attr({
+                            contenteditable: null,
+                            'data-version': null
+                        });
+                    }
+                }
+                content = container.html();
+                if (includeMarker)
+                    selection.removeMarker();
+                return content;
+            }
+        };
+
+        Textarea.prototype.togglePreview = function() {
+            if (this.previewing) {
+                this.element.get(0).contentEditable = true;
+                this.element.css({
+                    overflow: 'inherit'
+                });
+            } else {
+                this.content(this.content());
+                this.element.get(0).contentEditable = false;
+                this.element.css({
+                    overflow: this.element.data('originalOverflow')
+                });
+                this.element.blur();
+            }
+            return Textarea.__super__.togglePreview.apply(this, arguments);
+        };
+
+        Textarea.prototype.execCommand = function(action, options) {
+            var handler, sibling;
+            if (options == null)
+                options = {};
+            Textarea.__super__.execCommand.apply(this, arguments);
+            if (handler = Mercury.config.behaviors[action] || Mercury.Regions.Textarea.actions[action]) {
+                handler.call(this, this.selection(), options);
+            } else {
+                if (action === 'indent')
+                    sibling = this.element.get(0).previousSibling;
+                if (action === 'insertHTML' && options.value && options.value.get) {
+                    options.value = jQuery('<div>').html(options.value).html();
+                }
+                try {
+                    this.document.execCommand(action, false, options.value);
+                } catch (error) {
+                    if (action === 'indent' && this.element.prev() !== sibling) {
+                        this.element.prev().remove();
+                    }
+                }
+            }
+            return this.element.find('img').one('error', function() {
+                return jQuery(this).attr({
+                    src: '/assets/mercury/missing-image.png',
+                    title: 'Image not found'
+                });
+            });
+        };
+
+        Textarea.prototype.pushHistory = function(keyCode) {
+            var keyCodes, knownKeyCode, waitTime,
+                    _this = this;
+            keyCodes = [13, 46, 8];
+            waitTime = 2.5;
+            if (keyCode)
+                knownKeyCode = keyCodes.indexOf(keyCode);
+            clearTimeout(this.historyTimeout);
+            if (knownKeyCode >= 0 && knownKeyCode !== this.lastKnownKeyCode) {
+                this.history.push(this.content(null, false, true));
+            } else if (keyCode) {
+                this.historyTimeout = setTimeout((function() {
+                    return _this.history.push(_this.content(null, false, true));
+                }), waitTime * 1000);
+            } else {
+                this.history.push(this.content(null, false, true));
+            }
+            return this.lastKnownKeyCode = knownKeyCode;
+        };
+
+        Textarea.prototype.selection = function() {
+            return new Mercury.Regions.Textarea.Selection(this.window.getSelection(), this.document);
+        };
+
+        Textarea.prototype.path = function() {
+            var container;
+            container = this.selection().commonAncestor();
+            if (!container)
+                return [];
+            if (container.get(0) === this.element.get(0)) {
+                return [];
+            } else {
+                return container.parentsUntil(this.element);
+            }
+        };
+
+        Textarea.prototype.currentElement = function() {
+            var element, selection;
+            element = [];
+            selection = this.selection();
+            if (selection.range) {
+                element = selection.commonAncestor();
+                if (element.get(0).nodeType === 3)
+                    element = element.parent();
+            }
+            return element;
+        };
+
+        Textarea.prototype.handlePaste = function(event) {
+            var sanitizer, selection,
+                    _this = this;
+            if (Mercury.config.pasting.sanitize === 'text' && event.clipboardData) {
+                this.execCommand('insertHTML', {
+                    value: event.clipboardData.getData('text/plain')
+                });
+                event.preventDefault();
+            } else {
+                selection = this.selection();
+                selection.placeMarker();
+                sanitizer = jQuery('#mercury_sanitizer', this.document).focus();
+                return setTimeout(function() {
+                    var content;
+                    content = _this.sanitize(sanitizer);
+                    selection.selectMarker(_this.element);
+                    selection.removeMarker();
+                    _this.element.focus();
+                    return _this.execCommand('insertHTML', {
+                        value: content
+                    });
+                }, 1);
+            }
+        };
+
+        Textarea.prototype.sanitize = function(sanitizer) {
+            var allowed, allowedAttributes, allowedTag, attr, content, element, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4;
+            sanitizer.find("[" + Mercury.config.regions.attribute + "]").remove();
+            if (Mercury.config.pasting.sanitize) {
+                switch (Mercury.config.pasting.sanitize) {
+                    case 'blacklist':
+                        sanitizer.find('[style]').removeAttr('style');
+                        sanitizer.find('[class="Apple-style-span"]').removeClass('Apple-style-span');
+                        content = sanitizer.html();
+                        break;
+                    case 'whitelist':
+                        _ref = sanitizer.find('*');
+                        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                            element = _ref[_i];
+                            allowed = false;
+                            _ref2 = Mercury.config.pasting.whitelist;
+                            for (allowedTag in _ref2) {
+                                allowedAttributes = _ref2[allowedTag];
+                                if (element.tagName.toLowerCase() === allowedTag.toLowerCase()) {
+                                    allowed = true;
+                                    _ref3 = jQuery(element.attributes);
+                                    for (_j = 0, _len2 = _ref3.length; _j < _len2; _j++) {
+                                        attr = _ref3[_j];
+                                        if (_ref4 = attr.name, __indexOf.call(allowedAttributes, _ref4) < 0) {
+                                            jQuery(element).removeAttr(attr.name);
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            if (!allowed) {
+                                jQuery(element).replaceWith(jQuery(element).contents());
+                            }
+                        }
+                        content = sanitizer.html();
+                        break;
+                    default:
+                        content = sanitizer.text();
+                }
+            } else {
+                content = sanitizer.html();
+                if (content.indexOf('<!--StartFragment-->') > -1 || content.indexOf('="mso-') > -1 || content.indexOf('<o:') > -1 || content.indexOf('="Mso') > -1) {
+                    content = sanitizer.text();
+                }
+            }
+            sanitizer.html('');
+            return content;
+        };
+
+        Textarea.actions = {
+            insertRowBefore: function() {
+                return Mercury.tableEditor.addRow('before');
+            },
+            insertRowAfter: function() {
+                return Mercury.tableEditor.addRow('after');
+            },
+            insertColumnBefore: function() {
+                return Mercury.tableEditor.addColumn('before');
+            },
+            insertColumnAfter: function() {
+                return Mercury.tableEditor.addColumn('after');
+            },
+            deleteColumn: function() {
+                return Mercury.tableEditor.removeColumn();
+            },
+            deleteRow: function() {
+                return Mercury.tableEditor.removeRow();
+            },
+            increaseColspan: function() {
+                return Mercury.tableEditor.increaseColspan();
+            },
+            decreaseColspan: function() {
+                return Mercury.tableEditor.decreaseColspan();
+            },
+            increaseRowspan: function() {
+                return Mercury.tableEditor.increaseRowspan();
+            },
+            decreaseRowspan: function() {
+                return Mercury.tableEditor.decreaseRowspan();
+            },
+            undo: function() {
+                return this.content(this.history.undo());
+            },
+            redo: function() {
+                return this.content(this.history.redo());
+            },
+            horizontalRule: function() {
+                return this.execCommand('insertHorizontalRule');
+            },
+            removeFormatting: function(selection) {
+                return selection.insertTextNode(selection.textContent());
+            },
+            backColor: function(selection, options) {
+                return selection.wrap("<span style=\"background-color:" + (options.value.toHex()) + "\">", true);
+            },
+            overline: function(selection) {
+                return selection.wrap('<span style="text-decoration:overline">', true);
+            },
+            style: function(selection, options) {
+                return selection.wrap("<span class=\"" + options.value + "\">", true);
+            },
+            replaceHTML: function(selection, options) {
+                return this.content(options.value);
+            },
+            insertImage: function(selection, options) {
+                return this.execCommand('insertHTML', {
+                    value: jQuery('<img/>', options.value)
+                });
+            },
+            insertTable: function(selection, options) {
+                return this.execCommand('insertHTML', {
+                    value: options.value
+                });
+            },
+            insertLink: function(selection, options) {
+                var anchor;
+                anchor = jQuery("<" + options.value.tagName + ">", this.document).attr(options.value.attrs).html(options.value.content);
+                return selection.insertNode(anchor);
+            },
+            replaceLink: function(selection, options) {
+                var anchor, html;
+                anchor = jQuery("<" + options.value.tagName + ">", this.document).attr(options.value.attrs).html(options.value.content);
+                selection.selectNode(options.node);
+                html = jQuery('<div>').html(selection.content()).find('a').html();
+                return selection.replace(jQuery(anchor, selection.context).html(html));
+            },
+            insertSnippet: function(selection, options) {
+                var existing, snippet;
+                snippet = options.value;
+                if ((existing = this.element.find("[data-snippet=" + snippet.identity + "]")).length) {
+                    selection.selectNode(existing.get(0));
+                }
+                return selection.insertNode(snippet.getHTML(this.document));
+            },
+            editSnippet: function() {
+                var snippet;
+                if (!this.snippet)
+                    return;
+                snippet = Mercury.Snippet.find(this.snippet.data('snippet'));
+                return snippet.displayOptions();
+            },
+            removeSnippet: function() {
+                if (this.snippet)
+                    this.snippet.remove();
+                return Mercury.trigger('hide:toolbar', {
+                    type: 'snippet',
+                    immediately: true
+                });
+            }
+        };
+
+        return Textarea;
+
+    })(Mercury.Region);
+
+    Mercury.Regions.Textarea.Selection = (function() {
+
+        function Selection(selection, context) {
+            this.selection = selection;
+            this.context = context;
+            if (!(this.selection.rangeCount >= 1))
+                return;
+            this.range = this.selection.getRangeAt(0);
+            this.fragment = this.range.cloneContents();
+            this.clone = this.range.cloneRange();
+            this.collapsed = this.selection.isCollapsed;
+        }
+
+        Selection.prototype.commonAncestor = function(onlyTag) {
+            var ancestor;
+            if (onlyTag == null)
+                onlyTag = false;
+            if (!this.range)
+                return null;
+            ancestor = this.range.commonAncestorContainer;
+            if (ancestor.nodeType === 3 && onlyTag)
+                ancestor = ancestor.parentNode;
+            return jQuery(ancestor);
+        };
+
+        Selection.prototype.wrap = function(element, replace) {
+            if (replace == null)
+                replace = false;
+            element = jQuery(element, this.context).html(this.fragment);
+            if (replace)
+                this.replace(element);
+            return element;
+        };
+
+        Selection.prototype.textContent = function() {
+            return this.range.cloneContents().textContent;
+        };
+
+        Selection.prototype.content = function() {
+            return this.range.cloneContents();
+        };
+
+        Selection.prototype.is = function(elementType) {
+            var content;
+            content = this.content();
+            if (jQuery(content).length === 1 && jQuery(content.firstChild).is(elementType)) {
+                return jQuery(content.firstChild);
+            }
+            return false;
+        };
+
+        Selection.prototype.forceSelection = function(element) {
+            var lastChild, range;
+            if (!jQuery.browser.webkit)
+                return;
+            range = this.context.createRange();
+            if (this.range) {
+                if (this.commonAncestor(true).closest('[data-snippet]').length) {
+                    lastChild = this.context.createTextNode("\x00");
+                    element.appendChild(lastChild);
+                }
+            } else {
+                if (element.lastChild && element.lastChild.nodeType === 3 && element.lastChild.textContent.replace(/^[\s+|\n+]|[\s+|\n+]$/, '') === '') {
+                    lastChild = element.lastChild;
+                    element.lastChild.textContent = "\x00";
+                } else {
+                    lastChild = this.context.createTextNode("\x00");
+                    element.appendChild(lastChild);
+                }
+            }
+            if (lastChild) {
+                range.setStartBefore(lastChild);
+                range.setEndBefore(lastChild);
+                return this.selection.addRange(range);
+            }
+        };
+
+        Selection.prototype.selectMarker = function(context) {
+            var markers, range;
+            markers = context.find('em.mercury-marker');
+            if (!markers.length)
+                return;
+            range = this.context.createRange();
+            range.setStartBefore(markers.get(0));
+            if (markers.length >= 2)
+                range.setEndBefore(markers.get(1));
+            markers.remove();
+            this.selection.removeAllRanges();
+            return this.selection.addRange(range);
+        };
+
+        Selection.prototype.placeMarker = function() {
+            var rangeEnd, rangeStart;
+            if (!this.range)
+                return;
+            this.startMarker = jQuery('<em class="mercury-marker"/>', this.context).get(0);
+            this.endMarker = jQuery('<em class="mercury-marker"/>', this.context).get(0);
+            rangeEnd = this.range.cloneRange();
+            rangeEnd.collapse(false);
+            rangeEnd.insertNode(this.endMarker);
+            if (!this.range.collapsed) {
+                rangeStart = this.range.cloneRange();
+                rangeStart.collapse(true);
+                rangeStart.insertNode(this.startMarker);
+            }
+            this.selection.removeAllRanges();
+            return this.selection.addRange(this.range);
+        };
+
+        Selection.prototype.removeMarker = function() {
+            jQuery(this.startMarker).remove();
+            return jQuery(this.endMarker).remove();
+        };
+
+        Selection.prototype.insertTextNode = function(string) {
+            var node;
+            node = this.context.createTextNode(string);
+            this.range.extractContents();
+            this.range.insertNode(node);
+            this.range.selectNodeContents(node);
+            return this.selection.addRange(this.range);
+        };
+
+        Selection.prototype.insertNode = function(element) {
+            if (element.get)
+                element = element.get(0);
+            if (jQuery.type(element) === 'string') {
+                element = jQuery(element, this.context).get(0);
+            }
+            this.range.deleteContents();
+            this.range.insertNode(element);
+            this.range.selectNodeContents(element);
+            return this.selection.addRange(this.range);
+        };
+
+        Selection.prototype.selectNode = function(node, removeExisting) {
+            if (removeExisting == null)
+                removeExisting = false;
+            this.range.selectNode(node);
+            if (removeExisting)
+                this.selection.removeAllRanges();
+            return this.selection.addRange(this.range);
+        };
+
+        Selection.prototype.replace = function(element, collapse) {
+            if (element.get)
+                element = element.get(0);
+            if (jQuery.type(element) === 'string') {
+                element = jQuery(element, this.context).get(0);
+            }
+            this.range.deleteContents();
+            this.range.insertNode(element);
+            this.range.selectNodeContents(element);
+            this.selection.addRange(this.range);
+            if (collapse)
+                return this.range.collapse(false);
+        };
+
+        return Selection;
+
+    })();
+
+}).call(this);
