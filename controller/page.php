@@ -82,11 +82,11 @@ class Page extends Main
         $this->_view->main(FALSE);
         $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION,
             $this->_api["id"], $_REQUEST['id_parent']);
-        
+
         if (count($this->_pages) == 0) {
             exit();
         }
-        
+
         $this->_view->pages = $this->_pages;
 
         $query  = 'SELECT `gab_gabarit`.id, `gab_gabarit`.*'
@@ -298,7 +298,7 @@ class Page extends Main
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
 
         \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-            $typeSave . ' de contenu sur ' . $this->_mainConfig->get('name', 'project'),
+            $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
             $contenu, $headers, 'text/html');
 
         $json = array(
