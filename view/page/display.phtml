@@ -84,9 +84,9 @@
         if (isset($this->redirections[$page->getMeta('id_version')])) {
             $redirections = $this->redirections[$page->getMeta('id_version')];
         } else {
-             $redirections = array();
+            $redirections = array();
         }
-        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $redirections);
+        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $redirections, $this->authors[$page->getMeta('id_version')]);
 ?>
                         </div>
 
