@@ -51,6 +51,7 @@ function reloadDatatable(data) {
         null,
         null,
         null,
+        null,
         {
             "bSortable": false
         },
@@ -246,7 +247,7 @@ $(function () {
             $.each(files, function(i, file) {
                 var tr, td;
                 if(!file.error) {
-                    tr = $('<tr>');
+                    tr = $('<tr>').addClass("filenotused");
                     $('<td>', {
                         colspan : 4
                     }).html(file.name + '<div class="progressbar"></div>').appendTo(tr);
@@ -302,6 +303,7 @@ $(function () {
             ligne += '<td>' + response.width + '</td>';
             ligne += '<td>' + response.height + '</td>';
             ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
+            ligne += '<td>Non</td>';
             ligne += '<td><div class="btn-a gradient-blue"><a class="previsu" href="' + response.path + '"><img src="app/back/img/voir.png" alt="Prévisualisation"></a></div>';
             ligne += '<div class="btn-a gradient-blue"><a class="delete-file" href="#"><img src="app/back/img/white/trash_stroke_16x16.png" alt="Supprimer"></a></div></td>'
 

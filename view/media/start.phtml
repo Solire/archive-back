@@ -7,6 +7,11 @@
 
 
         }
+        
+        #tableau tr.filenotused td {
+            color: #777777;
+            font-style: italic;
+        }
 
         #tableau_length select {
             width: auto;
@@ -120,6 +125,10 @@
             background-color: #117ECA;
             color: #FFF;
         }
+        
+        #tableau tr.filenotused:hover td {
+            color: #FFF;
+        }
 
 
     #tableau_wrapper select {
@@ -174,6 +183,7 @@
                 <th>Largeur</th>
                 <th>Hauteur</th>
                 <th>Date / Heure</th>
+                <th>Utilisé</th>
                 <th style="width: 50px;">&nbsp;</th>
             </tr>
         </thead>
