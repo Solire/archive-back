@@ -86,7 +86,12 @@
         } else {
             $redirections = array();
         }
-        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $redirections, $this->authors[$page->getMeta('id_version')]);
+        if (isset($this->authors[$page->getMeta('id_version')])) {
+            $authors = $this->authors[$page->getMeta('id_version')];
+        } else {
+            $authors = array();
+        }
+        echo $page->getForm('back/page/save.html', 'back/page/liste.html', $redirections, $authors);
 ?>
                         </div>
 
