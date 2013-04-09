@@ -2,10 +2,10 @@
  * Mercury Editor is a CoffeeScript and jQuery based WYSIWYG editor.  Documentation and other useful information can be
  * found at https://github.com/jejacks0n/mercury
  *
- 
+
  *
  * Minimum jQuery requirements are 1.7
- 
+
  *
  * You can include the Rails jQuery ujs script here to get some nicer behaviors in modals, panels and lightviews when
  * using :remote => true within the contents rendered in them.
@@ -15,7 +15,7 @@
  * require mercury/support/history
  *c
  * Require Mercury Editor itself.
- 
+
  *
  * Require any localizations you wish to support
  * Example: es.locale, or fr.locale -- regional dialects are in each language file so never en_US for instance.
@@ -403,7 +403,7 @@ window.Mercury = {
         // need to include a few styles to indicate regions, as well as the different states of them (eg. focused).  These
         // styles are injected into your document, and as simple as they might be, you may want to change them.
         injectedStyles: '' +
-                '[data-mercury]       { min-height: 10px; outline: 1px dotted #09F } ' +
+                '[data-mercury]       { min-height: 10px; outline: 1px dotted #09F; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;}' +
                 '[data-mercury]:focus { outline: none; -webkit-box-shadow: 0 0 10px #09F, 0 0 1px #045; box-shadow: 0 0 10px #09F, 0 0 1px #045 }' +
                 '[data-mercury].focus { outline: none; -webkit-box-shadow: 0 0 10px #09F, 0 0 1px #045; box-shadow: 0 0 10px #09F, 0 0 1px #045 }' +
                 '[data-mercury]:after { content: "."; display: block; visibility: hidden; clear: both; height: 0; overflow: hidden; }' +
@@ -11701,15 +11701,15 @@ jQuery.extend(jQuery.easing, {
  HTML Clean for jQuery
  Anthony Johnston
  http://www.antix.co.uk
- 
+
  version 1.2.3
- 
+
  $Revision: 51 $
- 
+
  requires jQuery http://jquery.com
- 
+
  Use and distibution http://www.opensource.org/licenses/bsd-license.php
- 
+
  2010-04-02 allowedTags/removeTags added (white/black list) thanks to David Wartian (Dwartian)
  2010-06-30 replaceStyles added for replacement of bold, italic, super and sub styles on a tag
  2010-07-01 notRenderedTags added, where tags are to be removed but their contents are kept
@@ -12840,10 +12840,10 @@ Showdown.converter = function() {
          )*
          )
          \]
-         
+
          [ ]?					// one optional space
          (?:\n[ ]*)?				// one optional newline followed by spaces
-         
+
          \[
          (.*?)					// id = $3
          \]
@@ -12966,10 +12966,10 @@ Showdown.converter = function() {
          !\[
          (.*?)				// alt text = $2
          \]
-         
+
          [ ]?				// one optional space
          (?:\n[ ]*)?			// one optional newline followed by spaces
-         
+
          \[
          (.*?)				// id = $3
          \]
