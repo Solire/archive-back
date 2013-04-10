@@ -128,22 +128,25 @@ class Board extends Main
      * @return void
      */
     private function _boardDatatable() {
-        $nameConfig = "board";
+        $configName = "board";
+        
+        $frontController = \Slrfw\FrontController::getInstance();
+        $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
 
-        $datatableClassName = '\\App\\Back\\Datatable\\' . $nameConfig;
+        $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
         /** @todo Chargement des fichiers des differentes app */
         try {
             $datatable = new $datatableClassName(
-                $_GET, $nameConfig, $this->_db, './datatable/',
+                $_GET, $configPath, $this->_db, './datatable/',
                 './datatable/', 'img/datatable/');
         } catch (\Exception $exc) {
             $datatable = new \Slrfw\Datatable\Datatable(
-                $_GET, $nameConfig, $this->_db, './datatable/',
+                $_GET, $configPath, $this->_db, './datatable/',
                 './datatable/', 'img/datatable/');
         }
 
         /** On cré notre object datatable */
-        $datatable = new $datatableClassName($_GET, $nameConfig, $this->_db,
+        $datatable = new $datatableClassName($_GET, $configPath, $this->_db,
             '/back/css/datatable/', '/back/js/datatable/', 'img/datatable/');
 
         $datatable->setUtilisateur($this->_utilisateur);
