@@ -11,12 +11,17 @@ $(function(){
             /** Variable selon l'élément */
             var div       = $('.form-line', other).eq(i),
                 otherElmt = $('.form-controle', div),
-                otherValue = getVersionValue(otherElmt),
-                printLine  = $('.form-other-line', this),
+                otherValue, printLine, printElmt;
+
+            /** Si l'élément existe dans l'autre langue */
+            if (otherElmt.length > 0) {
+                otherValue = getVersionValue(otherElmt);
+                printLine  = $('.form-other-line', this);
                 printElmt  = $('.form-other-elmt', this);
 
-            printLine.slideDown(500);
-            printVersionValue(printElmt, otherValue);
+                printLine.slideDown(500);
+                printVersionValue(printElmt, otherValue);
+            }
         });
     },
     getVersionValue = function(elmt){
@@ -53,9 +58,9 @@ $(function(){
     };
 
     $('.langue').each(function(){
-        var current = $(this),
-            versionId    = $('[name="id_version"]', this).val(),
-            otherId      = $('.compareversion-other', this).val();
+        var current     = $(this),
+            versionId   = $('[name="id_version"]', this).val(),
+            otherId     = $('.compareversion-other', this).val();
 
         $('.compareversion-hide', current).hide();
 
