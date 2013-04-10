@@ -78,7 +78,9 @@ class Main extends \Slrfw\Controller
                . 'FROM gab_api ';
         $this->_apis = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
-        define('BACK_ID_API', $this->_api['id']);
+        if (!defined('BACK_ID_API')) {
+            define('BACK_ID_API', $this->_api['id']);
+        }
 
         $this->_javascript->addLibrary('back/js/jquery/jquery-1.8.0.min.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery-ui-1.8.23.custom.min.js');
@@ -136,18 +138,26 @@ class Main extends \Slrfw\Controller
             $id_version = $_GET['id_version'];
             $url = '/' . \Slrfw\Registry::get('baseroot');
             setcookie('id_version', $id_version, 0, $url);
-            define('BACK_ID_VERSION', $id_version);
+            if (!defined('BACK_ID_VERSION')) {
+                define('BACK_ID_VERSION', $id_version);
+            }
         } elseif (isset($_POST['id_version'])) {
             $id_version = $_POST['id_version'];
             $url = '/' . \Slrfw\Registry::get('baseroot');
             setcookie('id_version', $id_version, 0, $url);
-            define('BACK_ID_VERSION', $id_version);
+            if (!defined('BACK_ID_VERSION')) {
+                define('BACK_ID_VERSION', $id_version);
+            }
         } elseif (isset($_COOKIE['id_version'])
             && isset($this->_versions[$_COOKIE['id_version']])
         ) {
-            define('BACK_ID_VERSION', $_COOKIE['id_version']);
+            if (!defined('BACK_ID_VERSION')) {
+                define('BACK_ID_VERSION', $_COOKIE['id_version']);
+            }
         } else {
-            define('BACK_ID_VERSION', 1);
+            if (!defined('BACK_ID_VERSION')) {
+                define('BACK_ID_VERSION', 1);
+            }
         }
 
         if (isset($this->_post['log']) && isset($this->_post['pwd'])
@@ -223,7 +233,7 @@ class Main extends \Slrfw\Controller
          * On recupere la configuration du module pages (Menu + liste)
          */
         $configMain = \Slrfw\Registry::get('mainconfig');
-        include_once $configMain->get('dirs', 'back') . 'page.cfg.php';
+        include $configMain->get('dirs', 'back') . 'page.cfg.php';
         $this->_configPageModule = $config;
         $this->_view->menuPage = array();
         foreach ($this->_configPageModule as $configPage) {
