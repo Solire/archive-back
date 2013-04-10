@@ -155,7 +155,7 @@ class Page extends Main
 
                 $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
                 $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
-                
+
                 $query  = 'SELECT * '
                         . 'FROM `main_element_commun_author_google` '
                         . 'WHERE `id_version` = ' . $id_version;
@@ -164,11 +164,11 @@ class Page extends Main
         } else {
             $query = 'SELECT * FROM `version` WHERE `id` = ' . BACK_ID_VERSION;
             $this->_versions = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
-            
+
             $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, 0, $id_gabarit);
             $this->_pages[BACK_ID_VERSION] = $page;
             $this->_redirections[BACK_ID_VERSION] = array();
-            
+
             $query  = 'SELECT * '
                     . 'FROM `main_element_commun_author_google` '
                     . 'WHERE `id_version` = ' . BACK_ID_VERSION;
@@ -602,7 +602,7 @@ class Page extends Main
         $json = array('status' => "error");
 
         if (is_numeric($_POST['id_gab_page'])) {
-            if ($this->_gabaritManager->delete($id_gab_page)) {
+            if ($this->_gabaritManager->delete($_POST['id_gab_page'])) {
                 $this->_log->logThis("Suppression de page réussie", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page']);
                 $json['status'] = "success";
             } else {
