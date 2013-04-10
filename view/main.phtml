@@ -88,7 +88,7 @@
     if (count($this->pagesNonTraduites) > 0) {
 ?>
                                         <li class="sep dropdown">
-                                            <a data-toggle="dropdown" class="dropdown-toggle nav_condensed" href="#"><span class="count_el"><?php echo count($this->pagesNonTraduites); ?></span> contenus non traduits <b class="caret"></b></a>
+                                            <a data-toggle="dropdown" class="dropdown-toggle nav_condensed" href="#"><span class="count_el"><?php echo count($this->pagesNonTraduites); ?></span> contenu<?php if (count($this->pagesNonTraduites) > 1) { echo 's'; } ?> non traduit<?php if (count($this->pagesNonTraduites) > 1) { echo 's'; } ?> <b class="caret"></b></a>
                                             <ul class="dropdown-menu">
 <?php
         foreach ($this->pagesNonTraduites as $pageNonTraduite) {
@@ -286,7 +286,7 @@
 
                     <div id="footer">
                         <div class="bloc">
-                            <p style="color:#888; float:right; font-size:10px; margin-top:30px; padding:0px 10px 0px 0;">Outil de gestion de contenu développé par <a href="http://www.solire.fr" target="_blank"><img src="app/back/img/logo-solire-fw.png" title="Solire : agence web lyon" style="float: right; margin: -1px 0 0px 4px ; height:20px;"/></a></p>		
+                            <p style="color:#888; float:right; font-size:10px; margin-top:30px; padding:0px 10px 0px 0;">Outil de gestion de contenu développé par <a href="http://www.solire.fr" target="_blank"><img src="app/back/img/logo-solire-fw.png" title="Solire : agence web lyon" style="float: right; margin: -1px 0 0px 4px ; height:20px;"/></a></p>
                         </div>
                     </div>
                 </article>
