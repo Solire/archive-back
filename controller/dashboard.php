@@ -35,15 +35,22 @@ class Dashboard extends Main
 
             foreach ($configsName as $configKey => $configName) {
                 $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
-
+                
+                $frontController = \Slrfw\FrontController::getInstance();
+                $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
+                
+                if (!$configPath) {
+                    $this->pageNotFound();
+                }
+                
                 if (class_exists($datatableClassName)) {
                     $datatable = new $datatableClassName(
-                        $_GET, $configName, $this->_db, 
+                        $_GET, $configPath, $this->_db, 
                         '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 } else {
                     $datatable = new \Slrfw\Datatable\Datatable(
-                        $_GET, $configName, $this->_db, 
+                        $_GET, $configPath, $this->_db, 
                         '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 }
