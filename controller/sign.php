@@ -42,7 +42,9 @@ class Sign extends Main
         $this->_view->action = 'back/' . $this->_appConfig->get('general', 'page-default');
 
         if ($this->_utilisateur->isConnected()) {
-            $this->simpleRedirect ('back/' . $this->_appConfig->get('general', 'page-default'), true);
+            $this->simpleRedirect(
+                'back/' . $this->_appConfig->get('general', 'page-default'), true
+            );
         }
     }
 
@@ -56,7 +58,7 @@ class Sign extends Main
         $this->_view->enable(false);
 
         $this->_utilisateur->disconnect();
-        $this->simpleRedirect ('back/sign/start.html', true);
+        $this->simpleRedirect('back/sign/start.html', true);
     }
 }
 
