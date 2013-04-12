@@ -52,18 +52,21 @@ class Page extends Main
                . 'FROM `gab_gabarit` '
                . 'WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
 
-        /** Configuration de la page **/
+        /** Si on veut n'afficher que certains gabarits **/
         if (isset($_GET['c']) && intval($_GET['c'])) {
             $indexConfig = intval($_GET['c']);
         } else {
             $indexConfig = 0;
         }
+
+        /** Récupération de la liste de la page et des droits utilisateurs **/
         $currentConfigPageModule = $this->_configPageModule[$indexConfig];
         $gabaritsListPage = $currentConfigPageModule['gabarits'];
         $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
         $gabaritsListUser = $configPageModule['gabarits'];
         unset($configPageModule);
 
+        /** Génération de la liste des gabarits à montrer **/
         if ($gabaritsListPage == '*') {
             $gabaritsList = $gabaritsListUser;
         } else {
