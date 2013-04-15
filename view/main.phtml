@@ -79,7 +79,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a href="" class="brand"><img src="img/gray_dark/home_16x16.png"> <?php echo $this->site; ?></a>
+                        <a href="back/" class="brand"><img src="app/back/img/gray_dark/home_16x16.png"> <?php echo $this->site; ?></a>
 
                         <ul class="nav user_menu pull-right">
                             <li class="hidden-phone hidden-tablet">
@@ -88,12 +88,12 @@
     if (count($this->pagesNonTraduites) > 0) {
 ?>
                                         <li class="sep dropdown">
-                                            <a data-toggle="dropdown" class="dropdown-toggle nav_condensed" href="#"><span class="count_el"><?php echo count($this->pagesNonTraduites); ?></span> contenus non traduits <b class="caret"></b></a>
+                                            <a data-toggle="dropdown" class="dropdown-toggle nav_condensed" href="#"><span class="count_el"><?php echo count($this->pagesNonTraduites); ?></span> contenu<?php if (count($this->pagesNonTraduites) > 1) { echo 's'; } ?> non traduit<?php if (count($this->pagesNonTraduites) > 1) { echo 's'; } ?> <b class="caret"></b></a>
                                             <ul class="dropdown-menu">
 <?php
         foreach ($this->pagesNonTraduites as $pageNonTraduite) {
 ?>
-                                                    <li><a href="page/display.html?id_gab_page=<?php echo $pageNonTraduite["id"] ?>"> <?php echo $pageNonTraduite["titre"] ?></a></li>
+                                                    <li><a href="back/page/display.html?id_gab_page=<?php echo $pageNonTraduite["id"] ?>"> <?php echo $pageNonTraduite["titre"] ?></a></li>
 <?php
         }
 ?>
@@ -116,15 +116,15 @@
                             <li class="divider-vertical hidden-phone hidden-tablet"></li>
 
                             <li class="dropdown">
-                                <a data-toggle="dropdown" style="padding-bottom: 0;" class="dropdown-toggle nav_condensed" href="#"><img alt="<?php echo $this->versions[BACK_ID_VERSION]['nom'] ?>" src="img/flags/all/24/<?php echo strtolower($this->versions[BACK_ID_VERSION]['suf']) ?>.png" /> <b class="caret"></b></a>
+                                <a data-toggle="dropdown" style="padding-bottom: 0;" class="dropdown-toggle nav_condensed" href="#"><img alt="<?php echo $this->mainVersions[BACK_ID_VERSION]['nom'] ?>" src="app/back/img/flags/all/24/<?php echo strtolower($this->mainVersions[BACK_ID_VERSION]['suf']) ?>.png" /> <b class="caret"></b></a>
 
                                 <ul class="dropdown-menu">
 <?php
-    foreach ($this->versions as $version) {
+    foreach ($this->mainVersions as $version) {
 ?>
                                         <li>
-                                            <a style="cursor:pointer;" onclick="var b = $('base').attr('href'); $.cookie('id_version', <?php echo $version['id'] ?>, {path: '/<?php echo \Slrfw\Library\Registry::get("baseroot"); ?>back/'}); document.location.href = document.location.href; return false;">
-                                                <img style="width: 16px; height: 16px;display: block;float: left;margin-top: 1px;" alt="" src="img/flags/all/16/<?php echo strtolower($version['suf']) ?>.png" />&nbsp;&nbsp;<?php echo $version['nom'] ?>
+                                            <a style="cursor:pointer;" onclick="$.cookie('id_version', <?php echo $version['id'] ?>, {path: 'back/'}); document.location.href = document.location.href; return false;">
+                                                <img style="width: 16px; height: 16px;display: block;float: left;margin-top: 1px;" alt="" src="app/back/img/flags/all/16/<?php echo strtolower($version['suf']) ?>.png" />&nbsp;&nbsp;<?php echo $version['nom'] ?>
                                             </a>
                                         </li>
 <?php
@@ -135,12 +135,12 @@
 
                             <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
 
-                            <li class="dropdown<?php echo $this->controller == "user" ? ' gradient-blue text-light-white' : ''; ?>">
-                                <a data-toggle="dropdown" class="dropdown-toggle" style="padding-bottom: 0;line-height: 28px;"  href="#"><img src="img/gray_dark/user_12x16.png"> <b class="caret"></b></a>
+                            <li class="dropdown<?php echo $this->controller == "back/user" ? ' gradient-blue text-light-white' : ''; ?>">
+                                <a data-toggle="dropdown" class="dropdown-toggle" style="padding-bottom: 0;line-height: 28px;"  href="#"><img src="app/back/img/gray_dark/user_12x16.png"> <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li class="<?php echo $this->controller == "user" && $this->action == "start" ? 'active' : ''; ?>"><a href="user/start.html"><b>Mon profil (<?php echo $this->utilisateur->get("nom"); ?> <?php echo $this->utilisateur->get("prenom"); ?>)</b></a></li>
+                                    <li class="<?php echo $this->controller == "back/user" && $this->action == "start" ? 'active' : ''; ?>"><a href="back/user/start.html"><b>Mon profil (<?php echo $this->utilisateur->get("nom"); ?> <?php echo $this->utilisateur->get("prenom"); ?>)</b></a></li>
                                     <li class="divider"></li>
-                                    <li><a href="sign/signout.html"><b>Déconnexion</b></a></li>
+                                    <li><a href="back/sign/signout.html"><b>Déconnexion</b></a></li>
                                 </ul>
                             </li>
 
@@ -154,7 +154,7 @@
     if (count($this->apis) > 1) {
 ?>
                                     <li class="dropdown">
-                                        <a data-toggle="dropdown" class="dropdown-toggle" style="font-weight:bold;padding:0" href="#"><img style="float:left;margin-top: 9px;margin-left: 4px;" width="26" src="img/api/<?php echo $this->api["name"]; ?>.png" /><span class="api-selected" style="padding: 12px 10px 11px 3px;display:inline-block"><?php echo $this->api["label"]; ?> <b class="caret"></b></span></a>
+                                        <a data-toggle="dropdown" class="dropdown-toggle" style="font-weight:bold;padding:0" href="#"><img style="float:left;margin-top: 9px;margin-left: 4px;" width="26" src="app/back/img/api/<?php echo $this->api["name"]; ?>.png" /><span class="api-selected" style="padding: 12px 10px 11px 3px;display:inline-block"><?php echo $this->api["label"]; ?> <b class="caret"></b></span></a>
                                         <ul class="dropdown-menu">
 <?php
         $prefix = "../";
@@ -167,7 +167,7 @@
                 $mobile = true;
             }
 ?>
-                                            <li><a href="<?php echo $prefix; ?><?php echo $idApi == 1 ? '' : $api["name"] . "/"; ?>" style="font-weight:bold;" href="#"><img style="float:left;margin-top: 5px;" width="28" src="img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>
+                                            <li><a href="./back/" style="font-weight:bold;" onclick="$.cookie('api', '<?php echo $api['name']; ?>', {path : '/'});"><img style="float:left;margin-top: 5px;" width="28" src="app/back/img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>
 <?php
         }
 ?>
@@ -179,18 +179,25 @@
     }
 
     /** Si le tableau de board est activé */
-    if ($this->appConfig->get("active", "board")) {
+    if ($this->appConfig->get('board', 'active')) {
+        if ($this->controller == 'back/board') {
 ?>
-                                    <li<?php echo $this->controller == "board" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="board/start.html">Tableau de bord</a></li>
-
+                                    <li class="gradient-blue text-light-white"><a href="back/board/start.html">Tableau de bord</a></li>
 <?php
-    }
+        } else {
+?>
+                                    <li><a href="back/board/start.html">Tableau de bord</a></li>
+<?php
+        }
 ?>
                                     <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
 <?php
+    }
+?>
+<?php
     if (count($this->menuPage) > 1) {
 ?>
-                                    <li class="dropdown<?php echo $this->controller == "page" ? ' gradient-blue text-light-white' : ''; ?>">
+                                    <li class="dropdown<?php echo $this->controller == "back/page" ? ' gradient-blue text-light-white' : ''; ?>">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Pages <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
 <?php
@@ -200,7 +207,7 @@
                 $active = "active";
             }
 ?>
-                                            <li class="<?php echo $active; ?>"><a href="page/liste.html?c=<?php echo $indexMenuPage ?>"> <?php echo $mPage["label"] ?></a></li>
+                                            <li class="<?php echo $active; ?>"><a href="back/page/liste.html?c=<?php echo $indexMenuPage ?>"> <?php echo $mPage["label"] ?></a></li>
 <?php
         }
 ?>
@@ -210,14 +217,14 @@
     }
     else {
 ?>
-                                    <li<?php echo $this->controller == "page" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="page/liste.html">Pages</a></li>
+                                    <li<?php echo $this->controller == "back/page" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/page/liste.html">Pages</a></li>
 <?php
     }
 ?>
                                     <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-                                    <li<?php echo $this->controller == "media" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="media/start.html">Fichiers</a></li>
+                                    <li<?php echo $this->controller == "back/media" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/media/start.html">Fichiers</a></li>
                                     <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-                                    <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "translate" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="dashboard/start.html?name=translate" class="bis">Textes statiques</a></li>
+                                    <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "translate" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/dashboard/start.html?name=translate" class="bis">Textes statiques</a></li>
 <?php
     if ($this->utilisateur->get("niveau") == "solire") {
 ?>
@@ -226,25 +233,25 @@
         if ($this->api["name"] == "mobile") {
 ?>
 
-                                    <li class="dropdown<?php echo $this->controller == "dashboard" && ($_GET["name"] == "redirection" || $_GET["name"] == "redirection_mobile") ? ' gradient-blue text-light-white' : ''; ?>">
+                                    <li class="dropdown<?php echo $this->controller == "back/dashboard" && ($_GET["name"] == "redirection" || $_GET["name"] == "redirection_mobile") ? ' gradient-blue text-light-white' : ''; ?>">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Redirections <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
-                                            <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "redirection" ? ' class="active"' : ''; ?>><a href="dashboard/start.html?name=redirection">Redirections 301 permanentes</a></li>
-                                            <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "redirection_mobile" ? ' class="active"' : ''; ?>><a href="dashboard/start.html?name=redirection_mobile">Correspondances Desktop/Mobile</a></li>
+                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=redirection">Redirections 301 permanentes</a></li>
+                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection_mobile" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=redirection_mobile">Correspondances Desktop/Mobile</a></li>
                                         </ul>
                                     </li>
 <?php
         }
         else {
 ?>
-                                    <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "redirection" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="dashboard/start.html?name=redirection" class="bis">Redirections 301</a></li>
+                                    <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/dashboard/start.html?name=redirection" class="bis">Redirections 301</a></li>
 <?php
         }
     }
 
     if ($this->utilisateur->get("niveau") == "solire") {
         $class = '';
-        if ($this->controller == "dashboard" && ($_GET["name"] == "back_log" || $_GET["name"] == "utilisateur")) {
+        if ($this->controller == "back/dashboard" && ($_GET["name"] == "back_log" || $_GET["name"] == "utilisateur")) {
             $class = ' gradient-blue text-light-white';
         }
 
@@ -253,8 +260,8 @@
                                     <li class="dropdown<?php echo $class; ?>">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> + <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
-                                            <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "back_log" ? ' class="active"' : ''; ?>><a href="dashboard/start.html?name=back_log" class="bis">Logs</a></li>
-                                            <li<?php echo $this->controller == "dashboard" && $_GET["name"] == "utilisateur" ? ' class="active"' : ''; ?>><a href="dashboard/start.html?name=utilisateur" class="bis">Utilisateurs</a></li>
+                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "back_log" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=back_log" class="bis">Logs</a></li>
+                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "utilisateur" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=utilisateur" class="bis">Utilisateurs</a></li>
                                         </ul>
                                     </li>
 <?php
@@ -279,7 +286,7 @@
 
                     <div id="footer">
                         <div class="bloc">
-                            <p>Outil de gestion de contenu développé par <a href="http://www.solire.fr" target="_blank">Solire</a></p>
+                            <p style="color:#888; float:right; font-size:10px; margin-top:30px; padding:0px 10px 0px 0;">Outil de gestion de contenu développé par <a href="http://www.solire.fr" target="_blank"><img src="app/back/img/logo-solire-fw.png" title="Solire : agence web lyon" style="float: right; margin: -1px 0 0px 4px ; height:20px;"/></a></p>
                         </div>
                     </div>
                 </article>

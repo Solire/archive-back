@@ -18,17 +18,17 @@ var createUploader = function(idBtn, multi_selection) {
         silverlight_xap_url : basehref + 'js/admin/plupload/plupload.silverlight.xap',
         filters : [
         {
-            title : "Image files", 
+            title : "Image files",
             extensions : "jpg,jpeg,gif,png"
         },
 
         {
-            title : "Zip files", 
+            title : "Zip files",
             extensions : "zip,rar,bz2"
         },
 
         {
-            title : "Adobe", 
+            title : "Adobe",
             extensions : "pdf,eps,psd,ai,indd"
         }
         ],
@@ -36,15 +36,15 @@ var createUploader = function(idBtn, multi_selection) {
         unique_names : false,
         multiple_queues : true
     });
-    
+
     var detailId = idBtn.split("_")
     detailId.shift()
     uploader[idBtn].name = detailId.join("_")
     uploaderInited[idBtn] = false
     uploaderInit(idBtn)
-    
+
 }
-    
+
 
 var uploaderInit = function(idBtn){
     if (!uploaderInited[idBtn]) {
@@ -55,7 +55,7 @@ var uploaderInit = function(idBtn){
         uploader[idBtn].bind('FilesAdded', function(up, files) {
             //            var file = files[0]
             //            // affichage à l'ajout avec <div class="progressbar"></div>
-            //            
+            //
             //            file.div = $('<div>');
             //            $('#filelist').append(
             //                '<div id="' + file.id + '">' +
@@ -65,32 +65,32 @@ var uploaderInit = function(idBtn){
             if (uploader[idBtn].settings.multi_selection == false) {
                 $("#" + idBtn).parents(".control-group:first").find('.filelist').empty()
             }
-            
-            
+
+
             $("#" + idBtn).parents(".control-group:first").find('.filelist').removeClass("hide")
             $.each(files, function(i, file) {
                 if (uploader[idBtn].settings.multi_selection == false) {
                     var infoField = uploader[idBtn].name.split("-")
                     var $myForm = $("#" + idBtn).parents("form");
-                    console.log($("#" + infoField[1], $myForm))
+//                    console.log($("#" + infoField[1], $myForm))
                     $("#" + infoField[1], $myForm).val(file.name)
                 }
                 $("#" + idBtn).parents(".control-group:first").find('.filelist tbody').append(
                     '<tr id="' + file.id + '">' +
                     '<td>' + (i+1) + '</td><td>' + file.name + '</td><td>' + plupload.formatSize(file.size) + '</td>' +
-                    '<td><a href="" class="remove btn btn-danger" title="Supprimer"><img width="12" src="img/back/white/trash_stroke_16x16.png" alt="Supprimer" /></a></td>' +
+                    '<td><a href="" class="remove btn btn-danger" title="Supprimer"><img width="12" src="app/back/img/back/white/trash_stroke_16x16.png" alt="Supprimer" /></a></td>' +
                     '</tr>');
-                var $tr = 
+                var $tr =
                 $('<tr id="' + file.id + '_progress">' +
                     '<td style="padding: 0;line-height:0"  colspan="4">' +
-                    '    <div style="height:6px"  class="progress progress-striped active hide"><div class="bar" style=""></div></div>' + 
+                    '    <div style="height:6px"  class="progress progress-striped active hide"><div class="bar" style=""></div></div>' +
                     '</td>' +
                     '</tr>')
                 $("#" + idBtn).parents(".control-group:first").find('.filelist tbody').append(
                     $tr
                     );
                 file.div = $tr;
-                
+
                 $('#' + file.id + ' a.remove').first().click(function(e) {
                     e.preventDefault();
                     uploader[idBtn].removeFile(file);
@@ -99,12 +99,12 @@ var uploaderInit = function(idBtn){
                         $("#" + idBtn).parents(".control-group:first").find('.filelist').addClass("hide");
                     }
                 });
-                
-                
-                
+
+
+
             });
-            
-            
+
+
             $('.bar').css({
                 width: "0%"
             });
@@ -131,15 +131,15 @@ var uploaderInit = function(idBtn){
     //            var response = $.parseJSON(info.response);
     //
     //            if(response.status != "error") {
-    //                    
-    //            }                
-    //                
+    //
+    //            }
+    //
     //            uploader[idBtn].splice(0, 1);
-    //                
+    //
     //        });
     }
     else
         uploader[idBtn].refresh();
 }
-    
+
 

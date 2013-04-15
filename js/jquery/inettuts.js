@@ -35,7 +35,7 @@ var iNettuts = {
     },
 
     init : function () {
-        this.attachStylesheet('css/inettuts.js.css');
+        this.attachStylesheet('app/back/css/inettuts.css');
         this.sortWidgets();
         this.addWidgetControls();
         this.makeSortable();
@@ -253,7 +253,7 @@ var iNettuts = {
                 cookieString += $(settings.contentSelector,this).parents(settings.widgetSelector).hasClass("collapsed") ? 'collapsed' : 'not-collapsed';
             });
         });
-        $.post("board/save-state.html", {
+        $.post("back/board/savestate.html", {
             cookie : cookieString
         })
         $.cookie(settings.saveToCookie,cookieString,{

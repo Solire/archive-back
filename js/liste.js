@@ -61,7 +61,7 @@ $(function(){
         confirm.dialog('option', 'buttons', {
             "Ok" : function(){
                 $.post(
-                    'page/delete.html',
+                    'back/page/delete.html',
                     {
                         id_gab_page : id_gab_page
                     },
@@ -102,7 +102,7 @@ $(function(){
         var checked = $this.is(':checked');
 
         $.post(
-            'page/visible.html',
+            'back/page/visible.html',
             {
                 id_gab_page : id_gab_page,
                 visible     : checked ? 1 : 0
@@ -153,7 +153,7 @@ $(function(){
     }
 
     var orderProcess = function(){
-        $.post('page/order.html', {
+        $.post('back/page/order.html', {
             'positions' : positions
         }, function(data){
             if(data == "Succès") {
@@ -196,12 +196,12 @@ $(function(){
                     mode: 'queue',
                     port: 'ajaxWhois',
                     type: 'GET',
-                    url: 'page/children.html',
+                    url: 'back/page/children.html',
                     data: {
                         id_parent : id
                     },
                     success: function(data){
-                        console.log(id)
+//                        console.log(id)
                         $divToLoad.html(data)
                         $divToLoad.addClass('children-loaded');
                         if (data != '') {
@@ -271,7 +271,7 @@ $(function(){
                 mode: 'queue',
                 port: 'ajaxWhois',
                 type: 'GET',
-                url: 'page/children.html',
+                url: 'back/page/children.html',
                 data: {
                     id_parent : id
                 },

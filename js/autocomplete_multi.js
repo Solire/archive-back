@@ -122,7 +122,7 @@ function htmlentities(texte) {
 //Décode une chaîne
 function html_entity_decode(texte) {
 	texte = texte.replace(/&quot;/g,'"'); // 34 22
-	texte = texte.replace(/&amp;/g,'&'); // 38 26	
+	texte = texte.replace(/&amp;/g,'&'); // 38 26
 	texte = texte.replace(/&#39;/g,"'"); // 39 27
 	texte = texte.replace(/&lt;/g,'<'); // 60 3C
 	texte = texte.replace(/&gt;/g,'>'); // 62 3E
@@ -242,8 +242,8 @@ function html_entity_decode(texte) {
 }
 
 $(function(){
-    $(".autocomplete-multi").livequery(function(){ 
-        var $input = $(this); 
+    $(".autocomplete-multi").livequery(function(){
+        var $input = $(this);
         var table = $input.parent().find("input.join-table").val();
         var prePopulate = [];
         if($input.parent().find("input.prepopulate").val() != "")
@@ -253,7 +253,7 @@ $(function(){
         var idGabPage = $("input[name='id_gab_page']").val();
         var theme = $("input.automplete_multi-theme").val();
 
-        var url = "page/autocomplete-join.html?table=" + table + "&id_field=" + idField + "&label_field=" + labelField + "&id_gab_page=" + idGabPage + "&query_filter=&no_version=1";
+        var url = "back/page/autocompletejoin.html?table=" + table + "&id_field=" + idField + "&label_field=" + labelField + "&id_gab_page=" + idGabPage + "&query_filter=&no_version=1";
         $(this).tokenInput(url, {
             theme               : theme,
             prePopulate         : prePopulate,
@@ -261,13 +261,13 @@ $(function(){
             propertyToSearch    : "label",
             minChars            : 3,
             onReady: function () {
-                
+
             },
             onDelete: function (item) {
             }
-            
+
         });
     });
 
-    
+
 });

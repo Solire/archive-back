@@ -5,7 +5,7 @@ var image, contenu, resid = null, restype, currentData;
 var oTable = null;
 
 var orderby = {
-    champ:"date_crea", 
+    champ:"date_crea",
     sens:"desc"
 };
 var orderstates = ["", "asc", "desc", ""];
@@ -19,7 +19,7 @@ var orderclasses = ["ui-icon-carat-2-n-s", "ui-icon-carat-1-n", "ui-icon-carat-1
 $(".delete-file").live("click", function (e) {
     e.preventDefault()
     var tr = $(this).parents('tr').first();
-    $.post('media/delete.html', {
+    $.post('back/media/delete.html', {
         id_media_fichier : tr.attr('id').split('_').pop()
     }, function(data){
         if(data.status == 'success'){
@@ -35,9 +35,9 @@ function reloadDatatable(data) {
     if(oTable != null) {
         oTable.fnDestroy();
     }
-   
+
     $('#foldercontent').html(data);
-                    
+
     $("#tableau").css({
         width : "100%"
     })
@@ -46,7 +46,8 @@ function reloadDatatable(data) {
         "aoColumns": [
         {
             "bSortable": false
-        },                
+        },
+        null,
         null,
         null,
         null,
@@ -79,9 +80,9 @@ function reloadDatatable(data) {
 
 
 $(function () {
-    
-    
-    
+
+
+
     /**
      * Titre trop long (scroll)
      */
@@ -97,7 +98,7 @@ $(function () {
             onstartup: 	 'pause',
             cursor: 	 'pointer'
         });
-        
+
         $(this).unbind("mouseover");
         $(this).unbind("mouseout");
         //how to play or stop scrolling animation outside the scroller...
@@ -112,9 +113,9 @@ $(function () {
         $(' .scrollingtext', this).css("left","0px");
         return this;
     }
-    
-    
-    
+
+
+
     $( ".horizontal_scroller" ).livequery(function() {
         var newHeight = 0, $this = $( this );
         $.each( $this.children(), function() {
@@ -125,15 +126,15 @@ $(function () {
 
     });
 
-    
-    
-    
-    
-    
+
+
+
+
+
     basehref = $('base').attr('href');
-    
+
     reloadDatatable("")
-	
+
     //////////////////// JSTREE ////////////////////
     tree = $("#folders").jstree({
         "plugins" : ["themes", "json_data", "ui", "crrm", "cookies", "search", "types", "hotkeys"],//, "contextmenu"
@@ -142,9 +143,9 @@ $(function () {
         },
         "json_data" : {
             "ajax" : {
-                "url" : "media/folderlist.html",
+                "url" : "back/media/folderlist.html",
                 "data" : function (n) {
-                    console.log(n)
+//                    console.log(n)
                     return {
                         "id" : n.attr ? n.attr("id").replace("node_","") : ""
                     };
@@ -172,15 +173,15 @@ $(function () {
         $.cookie('id_gab_page', resid, {
             path : '/'
         });
-            
+
         tree.jstree("open_node", data.rslt.obj);
-            
+
         if (restype == "page") {
             $('#pickfiles').fadeIn(200);
             $('#foldercontent').html('<tr><td colspan="6">chargement ... </td></tr>');
 
             $.post(
-                "media/list.html",
+                "back/media/list.html",
                 {
                     id_gab_page: resid,
                     search: $('#search').val(),
@@ -197,7 +198,7 @@ $(function () {
             reloadDatatable("")
             $('#pickfiles').fadeOut(200);
         }
-    });	
+    });
     //////////////////// FIN JSTREE ////////////////////
 
 
@@ -207,26 +208,26 @@ $(function () {
         browse_button : 'pickfiles',
         max_file_size : '1000mb',
         chunk_size : '2mb',
-        url : basehref + 'media/upload.html',
+        url : basehref + 'back/media/upload.html',
         flash_swf_url : basehref + 'back/plupload/plupload.flash.swf',
         silverlight_xap_url : basehref + 'back/plupload/plupload.silverlight.xap',
         filters : [
         {
-            title : "Image files", 
+            title : "Image files",
             extensions : "jpg,jpeg,gif,png"
         },
 
         {
-            title : "Zip files", 
+            title : "Zip files",
             extensions : "zip,rar,bz2"
         },
 
         {
-            title : "Adobe", 
+            title : "Adobe",
             extensions : "pdf,eps,psd,ai,indd"
         },
         {
-            title : "Fichiers vidéos", 
+            title : "Fichiers vidéos",
             extensions : "mp4"
         }
         ],
@@ -246,25 +247,25 @@ $(function () {
             $.each(files, function(i, file) {
                 var tr, td;
                 if(!file.error) {
-                    tr = $('<tr>');
+                    tr = $('<tr>').addClass("filenotused");
                     $('<td>', {
                         colspan : 4
                     }).html(file.name + '<div class="progressbar"></div>').appendTo(tr);
                     file.tr = tr;
                 }
             });
-            
+
             $.each(files, function(i, file) {
                 if (i==0)
                     file.tr.prependTo($('#foldercontent'));
                 else
                     file.tr.insertAfter(files[i-1].tr);
             });
-            
+
             $('.progressbar').progressbar({
                 value: 0
             });
-			
+
             up.refresh();
             up.start();
         }
@@ -281,37 +282,40 @@ $(function () {
         up.refresh(); // Reposition Flash/Silverlight
     });
 
-    uploader.bind('FileUploaded', function(up, file, info) {       
+    uploader.bind('FileUploaded', function(up, file, info) {
         $(file.tr, '.progressbar').progressbar("destroy");
-        
+
         var response = $.parseJSON(info.response);
-		
+
         if(response.status != "error") {
             var ligne = '';
-            
-            ligne += '<td><a href="' + response.path + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
-			
+
+            ligne += '<td><a href="' + response.url + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
+
             var ext = file.name.split('.').pop().toLowerCase();
             if (extensionsImage.indexOf(ext) != -1)
-                ligne += '<img class="vignette" src="' + response.minipath + '" alt="' + ext + '" /></a></td>';
+                ligne += '<img class="vignette" src="' + response.mini_url + '" alt="' + ext + '" /></a></td>';
             else
                 ligne += '<img class="vignette" src="img/back/' + ext + '.png" alt="' + ext + '" /></a></td>';
 
-			
+
             ligne += '<td>' + response.size + '</td>';
             ligne += '<td>' + response.width + '</td>';
             ligne += '<td>' + response.height + '</td>';
             ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-            ligne += '<td><div class="btn-a gradient-blue"><a href="' + response.path + '" class="previsu"><img alt="supprimer" src="img/back/voir.png" /></a></div></td>';
+            ligne += '<td>Non</td>';
+            ligne += '<td><div class="btn-a gradient-blue"><a class="previsu" href="' + response.path + '"><img src="app/back/img/voir.png" alt="Prévisualisation"></a></div>';
+            ligne += '<div class="btn-a gradient-blue"><a class="delete-file" href="#"><img src="app/back/img/white/trash_stroke_16x16.png" alt="Supprimer"></a></div></td>'
+
 
             file.tr.attr("id", "fileid_" + response.id);
             file.tr.html(ligne);
         }
     });
-	
+
     image = $(null);
-    
-	
+
+
     var previsu = $('<div>', {
         id: 'previsu'
     }).dialog({
@@ -321,7 +325,7 @@ $(function () {
             text : "Supprimer",
             click : function(){
                 var tr = image.parents('tr').first();
-                $.post('media/delete.html', {
+                $.post('back/media/delete.html', {
                     id_media_fichier : tr.attr('id').split('_').pop()
                 }, function(data){
                     if(data.status == 'success'){
@@ -354,7 +358,7 @@ $(function () {
     });
 
     $('.previsu').live('click', function(){
-        previsu.dialog('close');	
+        previsu.dialog('close');
         image = $(this);
         var link = $(this).attr('href');
         var ext = link.split('.').pop().toLowerCase();
@@ -373,18 +377,18 @@ $(function () {
                     previsu.dialog( "option" , "height" , 0 );
                     previsu.html('');
                 }
-            
+
                 previsu.dialog('open');
                 previsu.dialog('option', 'position', "center");
             });
-	
+
             return false;
         }
     });
-    
+
     $('#search').keyup(function(){
         $('#node_' + resid + ' > a').click()
     });
-        
-        
+
+
 });

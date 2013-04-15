@@ -1,0 +1,47 @@
+<table class="w640" border="0" cellpadding="0" cellspacing="0" width="640">
+        <tbody><tr>
+            <td class="w30" width="30"></td>
+            <td class="w580" width="580">
+                <repeater>
+
+                    <layout label="Text only">
+                        <table class="w580" border="0" cellpadding="0" cellspacing="0" width="580">
+                            <tbody>
+                            <tr>
+                                <td colspan="2" class="w580" width="580">
+                                    <p class="article-title" align="left">Informations de connexion à l'outil d'administration de votre site</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w580" width="580">
+                                    <p class="article-title-2" align="left">Identifiant</p>
+                                    <div class="article-content" align="left"><?php echo $this->clientData["email"]; ?></div>
+                                </td>
+                                <td class="w580" width="580">
+                                    <p class="article-title-2" align="left">Mot de passe</p>
+                                    <div class="article-content" align="left"><?php echo nl2br($this->clientData["pass"]); ?></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="w580" width="580">
+                                    <p class="article-title-2" align="left">Url d'accès à l'outil</p>
+                                    <div class="article-content" align="left">
+                                        <a href="<?php echo $this->urlAcces; ?>"><?php echo $this->urlAcces; ?></a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr><td class="w580" height="10" width="580"></td></tr>
+                        </tbody></table>
+                    </layout>
+
+
+
+
+
+
+                </repeater>
+            </td>
+            <td class="w30" width="30"></td>
+        </tr>
+    </tbody></table>

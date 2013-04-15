@@ -85,3 +85,12 @@
 .form-horizontal.form-crop .control-group {
     margin-bottom: 6px;
 }
+
+
+.switch-editor span {
+    cursor: default;
+}
+
+.switch-editor span.translucide {
+    cursor: pointer;
+}

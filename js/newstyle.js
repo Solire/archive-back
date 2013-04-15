@@ -5,8 +5,8 @@ $(function(){
 
         // The code to close the dropdown
         $('.dropdown').find('ul:visible').each(function() {
-            if($(this).parents(".dropdown:first").hasClass("btn-create-container")) {
-                $(this).parents(".dropdown:first").find(":first-child img:first").attr("src", "img/back/white/plus_alt_16x16.png")
+            if($(this).parents('.dropdown:first').hasClass('btn-create-container')) {
+                $(this).parents('.dropdown:first').find(':first-child img:first').attr('src', 'app/back/img/white/plus_alt_16x16.png')
             }
             $(this).slideUp();
         })
@@ -14,14 +14,14 @@ $(function(){
     
     $('.dropdown').click(function(e) {
         
-        if($(this).find('ul:first').is(":hidden")) {
-            if($(this).hasClass("btn-create-container")) {
-                $(":first-child", this).find("img:first").attr("src", "img/back/white/minus_alt_16x16.png")
+        if($(this).find('ul:first').is(':hidden')) {
+            if($(this).hasClass('btn-create-container')) {
+                $(':first-child', this).find('img:first').attr('src', 'app/back/img/white/minus_alt_16x16.png')
             }
             
             $('.dropdown').not(this).find('ul:visible').each(function() {
-                if($(this).parents(".dropdown:first").hasClass("btn-create-container")) {
-                    $(this).parents(".dropdown:first").find(":first-child img:first").attr("src", "img/back/white/plus_alt_16x16.png")
+                if($(this).parents('.dropdown:first').hasClass('btn-create-container')) {
+                    $(this).parents('.dropdown:first').find(':first-child img:first').attr('src', 'app/back/img/white/plus_alt_16x16.png')
                 }
                 $(this).slideUp();
             })
@@ -29,8 +29,8 @@ $(function(){
             
             $(this).find('ul:first').slideDown();
         } else {
-            if($(this).hasClass("btn-create-container")) {
-                $(":first-child", this).find("img:first").attr("src", "img/back/white/plus_alt_16x16.png")
+            if($(this).hasClass('btn-create-container')) {
+                $(':first-child', this).find('img:first').attr('src', 'app/back/img/white/plus_alt_16x16.png')
             }
             $(this).find('ul:first').slideUp();
         }   
@@ -38,14 +38,14 @@ $(function(){
         
     })
     
-    $(".dropdown ul li").click(function(event){
+    $('.dropdown ul li').click(function(event){
         event.stopPropagation();
     })
     
     
-    $("#breadcrumbs").stickyPanel({
+    $('#breadcrumbs').stickyPanel({
         topPadding: 40,
-        afterDetachCSSClass: "breadcrumbs_sticky",
+        afterDetachCSSClass: 'breadcrumbs_sticky',
         savePanelSpace: true
     }); 
 
@@ -162,3 +162,4 @@ $(function(){
         collapsedWidth:   10
     };
 })(jQuery);
+

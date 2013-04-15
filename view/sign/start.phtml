@@ -1,5 +1,11 @@
 <!doctype html public "-//W3C//DTD HTML 4.0//EN">
+<!--[if !IE]><!-->
 <html>
+    <!--<![endif]-->
+    <!--[if IE]>
+    <html class="error">
+    <![endif]-->
+
     <head>
         <title>Connexion</title>
         <meta name="ROBOTS" content="noindex, nofollow" />
@@ -8,16 +14,30 @@
         <base href="<?php echo $this->url; ?>" />
 
         <link type="text/css" rel="stylesheet" media="screen" href="http://www.solire.fr/style_solire_fw/css/back/newstyle-1.1.css" />
-        <link rel="stylesheet" href="css/sticky.css" type="text/css" media="screen" title="" charset="utf-8" />
+        <link rel="stylesheet" href="app/back/css/sticky.css" type="text/css" media="screen" title="" charset="utf-8" />
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
         <style>
+            .error form {
+                display: none;
+            }
 
+            .error-message {
+                display: none;
+            }
+
+            .error .error-message {
+                display: block;
+            }
             @font-face {
                 font-family: 'FontomasCustomRegular';
-                src: url('font/fontomas-webfont.eot');
-                src: url('font/fontomas-webfont.eot?#iefix') format('embedded-opentype'),
-                    url('font/fontomas-webfont.woff') format('woff'),
-                    url('font/fontomas-webfont.ttf') format('truetype'),
-                    url('font/fontomas-webfont.svg#FontomasCustomRegular') format('svg');
+                src: url('app/back/font/fontomas-webfont.eot');
+                src: url('app/back/font/fontomas-webfont.eot?#iefix') format('embedded-opentype'),
+                    url('app/back/font/fontomas-webfont.woff') format('woff'),
+                    url('app/back/font/fontomas-webfont.ttf') format('truetype'),
+                    url('app/back/font/fontomas-webfont.svg#FontomasCustomRegular') format('svg');
                 font-weight: normal;
                 font-style: normal;
             }
@@ -77,12 +97,12 @@
 
         </style>
         <?php echo $this->javascript; ?>
-        <script type="text/javascript" src="js/jquery/vibrate.js"></script>
+        <script type="text/javascript" src="app/back/js/jquery/vibrate.js"></script>
         <script type="text/javascript">
 
             $(document).ready(function() {
 
-                $("#sign-in").submit( function(e) {
+                $("#sign-in").submit(function(e) {
                     e.preventDefault()
                     // configurations for the buzzing effect. Be careful not to make it too annoying!
                     var conf = {
@@ -94,10 +114,10 @@
                     var tthis = $(this);
                     var ok = true;
                     var formu = tthis;
-                    $.post(formu.attr('action'), formu.serialize(), function(data){
-                        if(data.success) {
+                    $.post(formu.attr('action'), formu.serialize(), function(data) {
+                        if (data.success) {
                             $.sticky(data.message, "success")
-                            $(formu).delay(800).queue(function(){
+                            $(formu).delay(800).queue(function() {
 //                                $("#sign-in").unbind("submit")
 //                                formu.submit();
                                 document.location.href = formu.attr('action');
@@ -113,7 +133,7 @@
                         }
 
 
-                    }, 'json' );
+                    }, 'json');
 
 
 
@@ -127,8 +147,9 @@
 
         </script>
         <script type="text/javascript">
-            var keypressaction = function(event){
-                if(event.keyCode == 13) $('.formsubmit-signin').trigger('click');
+            var keypressaction = function(event) {
+                if (event.keyCode == 13)
+                    $('.formsubmit-signin').trigger('click');
             }
 
             $(document).bind('keypress', keypressaction);
@@ -137,7 +158,18 @@
     <body style="background:#efefef;">
     <section>
 
-        <article style="margin-top:15%; margin-right:auto; margin-left:auto; width:356px; padding:20px;box-shadow:3px 2px 5px #BFBFBF">
+        <article style="position: relative;margin-top:15%; margin-right:auto; margin-left:auto; width:356px; padding:20px;box-shadow:3px 2px 5px #BFBFBF">
+            <div class="error-message">
+                <b>Module d'administration</b>
+                <br />
+                <br />
+                <p>
+                    Pour votre confort et votre sécurité, merci de télécharger un navigateur récent et compatible :
+                    <a href="http://www.mozilla-europe.org/fr/" target="_blank">Firefox</a>, 
+                    <a href="http://www.google.com/chrome" target="_blank">Google Chrome</a> 
+                </p>
+            </div>
+
             <form id="sign-in" method="post" action="<?php echo $this->action; ?>">
                 <fieldset>
                     <legend><b>Module d'administration</b></legend>
@@ -153,9 +185,15 @@
                     </div>
 
                     <div class="">
-                            <button class="btn-a gradient-green" type="submit">Connexion</button>
+                        <button class="btn-a gradient-green" type="submit">Connexion</button>
+					</div>			
+						
                 </fieldset>
             </form>
+
+
+                            <p style="color:#888; float:right; font-size:10px; margin-top:10px;">Outil de gestion de contenu développé par <img src="app/back/img/logo-solire-fw.png" title="Solire : agence web lyon" style="float: right; margin: -2px 0 0px 4px ; height:20px;"/></p>		
+							<div style="clear:both;"></div>
         </article>
     </section>
 </body>

@@ -1,5 +1,5 @@
 $(function() {
-    
+
     $(".visible-lang").live("click", function() {
         var $this = $(this);
         var value = $(this).val().split("|")
@@ -7,7 +7,7 @@ $(function() {
         var id_version = parseInt(value[1]);
         var checked = $this.is(':checked');
         $.post(
-            'page/visible.html',
+            'back/page/visible.html',
             {
                 id_gab_page : id_gab_page,
                 id_version : id_version,
@@ -20,7 +20,7 @@ $(function() {
                         type:"error"
                     });
                 }
-                    
+
                 else {
                     var $otherPageBloc = $('.visible-lang-' + id_gab_page + '-' + id_version).not($this)
                     $otherPageBloc.attr('checked', checked);
@@ -44,9 +44,9 @@ $(function() {
             },
             'json'
             );
-    }) 
-    
-    
+    })
+
+
     /*
      * Moteur de recherche Autocompletion sur les contenus
      */
@@ -56,12 +56,12 @@ $(function() {
             if ($(this).parents(".nav-search:first").length == 0) {
                 appendTo = null
             }
-            
+
             $(this).autocomplete({
                 source: function( request, response ) {
-                
-                $.getJSON( 
-                    "page/live-search.html", 
+
+                $.getJSON(
+                    "back/page/livesearch.html",
                     {
                     term : request.term
                     }, function( data, status, xhr ) {
@@ -70,7 +70,7 @@ $(function() {
                 },
                 open: function() {
                 $(this).data("autocomplete").menu.element.hide().slideDown(150);
-                },  
+                },
                 focus: function() {
                 return false
                 },
@@ -78,10 +78,10 @@ $(function() {
                 appendTo: appendTo,
                 select: function(e, ui) {
                 var baseHref = $("base").attr("href");
-                window.location.href = baseHref + ui.item.url;
+                window.location.href = baseHref + "back/" + ui.item.url;
                 return false;
                 }
-                
+
                 }).data( "autocomplete" )._renderItem = function( ul, item ) {
                 return $( "<li></li>" )
                 .data( "item.autocomplete", item )
@@ -89,9 +89,9 @@ $(function() {
                 .appendTo( ul );
             };
         })
-        
-    
-    
+
+
+
 
 });
 

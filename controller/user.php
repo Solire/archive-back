@@ -8,7 +8,7 @@
  * @license    Solire http://www.solire.fr/
  */
 
-namespace Slrfw\App\Back\Controller;
+namespace App\Back\Controller;
 
 /**
  * Gestion du profile utilisateur

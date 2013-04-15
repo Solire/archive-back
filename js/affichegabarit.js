@@ -5,46 +5,28 @@ var basehref = '';
 
 var initTinyMCE = function () {
     tinyMCE.init({
-        mode: "none",
-        theme : "advanced",
-        //      valid_elements : "a[href],em/i,strike,u,strong/b,div[align],br,#p[align],-ol[type|compact],-ul[type|compact],-li",
-        language : "fr",
-        plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
-        width:"500px",
-        height:"290px",
-        //      height:hauteur,
-
-        // ne transforme plus les en html_entities
-        entity_encoding : "raw",
-
-        //      // Sauts de ligne en <br/>
-        //      forced_root_block : false,
-        //      force_br_newlines : true,
-        //      force_p_newlines : false,
-
-        // Theme options
-        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink,image",
-        theme_advanced_buttons2 : "",
-        theme_advanced_buttons3 : "",
-
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_toolbar_align : "left",
+        mode: 'none',
+        theme : 'advanced',
+        language : 'fr',
+        plugins : 'safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template',
+        width:'500px',
+        height:'290px',
+        entity_encoding : 'raw',
+        theme_advanced_buttons1 : 'pasteword,|,bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink',
+        theme_advanced_buttons2 : '',
+        theme_advanced_buttons3 : '',
+        theme_advanced_toolbar_location : 'top',
+        theme_advanced_toolbar_align : 'left',
         theme_advanced_resizing : true,
-
-        theme_advanced_blockformats : "h1,h2,h3,h4,h5,h6",
-
-        //        external_image_list_url : "../media/autocomplete.html?tinyMCE"
-
-
+        theme_advanced_blockformats : 'h1,h2,h3,h4,h5,h6',
         relative_urls : true,
-        //        remove_script_host : false,
         convert_urls : true,
-        document_base_url : "../../../../",
-        content_css : "css/back/style-tinymce.css",
-        external_image_list_url : "back/media/autocomplete.html?tinyMCE",
-        external_link_list_url : "back/page/autocomplete-link.html"
+        document_base_url : '../../../../',
+        content_css : 'app/back/css/style-tinymce.css',
+        external_image_list_url : 'app/back/media/autocomplete.html?tinyMCE',
+        external_link_list_url : 'app/back/page/autocomplete-link.html'
     });
-}
+};
 
 initTinyMCE();
 
@@ -117,7 +99,7 @@ $(function(){
     });
 
     $(".form-crop-submit").bind("click", function() {
-        var action = $(".form-crop").attr("action");
+        var action = "back/" + $(".form-crop").attr("action");
         var data = $(".form-crop").serialize();
         $.post(action, data, function(response) {
             $('#modalCrop').modal("hide");
@@ -273,91 +255,14 @@ $(function(){
         return this;
     };
 
-    var tinyMethods = {
-        disable : function(){
-            //var base = this;
-            $('#tempId').attr('id','');
-            if (this.$el.attr('id') == '') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            tinyMCE.execCommand('mceFocus', false, tinyId);
-            tinyMCE.execCommand('mceRemoveControl', false, tinyId);
-            tinyMCE.triggerSave(true, true);
-        },
-        enable : function(){
-            //var base = this;
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-            tinyMCE.execCommand('mceAddControl',false,tinyId);
-        },
-        change : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(tinyMCE.getInstanceById(tinyId))
-                tinyMethods['disable'].apply(this);
-            else
-                tinyMethods['enable'].apply(this);
-
-        //			tinyMCE.execCommand('mceToggleEditor',false,tinyId);
-        },
-        disableOnly : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(tinyMCE.getInstanceById(tinyId)){
-                tinyMethods['disable'].apply(this);
-                this.$el.addClass('tinymce-tmp-disabled');
-            }
-        },
-        enableOnly : function(){
-            $('#tempId').attr('id','');
-            if(this.$el.attr('id')=='') {
-                this.$el.attr('id', 'tempId');
-            }
-            var tinyId = this.$el.attr('id');
-
-            if(!tinyMCE.getInstanceById(tinyId))
-                tinyMethods['enable'].apply(this);
-
-            this.$el.removeClass('tinymce-tmp-disabled');
-        }
-    };
-
-    $.tinymce = function(method, el){
-        var base=this;
-        base.$el = $(el);
-        base.el = el;
-
-        return tinyMethods[method].apply(this);
-    };
-
-    $.fn.tinymce = function(method){
-        var tab = [];
-
-        this.each(function(){
-            tab.push(new $.tinymce(method, this));
-        });
-        return tab;
-    };
-
-    $('textarea.tiny').tinymce('enable');
+    $('textarea.tiny').tinymce('enableOnly');
 
     $('label > .switch-editor').live('click', function(e){
         e.preventDefault();
 
-        if($(this).parent().next().is('textarea')){
+        var textarea = $(this).parent().next();
+
+        if(textarea.is('textarea')){
             if($(this).children().eq(0).hasClass('translucide')) {
                 $(this).children().eq(0).removeClass('translucide');
                 $(this).children().eq(1).addClass('translucide');
@@ -367,19 +272,15 @@ $(function(){
                 $(this).children().eq(1).removeClass('translucide');
             }
 
-            $(this).parent().next().tinymce('change');
+            textarea.tinymce('change');
         }
     });
 
-    //// GESTION DU TRI
     $('.sort-box').each(function(){
         $(this).sortable({
             placeholder: 'empty',
             items: '.sort-elmt',
             handle: '.sort-move',
-            deactivate: function() {
-            //callback();
-            },
             start: function(e, ui){
                 $('textarea', ui.item).tinymce('disableOnly');
             },
@@ -399,7 +300,7 @@ $(function(){
         clone.insertBefore($this);
         clone.find("legend").html("Nouvel élément");
         $this.parents('.sort-box').sortable('refresh');
-        $this.siblings('.sort-elmt').find('.delBloc').removeClass('translucide');
+        $this.siblings('.sort-elmt').find('.delBloc').show();
         $this.find('.form-date').datepicker($.datepicker.regional['fr']);
 
         initAutocompletePat();
@@ -464,7 +365,7 @@ $(function(){
 
                 sort_elmt.slideUp('fast', function(){
                     if ($(this).siblings('.sort-elmt').length < 2)
-                        $(this).siblings('.sort-elmt').find('.delBloc').addClass('translucide');
+                        $(this).siblings('.sort-elmt').find('.delBloc').hide();
                     $(this).remove();
                     sortpar.sortable('refresh');
                 });
@@ -486,9 +387,8 @@ $(function(){
         id: 'previsu'
     }).dialog({
         title : "Prévisualisation",
-
         autoOpen: false,
-        close: function(event, ui){
+        close: function(){
             image = $(null);
         },
         height: "auto",
@@ -500,16 +400,11 @@ $(function(){
         "max-width" : $(window).width()-180
     });
 
-
-    ///////////////////////////////
-    //// GESTION DES EVENMENTS ////
-
     $('.changevisible').live('click', function(){
         if($(this).is(':checked')){
             $(this).next().val(1);
             $(this).parent().first().next().removeClass('translucide');
-        }
-        else{
+        } else {
             $(this).next().val(0);
             $(this).parent().first().next().addClass('translucide');
         }
@@ -539,21 +434,20 @@ $(function(){
         }
     });
 
-
-    $(".expand").live("click", function(e) {
+    $('.expand').live('click', function(e) {
         e.preventDefault();
-        $(this).parent().nextAll("fieldset").each(function() {
-            if($(this).find("div:first").is(":hidden")) {
-                $(this).find("legend:first").click();
+        $(this).parent().nextAll('fieldset').each(function() {
+            if ($('div', this).first().is(':hidden')) {
+                $('legend', this).first().click();
             }
         });
     });
 
-    $(".collapse").live("click", function(e) {
+    $('.collapse').live('click', function(e) {
         e.preventDefault();
-        $(this).parent().nextAll("fieldset").each(function() {
-            if($(this).find("div:first").is(":visible")) {
-                $(this).find("legend:first").click();
+        $(this).parent().nextAll('fieldset').each(function() {
+            if ($('div', this).first().is(":visible")) {
+                $('legend', this).first().click();
             }
         });
     });
@@ -588,7 +482,7 @@ $(function(){
 
     var openingLegend = [];
 
-    $('legend').bind('click', function(e){
+    $('legend').live('click', function(e){
         e.preventDefault();
 
         var indexLegend = $(this).index("legend");
@@ -621,7 +515,7 @@ $(function(){
                         data.extensions = tthis.siblings('.extensions').val();
 
                     $.getJSON(
-                        'media/autocomplete.html',
+                        'back/media/autocomplete.html',
                         data,
                         function( data, status, xhr ) {
                             response( data );
@@ -745,7 +639,7 @@ $(function(){
         browse_button : 'pickfiles',
         max_file_size : '1000mb',
         chunk_size : '2mb',
-        url : basehref + 'media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
+        url : basehref + 'back/media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
         flash_swf_url : basehref + 'js/admin/plupload/plupload.flash.swf',
         silverlight_xap_url : basehref + 'js/admin/plupload/plupload.silverlight.xap',
         filters : [
@@ -844,18 +738,18 @@ $(function(){
 
                     var ligne = '';
 
-                    ligne += '<td><a href="' + response.path + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
+                    ligne += '<td><a href="' + response.url + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
 
                     var ext = file.name.split('.').pop().toLowerCase();
                     if ($.inArray(ext, extensionsImage) != -1) {
-                        ligne += '<img class="vignette img-polaroid" src="' + response.minipath + '" alt="' + ext + '" /></a></td>';
+                        ligne += '<img class="vignette img-polaroid" src="' + response.mini_url + '" alt="' + ext + '" /></a></td>';
                     } else {
-                        ligne += '<img class="vignette" src="img/back/filetype/' + ext + '.png" alt="' + ext + '" /></a></td>';
+                        ligne += '<img class="vignette" src="app/back/img/filetype/' + ext + '.png" alt="' + ext + '" /></a></td>';
                     }
 
                     ligne += '<td>' + response.size + '</td>';
                     ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-                    ligne += '<td><div class="btn-a gradient-blue"><a target="_blank" href="' + response.path + '" class="previsu"><img alt="Voir" src="img/back/voir.png" /></a></a></td>';
+                    ligne += '<td><div class="btn-a gradient-blue"><a target="_blank" href="' + response.path + '" class="previsu"><img alt="Voir" src="app/back/img/voir.png" /></a></a></td>';
 
                     file.tr.attr("id", "fileid_" + response.id);
                     file.tr.html(ligne);
@@ -882,7 +776,7 @@ $(function(){
 
     var uploader_popup = $('<div>', {
         id : 'uploader_popup'
-    }).load('media/popuplistefichiers.html?id_gab_page=' + $('[name=id_gab_page]').val(), function(){
+    }).load('back/media/popuplistefichiers.html?id_gab_page=' + $('[name=id_gab_page]').val(), function(){
         $(this).dialog({
             title : "Fichiers",
             autoOpen : false,
@@ -914,7 +808,7 @@ $(function(){
             checked = $this.is(':checked');
 
         $.post(
-            'page/visible.html',
+            'back/page/visible.html',
             {
                 id_gab_page : id_gab_page,
                 visible     : checked ? 1 : 0
@@ -958,7 +852,7 @@ $(function(){
             var id = $(this).attr("id").split("_");
             var name = id[0];
             var contentRule = [];
-            var content = '<img style="float:left;" src="img/back/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
+            var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
             if($(this).hasClass("form-oblig"))
                 contentRule.push('<span style="color:red">Obligatoire</span>');
             else {
@@ -991,7 +885,7 @@ $(function(){
             var id = $(this).attr("id").split("_");
             var name = id[0];
             var contentRule = [];
-            var content = '<img style="float:left;" src="img/back/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
+            var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
             if($(this).siblings('textarea').hasClass("form-oblig"))
                 contentRule.push('<span style="color:red">Obligatoire</span>');
             else {

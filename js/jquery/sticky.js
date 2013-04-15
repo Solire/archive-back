@@ -46,7 +46,7 @@ if(!$("body").find(".sticky-queue").html()){
     }
     if(display){
     $(".sticky-queue").prepend('<div class="sticky border-'+position+' sticky-'+settings.type+'" id="'+uniqID+'"></div>');
-    $("#"+uniqID).append('<img src="css/back/close.png" class="sticky-close" rel="'+uniqID+'" title="Close" />');
+    $("#"+uniqID).append('<img src="app/back/css/close.png" class="sticky-close" rel="'+uniqID+'" title="Close" />');
     $("#"+uniqID).append('<div class="sticky-note" rel="'+uniqID+'">'+note+"</div>");
     var height=$("#"+uniqID).height();
     $("#"+uniqID).css("height",height);
