@@ -195,13 +195,22 @@
     }
 ?>
 <?php
-    if (count($this->menuPage) > 1) {
+    $countConfig = 0;
+    foreach ($this->menuPage as $value) {
+        if ($value['display'] === true) {
+            $countConfig++;
+        }
+    }
+    if ($countConfig > 1) {
 ?>
                                     <li class="dropdown<?php echo $this->controller == "back/page" ? ' gradient-blue text-light-white' : ''; ?>">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Pages <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
 <?php
         foreach ($this->menuPage as $indexMenuPage => $mPage) {
+            if ($value['display'] !== true) {
+                continue;
+            }
             $active = "";
             if (isset($_GET["c"]) && $_GET["c"] == $indexMenuPage) {
                 $active = "active";
