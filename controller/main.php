@@ -240,6 +240,7 @@ class Main extends \Slrfw\Controller
         foreach ($this->_configPageModule as $configPage) {
             $this->_view->menuPage[] = array(
                 'label' => $configPage['label'],
+                'display' => $configPage['display'],
             );
         }
 
