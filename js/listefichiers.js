@@ -19,15 +19,17 @@ var orderclasses = ["ui-icon-carat-2-n-s", "ui-icon-carat-1-n", "ui-icon-carat-1
 $(".delete-file").live("click", function (e) {
     e.preventDefault()
     var tr = $(this).parents('tr').first();
-    $.post('back/media/delete.html', {
-        id_media_fichier : tr.attr('id').split('_').pop()
-    }, function(data){
-        if(data.status == 'success'){
-            tr.fadeOut(500, function(){
-                $(this).remove()
-            });
-        }
-    },'json');
+    if (confirm("Voulez-vous vraiment supprimmer ce fichier ? ")) {
+        $.post('back/media/delete.html', {
+            id_media_fichier : tr.attr('id').split('_').pop()
+        }, function(data){
+            if(data.status == 'success'){
+                tr.fadeOut(500, function(){
+                    $(this).remove()
+                });
+            }
+        },'json');
+    }
 })
 
 
