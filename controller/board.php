@@ -132,6 +132,8 @@ class Board extends Main
     /**
      * Génération du datatable des pages crées / éditées / supprimées
      *
+     * @var string $opt Option qui s'ajoute au nom du fichier de configuration
+     *
      * @return void
      */
     private function boardDatatable($opt = null)
@@ -142,10 +144,11 @@ class Board extends Main
             $configName = 'board-' . $opt;
         }
 
-        $frontController = \Slrfw\FrontController::getInstance();
-        $configPath = $frontController::search('config/datatable/' . $configName . '.cfg.php');
+        $configPath = \Slrfw\FrontController::search(
+            'config/datatable/' . $configName . '.cfg.php'
+        );
 
-        $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
+        $datatableClassName = '\\App\\Back\\Datatable\\Board';
         /** @todo Chargement des fichiers des differentes app */
         try {
             $datatable = new $datatableClassName(
