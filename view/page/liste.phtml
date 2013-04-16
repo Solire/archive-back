@@ -76,7 +76,9 @@
                                     <div class="sort-box" style="display:none;"></div>
                                         <div style="position: relative" class="line cat-modif">
 <?php
-                if ($page->getMeta("id_gabarit") == 1) {
+                if ($page->getMeta("id_gabarit") == 1
+                    || $page->getMeta("id_gabarit") == 2
+                ) {
 ?>
                                             <div style="float:left;">
                                                 <div class="btn-a gradient-blue" ><a title="Modifier '<?php echo $page->getMeta('titre'); ?>'" href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_16x16.png" /></a></div>

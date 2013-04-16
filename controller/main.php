@@ -30,14 +30,14 @@ class Main extends \Slrfw\Controller
 
     /**
      * Api en cours
-     * 
+     *
      * @var array
      */
     protected $_api;
 
     /**
      * Manager des requetes liées aux pages
-     * 
+     *
      * @var \Slrfw\Model\gabaritManager
      */
     protected $_gabaritManager = null;
@@ -87,7 +87,7 @@ class Main extends \Slrfw\Controller
         $this->_javascript->addLibrary('back/js/main.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.cookie.js');
         $this->_javascript->addLibrary('back/js/jquery/sticky.js');
-        $this->_javascript->addLibrary("back/js/jquery/jquery.livequery.min.js");
+        $this->_javascript->addLibrary('back/js/jquery/jquery.livequery.min.js');
 
         $this->_javascript->addLibrary('back/js/jquery/jquery.stickyPanel.min.js');
 
@@ -202,8 +202,8 @@ class Main extends \Slrfw\Controller
          *  = possibilité de voir le site sans tenir compte de la visibilité
          * Alors On le redirige vers le front
          */
-        if ($this->_utilisateur->get("niveau") == "voyeur") {
-            if($_GET['controller'] . "/" . $_GET['action'] != 'back/sign/signout') {
+        if ($this->_utilisateur->get('niveau') == 'voyeur') {
+            if ($_GET['controller'] . '/' . $_GET['action'] != 'back/sign/signout') {
                 $this->simpleRedirect('../', true);
             }
         }
@@ -232,13 +232,15 @@ class Main extends \Slrfw\Controller
         /**
          * On recupere la configuration du module pages (Menu + liste)
          */
-        $configMain = \Slrfw\Registry::get('mainconfig');
-        include $configMain->get('dirs', 'back') . 'page.cfg.php';
+        $path = \Slrfw\FrontController::search('config/page.cfg.php');
+        include $path;
         $this->_configPageModule = $config;
+        unset($path, $config);
         $this->_view->menuPage = array();
         foreach ($this->_configPageModule as $configPage) {
             $this->_view->menuPage[] = array(
                 'label' => $configPage['label'],
+                'display' => $configPage['display'],
             );
         }
 

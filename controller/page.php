@@ -1,8 +1,23 @@
 <?php
+/**
+ * Gestionnaire de pages
+ *
+ * @package    Back
+ * @subpackage Gabarit
+ * @author     dev <dev@solire.fr>
+ * @license    Solire http://www.solire.fr/
+ */
 
 namespace App\Back\Controller;
 
-
+/**
+ * Gestionnaire de pages
+ *
+ * @package    Back
+ * @subpackage Gabarit
+ * @author     dev <dev@solire.fr>
+ * @license    Solire http://www.solire.fr/
+ */
 class Page extends Main
 {
     /**
@@ -37,11 +52,39 @@ class Page extends Main
                . 'FROM `gab_gabarit` '
                . 'WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
 
-        //Si on a un fichier de conf
-        $indexConfig = isset($_GET['c']) && intval($_GET['c']) ? intval($_GET['c']) : 0;
-        $currentConfigPageModule = $this->_configPageModule[$indexConfig];
+        /** Si on veut n'afficher que certains gabarits **/
+        if (isset($_GET['c']) && intval($_GET['c'])) {
+            $indexConfig = intval($_GET['c']);
+        } else {
+            $indexConfig = 0;
+        }
 
-        $gabaritsList = $currentConfigPageModule['gabarits'];
+        /** Récupération de la liste de la page et des droits utilisateurs **/
+        $currentConfigPageModule = $this->_configPageModule[$indexConfig];
+        $gabaritsListPage = $currentConfigPageModule['gabarits'];
+        $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+        $gabaritsListUser = $configPageModule['gabarits'];
+        unset($configPageModule);
+
+        /** Génération de la liste des gabarits à montrer **/
+        if ($gabaritsListPage == '*') {
+            $gabaritsList = $gabaritsListUser;
+        } else {
+            if ($gabaritsListUser == '*') {
+                $gabaritsList = $gabaritsListPage;
+            } else {
+                $gabaritsList = array();
+                foreach ($gabaritsListPage as $gabId) {
+                    if (in_array($gabId, $gabaritsListUser)) {
+                        $gabaritsList[] = $gabId;
+                    }
+                    unset($gabId);
+                }
+            }
+        }
+        unset($gabaritsListPage, $gabaritsListUser);
+
+
 
         //Si on liste que certains gabarits
         if ($gabaritsList != '*' && count($gabaritsList) > 0) {
@@ -50,21 +93,31 @@ class Page extends Main
             if (isset($_GET['gabaritByGroup'])) {
                 $this->_view->gabaritByGroup = true;
                 foreach ($gabaritsList as $gabariId) {
-                    $this->_view->pagesGroup[$gabariId] = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], 0, $gabariId);
+                    $this->_view->pagesGroup[$gabariId] = $this->_gabaritManager->getList(
+                        BACK_ID_VERSION, $this->_api['id'], 0, $gabariId
+                    );
                 }
             } else {
-                $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], 0, $gabaritsList);
+                $this->_pages = $this->_gabaritManager->getList(
+                    BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
+                );
                 $this->_view->pagesGroup[0] = 1;
             }
         } else {
-            $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api["id"], 0);
+            $this->_pages = $this->_gabaritManager->getList(
+                BACK_ID_VERSION, $this->_api['id'], 0
+            );
             $this->_view->pagesGroup[0] = 1;
         }
 
-        $this->_gabarits = $this->_db->query($query)->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+        $this->_gabarits = $this->_db->query($query)->fetchAll(
+            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
+        );
         $this->getButton($currentConfigPageModule);
 
-        $this->_view->gabarits = $this->_db->query($query)->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+        $this->_view->gabarits = $this->_db->query($query)->fetchAll(
+            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
+        );
         $this->_view->pages = $this->_pages;
 
         $this->_view->breadCrumbs[] = array(
@@ -79,9 +132,9 @@ class Page extends Main
      */
     public function childrenAction()
     {
-        $this->_view->main(FALSE);
+        $this->_view->main(false);
         $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION,
-            $this->_api["id"], $_REQUEST['id_parent']);
+            $this->_api['id'], $_REQUEST['id_parent']);
 
         if (count($this->_pages) == 0) {
             exit();
@@ -91,8 +144,10 @@ class Page extends Main
 
         $query  = 'SELECT `gab_gabarit`.id, `gab_gabarit`.*'
                 . ' FROM `gab_gabarit`'
-                . ' WHERE `gab_gabarit`.`id_api` = ' . $this->_api["id"];
-        $this->_gabarits = $this->_db->query($query)->fetchAll(\PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
+                . ' WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
+        $this->_gabarits = $this->_db->query($query)->fetchAll(
+            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
+        );
         $this->_view->gabarits = $this->_gabarits;
     }
 
@@ -133,7 +188,6 @@ class Page extends Main
         $id_gab_page = isset($_GET['id_gab_page']) ? $_GET['id_gab_page'] : 0;
         $id_gabarit = isset($_GET['id_gabarit']) ? $_GET['id_gabarit'] : 1;
 
-//        $this->_view->upload_path = $this->_mainConfig->get('upload', 'path');
         $this->_view->action = 'liste';
 
         $this->_form            = '';
@@ -155,7 +209,7 @@ class Page extends Main
 
                 $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
                 $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
-                
+
                 $query  = 'SELECT * '
                         . 'FROM `main_element_commun_author_google` '
                         . 'WHERE `id_version` = ' . $id_version;
@@ -164,11 +218,11 @@ class Page extends Main
         } else {
             $query = 'SELECT * FROM `version` WHERE `id` = ' . BACK_ID_VERSION;
             $this->_versions = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
-            
+
             $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, 0, $id_gabarit);
             $this->_pages[BACK_ID_VERSION] = $page;
             $this->_redirections[BACK_ID_VERSION] = array();
-            
+
             $query  = 'SELECT * '
                     . 'FROM `main_element_commun_author_google` '
                     . 'WHERE `id_version` = ' . BACK_ID_VERSION;
@@ -228,8 +282,8 @@ class Page extends Main
      */
     public function saveAction()
     {
-        $this->_view->main(FALSE);
-        $this->_view->enable(FALSE);
+        $this->_view->main(false);
+        $this->_view->enable(false);
 
         if (isset($_GET["edit-front"]) && $_GET["edit-front"] == 1) {
 
@@ -355,8 +409,8 @@ class Page extends Main
      */
     public function autocompleteAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->main(false);
 
         $json = array();
         $dejaLiees = is_array($_REQUEST['deja']) ? $_REQUEST['deja'] : array();
@@ -379,8 +433,8 @@ class Page extends Main
      */
     public function autocompleteJoinAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->main(false);
 
         $json = array();
         $term = $_REQUEST["term"];
@@ -426,8 +480,8 @@ class Page extends Main
      */
     public function autocompleteOldLinksAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->main(false);
 
         $json = array();
         $term = $_REQUEST["term"];
@@ -450,8 +504,8 @@ class Page extends Main
      */
     public function liveSearchAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->main(false);
 
         $pages = array();
 
@@ -565,7 +619,7 @@ class Page extends Main
      */
     public function visibleAction()
     {
-        $this->_view->enable(FALSE);
+        $this->_view->enable(false);
 
         $json = array('status' => 'error');
 
@@ -597,12 +651,12 @@ class Page extends Main
      */
     public function deleteAction()
     {
-        $this->_view->enable(FALSE);
+        $this->_view->enable(false);
 
         $json = array('status' => "error");
 
         if (is_numeric($_POST['id_gab_page'])) {
-            if ($this->_gabaritManager->delete($id_gab_page)) {
+            if ($this->_gabaritManager->delete($_POST['id_gab_page'])) {
                 $this->_log->logThis("Suppression de page réussie", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page']);
                 $json['status'] = "success";
             } else {
@@ -621,8 +675,8 @@ class Page extends Main
     {
         $ok = true;
 
-        $this->_view->main(FALSE);
-        $this->_view->enable(FALSE);
+        $this->_view->main(false);
+        $this->_view->enable(false);
 
         $prepStmt = $this->_db->prepare("UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id");
         foreach ($_POST['positions'] as $id => $ordre) {
@@ -642,7 +696,7 @@ class Page extends Main
 
         echo $ok ? 'Succès' : 'Echec';
 
-        return FALSE;
+        return false;
     }
 
     protected function getButton($currentConfigPageModule)
