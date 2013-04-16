@@ -1,12 +1,12 @@
 <?php
 /**
- * 
+ *
  */
 
 namespace App\Back\Controller;
 
 /**
- * 
+ *
  */
 class Board extends Main
 {
@@ -25,13 +25,20 @@ class Board extends Main
 
     /**
      * Affichage du tableau de bord
-     * 
+     *
      * @return void
      */
     public function startAction() {
         $this->_view->action = 'board';
 
-        $this->_boardDatatable();
+        /** Chargement du datatable en fonction des droits **/
+        $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+        $gabaritsListUser = $configPageModule['gabarits'];
+        if ($gabaritsListUser == '*') {
+            $this->boardDatatable();
+        } else {
+            $this->boardDatatable($this->_utilisateur->gabaritNiveau);
+        }
 
         $idUtilisateur = $this->_utilisateur->id;
         $query  = 'SELECT board_state.cookie'
@@ -75,11 +82,11 @@ class Board extends Main
             $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION,
                 $this->_api['id'], false, $gabarit['id'], false, 'date_crea',
                 'desc', 0, 3);
-            
+
             if (count($pagesMeta) == 0) {
                 continue;
             }
-            
+
             $pages[$gabarit['id']]['gabarit'] = $gabarit;
             foreach ($pagesMeta as $pageMeta) {
                 $page = $this->_gabaritManager->getPage(BACK_ID_VERSION,
@@ -90,11 +97,11 @@ class Board extends Main
             $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION,
                 $this->_api['id'], false, $gabarit['id'], false, 'date_modif',
                 'desc', 0, 3);
-            
+
             if (count($pagesMeta) == 0) {
                 continue;
             }
-            
+
             if ($gabarit['id_parent'] == $lastGabaritId) {
                 $indexColor--;
             }
@@ -104,7 +111,7 @@ class Board extends Main
             if (!isset($colorWidget[$indexColor])) {
                 $indexColor = 0;
             }
-            
+
             $pages[$gabarit['id']]['color'] = $colorWidget[$indexColor];
 
             $indexColor++;
@@ -124,16 +131,24 @@ class Board extends Main
 
     /**
      * Génération du datatable des pages crées / éditées / supprimées
-     * 
+     *
+     * @var string $opt Option qui s'ajoute au nom du fichier de configuration
+     *
      * @return void
      */
-    private function _boardDatatable() {
-        $configName = "board";
-        
-        $frontController = \Slrfw\FrontController::getInstance();
-        $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
+    private function boardDatatable($opt = null)
+    {
+        if (empty($opt)) {
+            $configName = 'board';
+        } else {
+            $configName = 'board-' . $opt;
+        }
 
-        $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
+        $configPath = \Slrfw\FrontController::search(
+            'config/datatable/' . $configName . '.cfg.php'
+        );
+
+        $datatableClassName = '\\App\\Back\\Datatable\\Board';
         /** @todo Chargement des fichiers des differentes app */
         try {
             $datatable = new $datatableClassName(
@@ -170,15 +185,15 @@ class Board extends Main
             echo $datatable;
             exit();
         }
-        
+
         $this->_view->datatableRender = $datatable;
     }
 
     /**
      * Sauvegarde des widgets tableau de bord
-     * 
+     *
      * @deprecated since v2.0
-     * 
+     *
      * @return void
      */
     public function saveStateAction() {
@@ -195,9 +210,9 @@ class Board extends Main
 
     /**
      * Suppression des widgets tableau de bord
-     * 
+     *
      * @deprecated since v2.0
-     * 
+     *
      * @return void
      */
     public function deleteStateAction() {
