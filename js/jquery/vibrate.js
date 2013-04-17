@@ -38,7 +38,7 @@ jQuery.fn.vibrate = function(conf) {
 
                         var stopVibration = function() {
                                 clearInterval(vibrationInterval);
-                                t.css({position: 'static'});
+                                t.css({position: 'static', WebkitTransform:    'rotate(0deg)'});
                         };
 
                         setTimeout(stopVibration, config.duration);
