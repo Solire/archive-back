@@ -448,7 +448,7 @@ class Page extends Main
 
 
         $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"]) && $_REQUEST["no_version"] == 1) {
+        if (isset($_REQUEST["no_version"]) && $_REQUEST["no_version"] == 1 || ($_REQUEST["table"] == "gab_page")) {
             $filterVersion = 1;
         } else {
             $gabPageJoin = "INNER JOIN gab_page ON visible = 1 AND suppr = 0 AND gab_page.id = `$table`.$idField " . ($filterVersion != 1 ? "AND gab_page.id_version = $lang" : "");
