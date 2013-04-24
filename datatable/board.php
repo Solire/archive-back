@@ -17,6 +17,22 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @access protected
      */
     protected $_gabarits;
+    
+    /**
+     * Liste des versions
+     *
+     * @var array
+     * @access protected
+     */
+    protected $_versions;
+    
+    /**
+     * versions courantes
+     *
+     * @var array
+     * @access protected
+     */
+    protected $_currentVersion;
 
     /**
      * Utilisateur courant
@@ -25,6 +41,24 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @access protected
      */
     protected $_utilisateur;
+    
+    public function start() {
+        
+        foreach ($this->_versions as $version) {
+            if (BACK_ID_VERSION == $version["id"]) {
+                $this->_currentVersion = $version;
+                break;
+            }
+        }
+        parent::start();
+    }
+    
+    protected function beforeRunAction() {
+        parent::beforeRunAction();
+        if (count($this->_versions) == 1) {
+            array_pop($this->config["columns"]);
+        }
+    }
 
     public function datatableAction() {
         $fieldGabaritTypeKey = \Slrfw\Tools::multidimensional_search($this->config["columns"], array("name" => "id_gabarit", "filter_field" => "select"));
@@ -45,11 +79,21 @@ class Board extends \Slrfw\Datatable\Datatable {
     public function setUtilisateur($utilisateur) {
         $this->_utilisateur = $utilisateur;
     }
+    
+    /**
+     * Défini les versions
+     *
+     * @param array $versions versions disponibles
+     * @return void
+     */
+    public function setVersions($versions) {
+        $this->_versions = $versions;
+    }
 
     // --------------------------------------------------------------------
 
     /**
-     * Défini l'utilisateur
+     * Défini les gabarits
      *
      * @param array $gabarits tableau des gabarits
      * @return void
@@ -70,10 +114,10 @@ class Board extends \Slrfw\Datatable\Datatable {
         $actionHtml = '<div style="width:110px">';
 
         if (($this->_utilisateur != null && $this->_utilisateur->get("niveau") == "solire") || ($this->_gabarits != null && $this->_gabarits[$data["id_gabarit"]]["editable"])) {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Modifier" href="back/page/display.html?id_gab_page=' . $data["id"] . '"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_12x12.png" /></a></div>';
+            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Modifier en version : ' . $this->_currentVersion["nom"] .  '" href="back/page/display.html?id_gab_page=' . $data["id"] . '"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_12x12.png" /></a></div>';
         }
         if (($this->_utilisateur->get("niveau") == "solire" || $this->_gabarits[$data["id_gabarit"]]["make_hidden"] || $data["visible"] == 0) && $data["rewriting"] != "") {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Rendre visible \'' . $data["titre"] . '\'" style="padding: 3px 7px 3px;"><input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" class="visible-lang visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/></a></div>';
+            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Rendre visible \'' . $data["titre"] . '\'  en version : ' . $this->_currentVersion["nom"] .  '"" style="padding: 3px 7px 3px;"><input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" class="visible-lang visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/></a></div>';
         }
 
         if($data["suppr"] == 1) {
@@ -98,14 +142,25 @@ class Board extends \Slrfw\Datatable\Datatable {
             return "";
         }
         $actionHtml = '<div style="width:110px">';
+        
+        $pages = $this->_db->query(""
+                . "SELECT id_version, rewriting "
+                . "FROM gab_page "
+                . "WHERE id = " . $data["id"])->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE);
 
-
-        if ($data["rewriting"] == "") {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-red"><a style="color:white;line-height: 12px;" href="back/page/display.html?id_gab_page=' . $data["id"] . '">Non traduit</a></div>';
-        } else {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-green"><a style="color:white;line-height: 12px;" href="back/page/display.html?id_gab_page=' . $data["id"] . '">Traduit</a></div>';
+        foreach ($this->_versions as $version) {
+            if ($pages[$version["id"]] == "") {
+                continue;
+            }
+            $actionHtml .= '<img ' . ($pages[$version["id"]] == "" ? 'title="' . $version['nom'] . ' : Non traduit"  class="grayscale"' : 'title="' . $version['nom'] . ' : Traduit"') . ' src="app/back/img/flags/png/' . strtolower($version['suf']) . '.png" alt="' . $version['nom'] . '" />';
+            $actionHtml .= '&nbsp;' ;
         }
+        
         $actionHtml .= '</div>';
+        
+
+          
+        
         return $actionHtml;
     }
 
