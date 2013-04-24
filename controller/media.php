@@ -199,8 +199,6 @@ class Media extends Main {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
 
-        $_REQUEST['name'] = $_FILES['file']['name'];
-
         $id_gab_page = 0;
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {
             $id_gab_page = $_GET['id_gab_page'];
