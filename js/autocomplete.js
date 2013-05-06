@@ -9,6 +9,7 @@ $(function(){
                 var idField = $input.parent().find("input.join-id_field").val();
                 var labelField = $input.parent().find("input.join-label_field").val();
                 var queryFilter = $input.parent().find("input.join-query_filter").val();
+                var typeGabPage = $input.parent().find("input.join-type_gab_page").val();
                 var idGabPage = $("input[name='id_gab_page']").val();
                 var idVersion = $input.parents("form:first").find("input[name='id_version']").val();
 
@@ -20,6 +21,7 @@ $(function(){
                         id_version : idVersion,
                         label_field : labelField,
                         query_filter : queryFilter,
+                        type_gab_page : typeGabPage,
                         id_gab_page : idGabPage,
                         term : request.term
                     }, function( data, status, xhr ) {
