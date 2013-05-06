@@ -24,7 +24,7 @@ class Page extends Main
      *
      * @var \Slrfw\Gabarit\gabaritPage
      */
-    private $_page = null;
+    protected $_page = null;
 
     /**
      * Toujours executé avant l'action.
@@ -400,7 +400,7 @@ class Page extends Main
                                     . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a>');
         }
 
-        exit(json_encode($json));
+        echo(json_encode($json));
     }
 
     /**
@@ -440,6 +440,7 @@ class Page extends Main
         $term = $_REQUEST["term"];
         $idField = $_REQUEST["id_field"];
         $idGabPage = $_REQUEST["id_gab_page"];
+        $typeGabPage = $_REQUEST["type_gab_page"];
         $queryFilter = str_replace("[ID]", $idGabPage, $_REQUEST["query_filter"]);
         $table = $_REQUEST["table"];
         $labelField = "";
@@ -448,7 +449,10 @@ class Page extends Main
 
 
         $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"]) && $_REQUEST["no_version"] == 1) {
+        if (isset($_REQUEST["no_version"]) 
+                && $_REQUEST["no_version"] == 1 
+                || ($_REQUEST["table"] == "gab_page")
+                || !$typeGabPage) {
             $filterVersion = 1;
         } else {
             $gabPageJoin = "INNER JOIN gab_page ON visible = 1 AND suppr = 0 AND gab_page.id = `$table`.$idField " . ($filterVersion != 1 ? "AND gab_page.id_version = $lang" : "");
@@ -468,7 +472,7 @@ class Page extends Main
                 . " WHERE $filterVersion "
                 . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
                 . " AND $labelField  LIKE '%$term%'";
-
+        
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
         exit(json_encode($json));

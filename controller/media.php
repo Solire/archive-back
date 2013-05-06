@@ -134,7 +134,15 @@ class Media extends Main {
             );
         } elseif ($_REQUEST['id'] === '0') {
             $rubriques = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api['id'], 0);
-            foreach ($rubriques as $rubrique)
+            $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+            $gabaritsListUser = $configPageModule['gabarits'];
+            foreach ($rubriques as $rubrique) {
+                /** On exclu les gabarits qui ne sont pas dans les droits **/
+                if ($gabaritsListUser != '*') {
+                    if (!in_array($rubrique->getMeta('id_gabarit'), $gabaritsListUser)) {
+                        continue;
+                    }
+                }
                 $res[] = array(
                     'attr' => array(
                         'id' => 'node_' . $rubrique->getMeta('id'),
@@ -145,10 +153,21 @@ class Media extends Main {
                     ),
                     'state' => 'closed'
                 );
+            }
         } else {
             $sous_rubriques = $this->_gabaritManager->getList(BACK_ID_VERSION, $this->_api['id'], $_REQUEST['id']);
 
+            $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+            $gabaritsListUser = $configPageModule['gabarits'];
+
             foreach ($sous_rubriques as $sous_rubrique) {
+                /** On exclu les gabarits qui ne sont pas dans les droits **/
+                if ($gabaritsListUser != '*') {
+                    if (!in_array($sous_rubrique->getMeta('id_gabarit'), $gabaritsListUser)) {
+                        continue;
+                    }
+                }
+
                 $nbre = $this->_db->query('SELECT COUNT(*) FROM `media_fichier` WHERE `suppr` = 0 AND `id_gab_page` = ' . $sous_rubrique->getMeta('id'))->fetchColumn();
 
                 $res[] = array(
@@ -179,8 +198,6 @@ class Media extends Main {
     {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
-
-        $_REQUEST['name'] = $_FILES['file']['name'];
 
         $id_gab_page = 0;
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {

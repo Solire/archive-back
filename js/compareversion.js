@@ -65,6 +65,7 @@ $(function(){
         $('.compareversion-hide', current).hide();
 
         $('.compareversion-submit', current).click(function(){
+            otherId     = $('.compareversion-other', current).val();
             showVersion(current, otherId);
             $('.compareversion-hide', current).fadeIn(500);
         });
