@@ -23,8 +23,8 @@ var initTinyMCE = function () {
         convert_urls : true,
         document_base_url : '../../../../',
         content_css : 'app/back/css/style-tinymce.css',
-        external_image_list_url : 'app/back/media/autocomplete.html?tinyMCE',
-        external_link_list_url : 'app/back/page/autocomplete-link.html'
+        external_image_list_url : 'back/media/autocomplete.html?tinyMCE',
+        external_link_list_url : 'sitemap.xml?visible=0&json=1&onlylink=1&tinymce=1'
     });
 };
 
