@@ -26,6 +26,8 @@ $(function(){
                 marginLeft: '-' + Math.round(rx * c.x) + 'px',
                 marginTop: '-' + Math.round(ry * c.y) + 'px'
             });
+            
+            $(".form-crop-submit").removeClass("disabled")
 
             updateCoords(c);
         }
@@ -69,6 +71,8 @@ $(function(){
     });
 
     $(".form-crop-submit").bind("click", function() {
+        if($(this).hasClass("disabled"))
+            return false;
         var action = "back/" + $(".form-crop").attr("action") + "?id_gab_page=" + idGabarit;
         var data = $(".form-crop").serialize();
         $.post(action, data, function(response) {
@@ -105,7 +109,8 @@ $(function(){
             src: src
         }).load(function(){
             $('div.loading-overlay').remove();
-
+            $(".form-crop-submit").addClass("disabled")
+            
             var minWidth = $inputFile.attr("data-min-width");
             var minHeight = $inputFile.attr("data-min-height");
             $('.spinner').spinner("destroy");
