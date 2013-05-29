@@ -41,7 +41,6 @@ class Dashboard extends Main {
                 if (!$configPath) {
                     $this->pageNotFound();
                 }
-
                 $datatable = null;
 
                 foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {
