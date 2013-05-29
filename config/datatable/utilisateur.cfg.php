@@ -244,30 +244,30 @@ $config = array(
                 ),
             ),
         ),
-//        array(
-//            'name' => 'pass',
-//            'show' => false,
-//            'filter_field' => 'text',
-//            'title' => 'Pass',
-//            'creable_field' => array(
-//                "type"       => "password",
-//                'validate' => array(
-//                    'rules' => array(
-//                        "required" => array(
-//                            'param' => true,
-//                            'depends' => array(
-//                                "form.this.add" => true
-//                            ),
-//                        ),
-//                        "minlength" => 5,
-//                    ),
-//                    'messages' => array(
-//                        "required" => "Ce champ est obligatoire.",
-//                        "minlength" => "Votre mot de passe doit contenir au moins 5 caractères.",
-//                    ),
-//                ),
-//            ),
-//        ),
+        array(
+            'name' => 'pass',
+            'show' => false,
+            'filter_field' => 'text',
+            'title' => 'Pass',
+            'creable_field' => array(
+                "type"       => "password",
+                'validate' => array(
+                    'rules' => array(
+                        "required" => array(
+                            'param' => true,
+                            'depends' => array(
+                                "form.this.add" => true
+                            ),
+                        ),
+                        "minlength" => 5,
+                    ),
+                    'messages' => array(
+                        "required" => "Ce champ est obligatoire.",
+                        "minlength" => "Votre mot de passe doit contenir au moins 5 caractères.",
+                    ),
+                ),
+            ),
+        ),
         array(
             'name' => 'actif',
             'show' => true,

@@ -14121,7 +14121,7 @@ Showdown.converter = function() {
             var height, toolbarHeight, width;
             width = jQuery(window).width();
             height = this.statusbar.top();
-            toolbarHeight = this.toolbar.height() + 42;
+            toolbarHeight = this.toolbar.height() + 40;
             Mercury.displayRect = {
                 top: toolbarHeight,
                 left: 0,
@@ -15972,11 +15972,11 @@ Showdown.converter = function() {
         Toolbar.prototype.show = function() {
             this.visible = true;
             this.element.css({
-                top: -this.element.outerHeight() - 42,
+                top: -this.element.outerHeight() - 40,
                 display: 'block'
             });
             return this.element.animate({
-                top: '42'
+                top: '40'
             }, 200, 'easeInOutSine');
         };
 
@@ -18880,7 +18880,7 @@ Showdown.converter = function() {
                 width = '100%';
                 height = this.element.height();
             } else {
-                width = this.element.width();
+                width = this.element.width()+2;
                 height = this.element.height();
             }
             value = this.element.text();

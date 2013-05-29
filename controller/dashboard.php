@@ -2,8 +2,7 @@
 
 namespace App\Back\Controller;
 
-class Dashboard extends Main
-{
+class Dashboard extends Main {
 
     private $_cache = null;
     private $_config = null;
@@ -35,23 +34,30 @@ class Dashboard extends Main
 
             foreach ($configsName as $configKey => $configName) {
                 $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
-                
+
                 $frontController = \Slrfw\FrontController::getInstance();
                 $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
-                
+
                 if (!$configPath) {
                     $this->pageNotFound();
                 }
-                
-                if (class_exists($datatableClassName)) {
-                    $datatable = new $datatableClassName(
-                        $_GET, $configPath, $this->_db, 
-                        '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
-                    );
-                } else {
+
+                $datatable = null;
+
+                foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {
+                    $datatableClassName = '\\' . $appDir["name"] . "\\Back\\Datatable\\" . $configName;
+                    if (class_exists($datatableClassName)) {
+                        $datatable = new $datatableClassName(
+                                $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                        );
+
+                        break;
+                    }
+                }
+
+                if ($datatable == null) {
                     $datatable = new \Slrfw\Datatable\Datatable(
-                        $_GET, $configPath, $this->_db, 
-                        '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                            $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 }
 

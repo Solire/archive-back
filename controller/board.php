@@ -166,6 +166,7 @@ class Board extends Main
 
         $datatable->setUtilisateur($this->_utilisateur);
         $datatable->setGabarits($this->_gabarits);
+        $datatable->setVersions($this->_versions);
 
         /** On cré un filtre pour les gabarits de l'api courante */
         $idsGabarit = array();
