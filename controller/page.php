@@ -610,17 +610,6 @@ class Page extends Main
      *
      * @return void
      */
-    public function autocompleteLinkAction()
-    {
-        header('content-type: application/x-javascript; charset=UTF-8');
-        $json = file_get_contents($this->_url . '../sitemap.xml?visible=0&json=1&onlylink=1');
-        exit('var tinyMCELinkList = ' . $json . ';');
-    }
-
-    /**
-     *
-     * @return void
-     */
     public function visibleAction()
     {
         $this->_view->enable(false);
