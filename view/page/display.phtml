@@ -150,7 +150,12 @@
 
                             <div class="modal-footer">
                                 <button class="btn-a gradient-grey btn-large" onclick="var link = $('.back-to-list a').attr('href');window.location = link;">Quitter</button>
+                                <?php
+                                    $page = $this->pages[BACK_ID_VERSION];
+                                    if ($page->getGabarit()->getView()) {
+                                ?>
                                 <button class="btn-a gradient-grey btn-large" data-dismiss="modal" onclick="$('.formprev').click()" aria-hidden="true"><b>Prévisualiser</b></button>
+                                <?php } ?>
                                 <button class="btn-a gradient-blue btn-large" data-dismiss="modal" aria-hidden="true">Continuer l'édition de cette page</button>
                             </div>
                         </div>
