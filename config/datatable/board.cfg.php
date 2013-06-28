@@ -61,7 +61,8 @@ $config = array(
             "show" => true,
             "filter_field" => "select",
             "title" => "Type de contenu",
-        ), array(
+        ), 
+        array(
             "name" => "date_crea",
             "php_function" => array(
                 "\Slrfw\Tools::RelativeTimeFromDate"
@@ -96,14 +97,6 @@ $config = array(
 );
 //Si autre langue que version de base
 //if (BACK_ID_VERSION != 1) {
-$config["columns"][] = array(
-    "special" => "buildAction",
-    "sql" => "IF(`gab_page`.`suppr` = 1, '&#8709; Supprimé', IF(`gab_page`.`visible` = 0, '&#10005; Non visible', '&#10003; Visible'))",
-    "filter_field" => "select",
-    "show" => true,
-    "title" => "Actions",
-    "name"  =>  "visible",
-);
 
 $config["columns"][] = array(
     "special" => "buildTraduit",
@@ -113,6 +106,17 @@ $config["columns"][] = array(
     "filter_field" => "select",
     "name"  =>  "rewriting"
 );
+
+$config["columns"][] = array(
+    "special" => "buildAction",
+    "sql" => "IF(`gab_page`.`suppr` = 1, '&#8709; Supprimé', IF(`gab_page`.`visible` = 0, '&#10005; Non visible', '&#10003; Visible'))",
+    "filter_field" => "select",
+    "show" => true,
+    "title" => "Actions",
+    "name"  =>  "visible",
+);
+
+
 //}
 
 

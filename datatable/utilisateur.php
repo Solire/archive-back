@@ -11,7 +11,7 @@ class Utilisateur extends \Slrfw\Datatable\Datatable {
     }
 
     protected function beforeRunAction() {
-        $showButton = '<a href="' . $this->url . '&dt_action=sendMail&index=[#id#]" title="Envoyer identifiant par email" class="btn btn-primary send-info-ajax">
+        $showButton = '<a href="' . $this->url . '&dt_action=sendMail&index=[#id#]" title="Envoyer identifiant par email" class="btn btn-success btn-small send-info-ajax">
                             <img width="12" alt="Envoyer identifiant par email" src="app/back/img/white/mail_16x12.png">
                         </a>';
         array_unshift($this->_columnActionButtons, $showButton);

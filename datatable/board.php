@@ -111,18 +111,30 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @return string Html des actions
      */
     public function buildAction(&$data) {
-        $actionHtml = '<div style="width:110px">';
+        $actionHtml = '<div class="btn-group">';
 
-        if (($this->_utilisateur != null && $this->_utilisateur->get("niveau") == "solire") || ($this->_gabarits != null && $this->_gabarits[$data["id_gabarit"]]["editable"])) {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Modifier en version : ' . $this->_currentVersion["nom"] .  '" href="back/page/display.html?id_gab_page=' . $data["id"] . '"><img alt="Modifier" src="app/back/img/white/pen_alt_stroke_12x12.png" /></a></div>';
+        if (($this->_utilisateur != null 
+                && $this->_utilisateur->get("niveau") == "solire") 
+                || ($this->_gabarits != null 
+                && $this->_gabarits[$data["id_gabarit"]]["editable"])) {
+            $actionHtml .= '<a href="back/page/display.html?id_gab_page=' . $data["id"] . '" class="btn btn-small btn-info" title="Modifier en version : ' . $this->_currentVersion["nom"] .  '">
+                                <i class="icon-pencil"></i>
+                            </a>';
         }
-        if (($this->_utilisateur->get("niveau") == "solire" || $this->_gabarits[$data["id_gabarit"]]["make_hidden"] || $data["visible"] == 0) && $data["rewriting"] != "") {
-            $actionHtml .= '<div class="btn-a btn-mini gradient-blue fl" ><a title="Rendre visible \'' . $data["titre"] . '\'  en version : ' . $this->_currentVersion["nom"] .  '"" style="padding: 3px 7px 3px;"><input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" class="visible-lang visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/></a></div>';
+        if (($this->_utilisateur->get("niveau") == "solire" 
+                || $this->_gabarits[$data["id_gabarit"]]["make_hidden"] 
+                || $data["visible"] == 0) 
+                && $data["rewriting"] != "") {
+            $actionHtml .= '<a class="btn btn-small btn-info visible-lang"  title="Rendre visible sur le site \'' . $data["titre"] . '\'  en version : ' . $this->_currentVersion["nom"] .  '">
+                                <input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>
+                                <i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') . '"></i>
+                            </a>';
         }
 
         if($data["suppr"] == 1) {
-            $actionHtml = '<div class="btn-a btn-mini gradient-blue fl" ><a title="Modifier" href="back/page/undelete.html?id_gab_page=' . $data["id"] . '"><img alt="Récupérer" src="app/back/img/white/pen_alt_stroke_12x12.png" /></a></div>';
-
+            $actionHtml = '<a href="#" class="btn btn-small btn-warning supprimer" title="Supprimer">
+                                <i class="icon-eye-open"></i>
+                           </a>';
         }
 
         $actionHtml .= '</div>';
@@ -179,7 +191,7 @@ class Board extends \Slrfw\Datatable\Datatable {
         $row["DT_RowClass"] = "";
         if ($aRow["suppr"] == 1) {
             $keyAction = array_search("visible_1", array_keys($rowAssoc));
-            $row[$keyAction] = '<div class="btn-a btn-mini gradient-red fl" ><a style="color:white;line-height: 12px;">Supprimée</a></div>';
+            $row[$keyAction] = '<div class="btn btn-small btn-danger disabled" >Supprimée</div>';
             $row["DT_RowClass"] = "translucide";
         }
     }

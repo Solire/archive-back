@@ -168,7 +168,7 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
         $this->_javascript->addLibrary('back/js/join-simple.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
-        $this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
+        $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
         $this->_javascript->addLibrary('back/js/jquery/ui.spinner.min.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi/jquery.tokeninput.js');
@@ -206,7 +206,10 @@ class Page extends Main
                 foreach ($page->getParents() as $parent) {
                     $path = $parent->getMeta('rewriting') . '/' . $path;
                 }
-
+                
+                if($id_version == BACK_ID_VERSION)
+                    $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                
                 $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
                 $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
 

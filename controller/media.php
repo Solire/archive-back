@@ -32,14 +32,16 @@ class Media extends Main {
      */
     public function startAction()
     {
+        
+        $this->fileDatatable();
         $this->_javascript->addLibrary('back/js/jquery/jquery.hotkeys.js');
         $this->_javascript->addLibrary('back/js/jstree/jquery.jstree.js');
-        $this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
+        //$this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
         $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
         $this->_javascript->addLibrary('back/js/listefichiers.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.scroller-1.0.min.js');
 
-        $this->_css->addLibrary('back/css/demo_table_jui.css');
+        //$this->_css->addLibrary('back/css/demo_table_jui.css');
         $this->_css->addLibrary('back/css/jquery.scroller.css');
 
         $this->_view->breadCrumbs[] = array(
@@ -97,6 +99,54 @@ class Media extends Main {
         }
 
         $this->_view->files = $this->_files;
+    }
+    
+    /**
+     * Génération du datatable des fichiers
+     *
+     * @return void
+     */
+    private function fileDatatable()
+    {
+        $configName = 'file';
+        $gabarits = array();
+        
+        $configPath = \Slrfw\FrontController::search(
+            'config/datatable/' . $configName . '.cfg.php'
+        );
+        
+        $datatableClassName = '\\App\\Back\\Datatable\\File';
+        
+        $datatable = null;
+        
+        foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {
+            $datatableClassName = '\\' . $appDir["name"] . "\\Back\\Datatable\\" . $configName;
+            if (class_exists($datatableClassName)) {
+                $datatable = new $datatableClassName(
+                        $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                );
+
+                break;
+            }
+        }
+        
+        if ($datatable == null) {
+            $datatable = new \Slrfw\Datatable\Datatable(
+                    $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+            );
+        }  
+
+        
+        $datatable->start();
+
+        if (isset($_GET['json']) || (isset($_GET['nomain'])
+            && $_GET['nomain'] == 1)
+        ) {
+            echo $datatable;
+            exit();
+        }
+
+        $this->_view->datatableRender = $datatable;
     }
 
     /**
@@ -215,13 +265,15 @@ class Media extends Main {
             $json = $this->_fileManager->uploadGabPage($this->_upload_path,
                 $id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir,
                 $apercuDir);
+            
+            $json['size'] = \Slrfw\Tools::format_taille($json['size']);
             if (isset($json['minipath'])) {
                 $json['minipath'] = $json['minipath'];
                 $json['image'] = array(
                     'url'   =>  $id_gab_page . DS . $json['filename']
                 );
                 $json['path'] = $json['path'];
-                $json['size'] = \Slrfw\Tools::format_taille($json['size']);
+
             }
         } else {
             if (isset($_COOKIE['id_temp'])
@@ -466,6 +518,7 @@ class Media extends Main {
                             'path' => $path,
                             'vignette' => $vignette,
                             'label' => $file['rewriting'],
+                            'utilise' => $file['utilise'],
                             'size' => ($size ? $size : ''),
                             'value' => $file['rewriting'],
                         );

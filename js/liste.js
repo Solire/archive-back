@@ -14,8 +14,10 @@ $(function(){
     .dialog({
         open: function(){
             $('.ui-widget-overlay').hide().fadeIn();
-            if(!$('.ui-dialog-buttonset button').hasClass("btn-a"))
-                $('.ui-dialog-buttonset button').attr("class", "").addClass("btn-a gradient-blue").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+            if(!$('.ui-dialog-buttonset button').hasClass("btn")) {
+                $('.ui-dialog-buttonset button:eq(0)').attr("class", "").addClass("btn btn-warning btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+                $('.ui-dialog-buttonset button:eq(1)').attr("class", "").addClass("btn btn-default btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+            }
         },
         beforeClose: function(){
             $('.ui-widget-overlay').remove();
@@ -57,36 +59,36 @@ $(function(){
     var confirmOpen = function(sort_elmt) {
         var sort_box = sort_elmt.parent();
         var id_gab_page = parseInt(sort_elmt.attr('id').split('_').pop());
+        var titleElemDel = sort_elmt.attr("data-titre")
+        var heading = 'Confirmation de suppression de "' + titleElemDel + '"';
+        var question = 'Etes-vous sûr de vouloir supprimer "' + titleElemDel + '" ? ';
+        var cancelButtonTxt = 'Annuler';
+        var okButtonTxt = 'Confirmer';
 
-        confirm.dialog('option', 'buttons', {
-            "Ok" : function(){
-                $.post(
-                    'back/page/delete.html',
-                    {
-                        id_gab_page : id_gab_page
-                    },
-                    function(data){
-                        if(data.status == 'success')
-                            sort_elmt.slideUp('fast', function(){
-                                $(this).remove();
-                                sort_box.sortable('refresh');
-                                confirm.dialog("close")
-                                $.sticky("La page a été supprimée", {
-                                    type:"success"
-                                });
-                            })
-                    },
-                    'json'
-                    );
-            },
-            "Annuler" : function(){
-                $(this).dialog("close");
-            }
-        }).dialog('open');
-        $(".supprimer", sort_elmt).effect("transfer", {
-            to: confirm.dialog("widget"),
-            className: "ui-effects-transfer"
-        }, 500);
+        var callback = function() {
+            $.post(
+                'back/page/delete.html',
+                {
+                    id_gab_page : id_gab_page
+                },
+                function(data){
+                    if(data.status == 'success')
+                        sort_elmt.slideUp('fast', function(){
+                            $(this).remove();
+                            sort_box.sortable('refresh');
+                            var heading = 'Confirmation de suppression de "' + titleElemDel + '"';
+                            var message = '"' + titleElemDel + '"'
+                                + ' a été supprimé avec succès'
+                            var closeButtonTxt = 'Fermer';
+                            myModal.message(heading, message, closeButtonTxt, 2500);
+                        })
+                },
+                'json'
+                );
+            };
+
+            myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
+        
 
     }
 
@@ -187,7 +189,7 @@ $(function(){
         var $legend = $(this)
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
 
-            $legend.find('span.ui-icon-plus').addClass("ui-icon-moins")
+            $legend.find('i.icon-chevron-down').addClass("icon-chevron-up").removeClass("icon-chevron-down")
             if (!$(this).next('div').hasClass('children-loaded')) {
                 var id = $(this).parent().attr('id').split('_').pop();
 
@@ -218,7 +220,7 @@ $(function(){
             }
         }
         else {
-            $legend.find('span.ui-icon-plus').toggleClass("ui-icon-moins")
+            $legend.find('i.icon-chevron-down, i.icon-chevron-up').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
             $(this).next('div').slideToggle(500);
             $(this).siblings('.cat-modif').slideToggle(500);
         }

@@ -151,15 +151,13 @@
 <div id="mmenu">
     <!--    <div id="currentruntime" style="font-size:10px; color:#a1a1a1; font-style:italic; padding: 3px;"></div>-->
 
-    <div style="float:left; margin-right:10px; width:200px; height:40px;">
+    <div style="float:left; margin-right:10px;height: 20px;">
 
         <!--<a href="#" class="button vert" id="add_folder">
                                         <span class="vert">ajouter un dossier</span>
                                 </a>-->
-        <div class="btn-a gradient-green">
-            <a href="#" id="pickfiles">Ajouter un fichier
-            </a>
-        </div>
+        
+        <a href="#" class="btn btn-small btn-success" id="pickfiles" style="display: none;"><i class="icon-folder-open"></i> Ajouter un fichier</a>
     </div>
 
 
@@ -174,21 +172,10 @@
 
 <div id="folders" style="width: 200px; overflow: hidden; float: left"></div>
 
-<div id="colright" style="min-height: 400px; float: left; width: 75%; margin-left: 20px;">
-    <table id="tableau" class="display" style="width:100%;margin:0">
-        <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th>Taille</th>
-                <th>Largeur</th>
-                <th>Hauteur</th>
-                <th>Date / Heure</th>
-                <th>Utilisé</th>
-                <th style="width: 50px;">&nbsp;</th>
-            </tr>
-        </thead>
-
-        <tbody id="foldercontent">
-        </tbody>
-    </table>
+<div id="colright" style="min-height: 400px; float: left; width: 75%; margin-left: 20px;display: none;">
+    
+    
+    <?php echo $this->datatableRender; ?>
+    
+    
 </div>

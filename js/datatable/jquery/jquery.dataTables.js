@@ -11267,12 +11267,12 @@
 	
 	$.extend( DataTable.ext.oJUIClasses, DataTable.ext.oStdClasses, {
 		/* Two buttons buttons */
-		"sPagePrevEnabled": "fg-button ui-button ui-state-default ui-corner-left",
-		"sPagePrevDisabled": "fg-button ui-button ui-state-default ui-corner-left ui-state-disabled",
-		"sPageNextEnabled": "fg-button ui-button ui-state-default ui-corner-right",
-		"sPageNextDisabled": "fg-button ui-button ui-state-default ui-corner-right ui-state-disabled",
-		"sPageJUINext": "ui-icon ui-icon-circle-arrow-e",
-		"sPageJUIPrev": "ui-icon ui-icon-circle-arrow-w",
+		"sPagePrevEnabled": "fg-button btn btn-default btn-small ui-corner-left",
+		"sPagePrevDisabled": "fg-button  btn btn-default btn-small ui-state-disabled",
+		"sPageNextEnabled": "fg-button  btn btn-default btn-small",
+		"sPageNextDisabled": "fg-button  btn btn-default btn-small ui-state-disabled",
+		"sPageJUINext": "icon-chevron-right",
+		"sPageJUIPrev": "icon-chevron-left",
 		
 		/* Full numbers paging buttons */
 		"sPageButton": "fg-button ui-button ui-state-default",
@@ -11282,7 +11282,7 @@
 		"sPageLast": "last ui-corner-tr ui-corner-br",
 		
 		/* Features */
-		"sPaging": "dataTables_paginate fg-buttonset ui-buttonset fg-buttonset-multi "+
+		"sPaging": "dataTables_paginate fg-buttonset  btn-group ui-buttonset fg-buttonset-multi "+
 			"ui-buttonset-multi paging_", /* Note that the type is postfixed */
 		
 		/* Sorting */

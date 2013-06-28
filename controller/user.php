@@ -28,7 +28,7 @@ class User extends Main
      */
     public function startAction()
     {
-        $this->_javascript->addLibrary('formgabarit.js');
+        $this->_javascript->addLibrary('back/js/formgabarit.js');
 
         $this->_view->breadCrumbs[] = array(
             'label' => 'Mon profil',
