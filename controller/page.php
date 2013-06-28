@@ -452,8 +452,8 @@ class Page extends Main
 
 
         $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"]) 
-                && $_REQUEST["no_version"] == 1 
+        if (isset($_REQUEST["no_version"])
+                && $_REQUEST["no_version"] == 1
                 || ($_REQUEST["table"] == "gab_page")
                 || !$typeGabPage) {
             $filterVersion = 1;
@@ -475,7 +475,7 @@ class Page extends Main
                 . " WHERE $filterVersion "
                 . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
                 . " AND $labelField  LIKE '%$term%'";
-        
+
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
         exit(json_encode($json));
@@ -626,7 +626,7 @@ class Page extends Main
         }
 
         if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
-            if ($this->_gabaritManager->setVisible($idVersion, ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
+            if ($this->_gabaritManager->setVisible($idVersion, BACK_ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
                 $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
                 $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');
