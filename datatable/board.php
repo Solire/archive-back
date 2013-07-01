@@ -125,7 +125,7 @@ class Board extends \Slrfw\Datatable\Datatable {
                 || $this->_gabarits[$data["id_gabarit"]]["make_hidden"] 
                 || $data["visible"] == 0) 
                 && $data["rewriting"] != "") {
-            $actionHtml .= '<a class="btn btn-small btn-info visible-lang"  title="Rendre \'' . $data["titre"] . '\' visible sur le site">
+            $actionHtml .= '<a class="btn btn-small btn-info visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">
                                 <input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>
                                 <i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') . '"></i>
                             </a>';

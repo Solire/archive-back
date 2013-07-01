@@ -151,7 +151,7 @@ $(function() {
     $(".back-to-list").click(function(e) {
         e.preventDefault()
         var heading = 'Quitter';
-        var question = 'Attention, les données saisies seront perdues, malgré cela êtes-vous sûr de vouloir quitter cette page ? ';
+        var question = 'Attention, les données saisies ne seront pas sauvegardées, malgré cela êtes-vous sûr de vouloir quitter cette page ? ';
         var cancelButtonTxt = 'Annuler';
         var okButtonTxt = 'Confirmer';
         var href = $(this).attr("href");
