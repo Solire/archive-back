@@ -319,7 +319,7 @@ $(function() {
         var clone = adupliquer.clone(false).clearForm();
         clone.find("ul").remove();
         clone.insertBefore($this);
-        clone.find("legend").html("Nouvel élément");
+        clone.find("legend").html("Bloc en cours de création");
         $this.parents('.sort-box').sortable('refresh');
         $this.siblings('.sort-elmt').find(".btn-bloc-action").each(function() {
             if ($(this).find(".delBloc").length == 0)
