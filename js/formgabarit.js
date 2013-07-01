@@ -5,6 +5,9 @@ var formsubmit = {
 }
 
 var expressions = {
+    gmap_point_lat		: /\-?[0-9]+[\.]{0,1}[0-9]*/, // latitude
+    gmap_point_lng		: /\-?[0-9]+[\.]{0,1}[0-9]*/, // longitude
+    gmap_point_zoom		: /^[0-9]{1,2}$/, // num de 0 à 99 (zoom gmap)
     txt		: /^[a-zA-Zàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\s]{2,}$/, // texte uniquement
     txt2	: /^[0-9a-zA-Zàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\s]{2,}$/, // texte uniquement
     num		: /^[0-9]+$/, // chiffres et nombres uniquement

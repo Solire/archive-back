@@ -174,6 +174,11 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/autocomplete_multi/jquery.tokeninput.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi.js');
         $this->_javascript->addLibrary('back/js/compareversion.js');
+        
+        //Gmap
+        $this->_javascript->addLibrary('http://maps.google.com/maps/api/js?sensor=false');
+        $this->_javascript->addLibrary('back/js/jquery/gmap3.min.js');
+        
 
         $this->_css->addLibrary('back/css/jcrop/jquery.Jcrop.min.css');
         $this->_css->addLibrary('back/css/ui.spinner.css');
@@ -182,6 +187,8 @@ class Page extends Main
         $this->_css->addLibrary('back/css/jquery.qtip.min.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input-facebook.css');
+        
+
 
         $this->_css->addLibrary('back/css/affichegabarit.css');
 
