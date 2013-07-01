@@ -240,7 +240,7 @@ $(function(){
      */
     function saveState() {
         var saveStateListPage = []
-        $("legend .ui-icon-moins").each(function(){
+        $("legend i.icon-chevron-up").each(function(){
             saveStateListPage.push($(this).parents("fieldset:first").attr("id"))
         })
 
@@ -281,8 +281,7 @@ $(function(){
                     currentState++;
                     var $legend = $("#" + item).find("legend:first")
                     var $divToLoad = $("#" + item).find(".sort-box:first")
-
-                    $legend.find('span.ui-icon-plus').addClass("ui-icon-moins")
+                    $legend.find('i.icon-chevron-down').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
                     $divToLoad.html(data)
                     $divToLoad.addClass('children-loaded');
                     if (data != '') {
