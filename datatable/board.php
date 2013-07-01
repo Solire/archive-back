@@ -56,7 +56,7 @@ class Board extends \Slrfw\Datatable\Datatable {
     protected function beforeRunAction() {
         parent::beforeRunAction();
         if (count($this->_versions) == 1) {
-            array_pop($this->config["columns"]);
+            unset($this->config["columns"][count($this->config["columns"]) - 2]);
         }
     }
 
