@@ -24,7 +24,7 @@ $config = array(
  */
 
 $config = array(
-    array(
+    0 => array(
         'label' => 'Contenu institutionnel',
         'gabarits' => '*',
         'display' => true,
