@@ -359,22 +359,26 @@ class Page extends Main
 
 
         $this->_page = $this->_gabaritManager->save($_POST);
-
-        $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
-                    . 'page/display.html?id_gab_page='
-                    . $this->_page->getMeta('id') . '">'
-                    . $this->_page->getMeta('titre') . '</a>';
-
-        $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Bcc: contact@solire.fr ' . "\r\n"
-                    . 'X-Mailer: PHP/' . phpversion();
-
+        
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
+        
+        //Envoi de mail à solire
+        if($this->_appConfig->get('general', 'mail-notification')) {
+            $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
+                        . 'page/display.html?id_gab_page='
+                        . $this->_page->getMeta('id') . '">'
+                        . $this->_page->getMeta('titre') . '</a>';
 
-        \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-            $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
-            $contenu, $headers, 'text/html');
+            $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Bcc: contact@solire.fr ' . "\r\n"
+                        . 'X-Mailer: PHP/' . phpversion();
+
+            \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
+                $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
+                $contenu, $headers, 'text/html');
+        }
+        
 
         $json = array(
             'status'        => 'success',
