@@ -232,8 +232,25 @@ class Main extends \Slrfw\Controller
          * On recupere la configuration du module pages (Menu + liste)
          */
         $path = \Slrfw\FrontController::search('config/page.cfg.php');
-        include $path;
-        $this->_configPageModule = $config;
+        $completConfig = array();
+        $appList = \Slrfw\FrontController::getAppDirs();
+        foreach ($appList as $app) {
+            $path = new \Slrfw\Path(
+                $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+            );
+
+            if ($path->get() == false) {
+                continue;
+            }
+            include $path->get();
+
+            foreach ($config as $key => $value) {
+                $completConfig[$key] = $value;
+            }
+            unset($config, $key, $value);
+        }
+
+        $this->_configPageModule = $completConfig;
         unset($path, $config);
         $this->_view->menuPage = array();
         foreach ($this->_configPageModule as $configPage) {
