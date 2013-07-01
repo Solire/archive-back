@@ -3,6 +3,52 @@ var sort_elmt = $(null);
 var sortpar = $(null);
 var basehref = '';
 
+
+function addMarker(map3, lat, lng) {
+        map3.gmap3({
+            marker: {
+                tag: 'myMarker',
+                callback: function(marker) {
+                    map3.data("marker", marker)
+                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour supprimer le marqueur')
+                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Supprimer le marqueur')
+                    $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
+                    $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
+                    $('input.gmap_zoom', map3.parents(".line:first")).val(map3.gmap3("get").getZoom());
+                },
+                latLng: [lat, lng],
+                options: {
+                    draggable: true,
+                    animation: google.maps.Animation.DROP
+                },
+                events: {
+                    dragend: function(marker) {
+                        $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
+                        $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
+                    }
+                }
+            }
+        })
+    }
+
+    function removeMarker(map3) {
+        map3.gmap3({
+            clear: {
+                callback: function() {
+                    map3.data("marker", null)
+                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour ajouter un marqueur')
+                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Ajouter un marqueur')
+                    $('input.gmap_lat', map3.parents(".line:first")).val("");
+                    $('input.gmap_lng', map3.parents(".line:first")).val("");
+                    $('input.gmap_zoom', map3.parents(".line:first")).val("");
+                },
+                tag: 'myMarker'
+            }
+
+        })
+    }
+
+
 var initTinyMCE = function() {
     tinyMCE.init({
         mode: 'none',
@@ -101,6 +147,22 @@ $(function() {
     $('.spinner').spinner({
         min: 0
     });
+    
+    $(".back-to-list").click(function(e) {
+        e.preventDefault()
+        var heading = 'Quitter';
+        var question = 'Attention, les données saisies seront perdues, malgré cela êtes-vous sûr de vouloir quitter cette page ? ';
+        var cancelButtonTxt = 'Annuler';
+        var okButtonTxt = 'Confirmer';
+        var href = $(this).attr("href");
+        var callback = function() {
+            document.location.href = href;
+        }
+        
+        myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
+        
+        
+    })
 
     $(".form-crop-submit").bind("click", function() {
         if ($(this).hasClass("disabled"))
@@ -309,6 +371,9 @@ $(function() {
 
     var $delBtnClone = $('.delBloc:first').clone();
     $('.delBloc.to-remove').remove();
+    
+    var $sortBtnClone = $('.sort-move:first').clone();
+    $('.sort-move.to-remove').remove();
 
     $('.addBloc').live('click', function(e) {
         e.preventDefault();
@@ -324,6 +389,8 @@ $(function() {
         $this.siblings('.sort-elmt').find(".btn-bloc-action").each(function() {
             if ($(this).find(".delBloc").length == 0)
                 $(this).append($delBtnClone.clone())
+            if ($(this).find(".sort-move").length == 0)
+                $(this).prepend($sortBtnClone.clone())
         })
 
         $this.find('.form-date').datepicker($.datepicker.regional['fr']);
@@ -411,8 +478,10 @@ $(function() {
                     sort_elmt.find('textarea.tiny').tinymce('disableOnly');
 
                 sort_elmt.slideUp('fast', function() {
-                    if ($(this).siblings('.sort-elmt').length < 2)
+                    if ($(this).siblings('.sort-elmt').length < 2) {
                         $(this).siblings('.sort-elmt').find('.delBloc').remove();
+                        $(this).siblings('.sort-elmt').find('.sort-move').remove();
+                    }
                     $(this).remove();
                     sortpar.sortable('refresh');
                 });
@@ -506,7 +575,7 @@ $(function() {
         controlUI.style.cursor = 'pointer';
         controlUI.style.textAlign = 'center';
         controlUI.className = 'gmap-marker-button';
-        controlUI.title = 'Cliquez pour ajouter un marqueur';
+        controlUI.title = 'Cliquez pour ajouter un marqueur au centre de la carte';
         controlDiv.appendChild(controlUI);
 
         // Set CSS for the control interior.
@@ -533,49 +602,7 @@ $(function() {
         });
     }
 
-    function addMarker(map3, lat, lng) {
-        map3.gmap3({
-            marker: {
-                tag: 'myMarker',
-                callback: function(marker) {
-                    map3.data("marker", marker)
-                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour supprimer le marqueur')
-                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Supprimer le marqueur')
-                    $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
-                    $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
-                    $('input.gmap_zoom', map3.parents(".line:first")).val(map3.gmap3("get").getZoom());
-                },
-                latLng: [lat, lng],
-                options: {
-                    draggable: true,
-                    animation: google.maps.Animation.DROP
-                },
-                events: {
-                    dragend: function(marker) {
-                        $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
-                        $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
-                    }
-                }
-            }
-        })
-    }
-
-    function removeMarker(map3) {
-        map3.gmap3({
-            clear: {
-                callback: function() {
-                    map3.data("marker", null)
-                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour ajouter un marqueur')
-                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Ajouter un marqueur')
-                    $('input.gmap_lat', map3.parents(".line:first")).val("");
-                    $('input.gmap_lng', map3.parents(".line:first")).val("");
-                    $('input.gmap_zoom', map3.parents(".line:first")).val("");
-                },
-                tag: 'myMarker'
-            }
-
-        })
-    }
+    
 
     /**
      * Champ de type map
