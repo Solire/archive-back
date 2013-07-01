@@ -128,6 +128,8 @@ $(function() {
                     });
                     $thisAll.each(function() {
 //                        $(this).parents("li:first").removeClass("translucide")
+                        var title = $(this).parents("a:first,button:first").attr("title");
+                        $(this).parents("a:first,button:first").attr("title", title.substr(0, title.length - 19) + "invisible sur le site")
                         $(this).parents("a:first,button:first").find("i").removeClass("icon-eye-close translucide").addClass("icon-eye-open")
                     })
                 } else {
@@ -136,6 +138,8 @@ $(function() {
                     });
                     $thisAll.each(function() {
 //                        $(this).parents("li:first").addClass("translucide")
+                        var title = $(this).parents("a:first,button:first").attr("title");
+                        $(this).parents("a:first,button:first").attr("title", title.substr(0, title.length - 21) + "visible sur le site")
                         $(this).parents("a:first,button:first").find("i").removeClass("icon-eye-open").addClass("icon-eye-close translucide")
                     })
                 }

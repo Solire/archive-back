@@ -174,6 +174,11 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/autocomplete_multi/jquery.tokeninput.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi.js');
         $this->_javascript->addLibrary('back/js/compareversion.js');
+        
+        //Gmap
+        $this->_javascript->addLibrary('http://maps.google.com/maps/api/js?sensor=false');
+        $this->_javascript->addLibrary('back/js/jquery/gmap3.min.js');
+        
 
         $this->_css->addLibrary('back/css/jcrop/jquery.Jcrop.min.css');
         $this->_css->addLibrary('back/css/ui.spinner.css');
@@ -182,6 +187,8 @@ class Page extends Main
         $this->_css->addLibrary('back/css/jquery.qtip.min.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input-facebook.css');
+        
+
 
         $this->_css->addLibrary('back/css/affichegabarit.css');
 
@@ -352,22 +359,26 @@ class Page extends Main
 
 
         $this->_page = $this->_gabaritManager->save($_POST);
-
-        $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
-                    . 'page/display.html?id_gab_page='
-                    . $this->_page->getMeta('id') . '">'
-                    . $this->_page->getMeta('titre') . '</a>';
-
-        $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Bcc: contact@solire.fr ' . "\r\n"
-                    . 'X-Mailer: PHP/' . phpversion();
-
+        
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
+        
+        //Envoi de mail à solire
+        if($this->_appConfig->get('general', 'mail-notification')) {
+            $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
+                        . 'page/display.html?id_gab_page='
+                        . $this->_page->getMeta('id') . '">'
+                        . $this->_page->getMeta('titre') . '</a>';
 
-        \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-            $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
-            $contenu, $headers, 'text/html');
+            $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Bcc: contact@solire.fr ' . "\r\n"
+                        . 'X-Mailer: PHP/' . phpversion();
+
+            \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
+                $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
+                $contenu, $headers, 'text/html');
+        }
+        
 
         $json = array(
             'status'        => 'success',

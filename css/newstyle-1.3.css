@@ -705,7 +705,7 @@ form input   {
     width:420px;
 }
 
-textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+.gmap, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
     background-color: #FFFFFF;
     border: 1px solid #E5E5E5;
@@ -719,13 +719,13 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
         outline: 0 none;*/
 }
 
-.error textarea:focus, .error input[type="text"]:focus, .error input[type="password"]:focus, .error input[type="datetime"]:focus, .error input[type="datetime-local"]:focus, .error input[type="date"]:focus, .error input[type="month"]:focus, .error input[type="time"]:focus, .error input[type="week"]:focus, .error input[type="number"]:focus, .error input[type="email"]:focus, .error input[type="url"]:focus, .error input[type="search"]:focus, .error input[type="tel"]:focus, .error input[type="color"]:focus, .error .uneditable-input:focus {
+.error .gmap:focus, .error textarea:focus, .error input[type="text"]:focus, .error input[type="password"]:focus, .error input[type="datetime"]:focus, .error input[type="datetime-local"]:focus, .error input[type="date"]:focus, .error input[type="month"]:focus, .error input[type="time"]:focus, .error input[type="week"]:focus, .error input[type="number"]:focus, .error input[type="email"]:focus, .error input[type="url"]:focus, .error input[type="search"]:focus, .error input[type="tel"]:focus, .error input[type="color"]:focus, .error .uneditable-input:focus {
     border-color: rgba(255, 0, 0, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 0, 0, 0.6);
     outline: 0 none;
 }
 
-.error textarea:hover, .error input[type="text"]:hover, .error input[type="password"]:hover, .error input[type="datetime"]:hover, .error input[type="datetime-local"]:hover, .error input[type="date"]:hover, .error input[type="month"]:hover, .error input[type="time"]:hover, .error input[type="week"]:hover, .error input[type="number"]:hover, .error input[type="email"]:hover, .error input[type="url"]:hover, .error input[type="search"]:hover, .error input[type="tel"]:hover, .error input[type="color"]:hover, .error .uneditable-input:hover {
+.error .gmap:hover, .error textarea:hover, .error input[type="text"]:hover, .error input[type="password"]:hover, .error input[type="datetime"]:hover, .error input[type="datetime-local"]:hover, .error input[type="date"]:hover, .error input[type="month"]:hover, .error input[type="time"]:hover, .error input[type="week"]:hover, .error input[type="number"]:hover, .error input[type="email"]:hover, .error input[type="url"]:hover, .error input[type="search"]:hover, .error input[type="tel"]:hover, .error input[type="color"]:hover, .error .uneditable-input:hover {
     border-color: rgba(255, 0, 0, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 0, 0, 0.6);
     outline: 0 none;
@@ -816,7 +816,7 @@ form  .line .content {
     float:left;
 }
 
-form .error input, form .error table.mceLayout, form .error select {
+form .error .gmap, form .error input, form .error table.mceLayout, form .error select {
     border-color: rgba(255, 0, 0, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 0, 0, 0.6);
     -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
@@ -1251,7 +1251,7 @@ form textarea {
     line-height: 150%;
 }
 
-form input:hover, form textarea:hover, form input:focus, form textarea:focus, form .defaultSkin table.mceLayout:focus {
+form .gmap:hover, form .gmap:focus, form input:hover, form textarea:hover, form input:focus, form textarea:focus, form .defaultSkin table.mceLayout:focus {
     border-color: #C9C9C9;
     -moz-box-shadow: rgba(0,0,0, 0.15) 0px 0px 8px;
     -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
@@ -2195,7 +2195,7 @@ fieldset {
 }
 
 .buttonfixed {
-    margin-left: 916px;
+    margin-left: 906px;
 }
 
 .ui-effects-transfer {

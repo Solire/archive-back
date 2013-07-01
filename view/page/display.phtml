@@ -15,8 +15,13 @@
             $page = $this->pages[$id_version];
 ?>
                             <div style="float: left;margin-right: 10px;" class="btn-group">
-                                    <a title="<?php echo $version['nom']; ?>" class="openlang <?php echo $id_version == BACK_ID_VERSION ? '' : 'translucide'; ?> btn btn-default btn-small">
-                                        <img src="app/back/img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
+                                    <a title="<?php echo ($this->pages[BACK_ID_VERSION]->getMeta() ? '' : 'Page en cours de création en version : ') . $version['nom']; ?>" class="openlang <?php echo $id_version == BACK_ID_VERSION ? '' : 'translucide'; ?> btn btn-default btn-small">
+                                        <?php if($this->pages[BACK_ID_VERSION]->getMeta()) { ?>
+                                            <img src="app/back/img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
+                                        <?php } else { ?>
+                                            <i class="icon-time" alt="Page en cours de création en version <?php echo $version['nom']; ?>"></i>
+                                        <?php } ?>
+                                        
                                     </a>
                                     
 
@@ -27,7 +32,7 @@
                     || !$page->getMeta("visible")
                 ) {
 ?>
-                                    <a class="btn btn-small btn-info visible-lang"  title="Rendre visible sur le site '<?php echo $page->getMeta('titre'); ?>'  en version : <?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>">
+                                    <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
                                         <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta("id_version"); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo $page->getMeta("id_version"); ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
                                         <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
                                     </a>
@@ -126,7 +131,7 @@
                                             <a title="<?php echo $version['nom']; ?>" class="btn btn-default btn-small">
                                                 <img src="app/back/img/flags/png/<?php echo strtolower($this->mainVersions[$page->getMeta("id_version")]["suf"]); ?>.png" alt="<?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>" />
                                             </a>    
-                                            <a class="btn btn-small btn-info visible-lang"  title="Rendre visible sur le site '<?php echo $page->getMeta('titre'); ?>'  en version : <?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>">
+                                            <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
                                                 <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo BACK_ID_VERSION; ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo BACK_ID_VERSION; ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
                                                 <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
                                             </a>    
