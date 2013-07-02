@@ -5,7 +5,7 @@
         if ($iLink == count($this->breadCrumbs) - 1 || !isset($link["url"])) {
 ?>
                             <li class="<?php echo $iLink == count($this->breadCrumbs) - 1 ? 'current' : 'parent'; ?>">
-                                <a class="vam"><?php echo $link["label"]; ?></a>
+                                <a class="vam" <?php echo $iLink == count($this->breadCrumbs) - 1 ? '' : 'style="color: #222222"'; ?>><?php echo $link["label"]; ?></a>
                             </li>
 <?php
         }
