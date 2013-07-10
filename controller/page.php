@@ -40,6 +40,8 @@ class Page extends Main
      * Liste les gabarits
      *
      * @return void
+     * @hook back/ list<indexConfig> Pour remplacer le chargement d'une config
+     * particulière
      */
     public function listeAction()
     {
@@ -98,9 +100,23 @@ class Page extends Main
                     );
                 }
             } else {
-                $this->_pages = $this->_gabaritManager->getList(
-                    BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
-                );
+                $hook = new \Slrfw\Hook();
+                $hook->setSubdirName('back');
+
+                $hook->gabaritManager = $this->_gabaritManager;
+                $hook->gabaritsList = $gabaritsList;
+                $hook->idApi = $this->_api['id'];
+
+                $hook->exec('list' . $indexConfig);
+
+                /** Chargement par défaut **/
+                if (!isset($hook->list) || empty($hook->list)) {
+                    $this->_pages = $this->_gabaritManager->getList(
+                        BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
+                    );
+                } else {
+                    $this->_pages = $hook->list;
+                }
                 $this->_view->pagesGroup[0] = 1;
             }
         } else {
@@ -174,11 +190,11 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/autocomplete_multi/jquery.tokeninput.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi.js');
         $this->_javascript->addLibrary('back/js/compareversion.js');
-        
+
         //Gmap
         $this->_javascript->addLibrary('http://maps.google.com/maps/api/js?sensor=false');
         $this->_javascript->addLibrary('back/js/jquery/gmap3.min.js');
-        
+
 
         $this->_css->addLibrary('back/css/jcrop/jquery.Jcrop.min.css');
         $this->_css->addLibrary('back/css/ui.spinner.css');
@@ -187,7 +203,7 @@ class Page extends Main
         $this->_css->addLibrary('back/css/jquery.qtip.min.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input-facebook.css');
-        
+
 
 
         $this->_css->addLibrary('back/css/affichegabarit.css');
@@ -213,10 +229,10 @@ class Page extends Main
                 foreach ($page->getParents() as $parent) {
                     $path = $parent->getMeta('rewriting') . '/' . $path;
                 }
-                
+
                 if($id_version == BACK_ID_VERSION)
                     $this->_view->pagePath = $path . "?mode_previsualisation=1";
-                
+
                 $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
                 $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
 
@@ -359,9 +375,9 @@ class Page extends Main
 
 
         $this->_page = $this->_gabaritManager->save($_POST);
-        
+
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
-        
+
         //Envoi de mail à solire
         if($this->_appConfig->get('general', 'mail-notification')) {
             $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
@@ -378,7 +394,7 @@ class Page extends Main
                 $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
                 $contenu, $headers, 'text/html');
         }
-        
+
 
         $json = array(
             'status'        => 'success',
