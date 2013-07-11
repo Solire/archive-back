@@ -1,8 +1,12 @@
 var myModal = {
-    confirm: function(heading, question, cancelButtonTxt, okButtonTxt, callback) {
-
+    confirm: function(heading, question, cancelButtonTxt, okButtonTxt, callback, zIndex) {
+        if(!zIndex) {
+            zIndex = "";
+        } else {
+            zIndex = 'z-index : ' + zIndex;
+        }
         var confirmModal =
-                $('<div class="modal hide fade">' +
+                $('<div class="modal hide fade" style="' + zIndex + '">' +
                 '<div class="modal-header">' +
                 '<a class="close" data-dismiss="modal" >&times;</a>' +
                 '<h3>' + heading + '</h3>' +
@@ -28,14 +32,20 @@ var myModal = {
         confirmModal.appendTo("body")
         confirmModal.modal('show');
     },
-    message: function(heading, message, closeButtonTxt, closeDelay, widthAuto) {
+    message: function(heading, message, closeButtonTxt, closeDelay, widthAuto, zIndex) {
         var appendClass = ""
         if(widthAuto) {
             appendClass = " modal-auto-width";
         }
+        
+        if(!zIndex) {
+            zIndex = "";
+        } else {
+            zIndex = 'z-index = ' + zIndex;
+        }
 
         var messageModal =
-                $('<div class="modal hide fade' + appendClass +'">' +
+                $('<div class="modal hide fade' + appendClass +'" style="' + zIndex + '">' +
                 '<div class="modal-header">' +
                 '<a class="close" data-dismiss="modal" >&times;</a>' +
                 '<h3>' + heading + '</h3>' +
