@@ -1,4 +1,8 @@
-                        <h1>Liste des pages</h1>
+<?php if (isset($this->label)) { ?>
+                <h1><?php echo $this->label; ?></h1>
+<?php } else { ?>
+                <h1>Liste des pages</h1>
+<?php } ?>
 
 <?php $this->add('breadcrumbs.phtml'); ?>
 
