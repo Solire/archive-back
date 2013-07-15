@@ -188,6 +188,9 @@ $(function(){
     $('legend').live('click', function(){
         var $legend = $(this)
         if ($legend.hasClass("noChild")) {
+            if ($legend.data("url") !== undefined) {
+                document.location.href = $legend.data("url");
+            }
             return false;
         }
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
