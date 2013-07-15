@@ -32,6 +32,7 @@
 <?php
                 if ($page->getMeta("id_gabarit") != 1
                     && $page->getMeta("id_gabarit") != 2
+                    && (isset($this->noType) && $this->noType === false || !isset($this->noType))
                 ) {
 
                     if ($page->getMeta("date_modif") != "0000-00-00 00:00:00"
@@ -49,7 +50,7 @@
                 if ($page->getMeta('nbre_enfants') > 0) {
 ?>
                                             |
-                                            <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?></span> page(s)</i>
+                                            <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?> </span><?php echo $this->childName; ?></i>
 <?php
                 }
 ?>

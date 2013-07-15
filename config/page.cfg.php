@@ -28,6 +28,11 @@ $config = array(
         'label' => 'Contenu institutionnel',
         'gabarits' => '*',
         'display' => true,
+        /** Si vrais, empêche le chargement des gabarits enfants **/
+        'noChild' => false,
+        /** Blocage de l'affichage du type de gabarit **/
+        'noType' => false,
+        'childName' => 'page(s)',
     ),
 );
 

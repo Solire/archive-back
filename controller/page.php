@@ -78,6 +78,16 @@ class Page extends Main
             $this->_view->label = $currentConfigPageModule['label'];
         }
 
+        if (isset($currentConfigPageModule['childName'])) {
+            $this->_view->childName = $currentConfigPageModule['childName'];
+        }
+
+        if (isset($currentConfigPageModule['noType'])
+            && $currentConfigPageModule['noType'] === true
+        ) {
+            $this->_view->noType = true;
+        }
+
         unset($configPageModule);
 
         /** Génération de la liste des gabarits à montrer **/
