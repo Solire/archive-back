@@ -88,7 +88,7 @@ $(function(){
             };
 
             myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
-        
+
 
     }
 
@@ -187,6 +187,9 @@ $(function(){
     //// OUVERTURE / FERMETURE DES PAGES PARENTES.
     $('legend').live('click', function(){
         var $legend = $(this)
+        if ($legend.hasClass("noChild")) {
+            return false;
+        }
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
 
             $legend.find('i.icon-chevron-down').addClass("icon-chevron-up").removeClass("icon-chevron-down")
