@@ -131,6 +131,7 @@ class Page extends Main
 
                 $hook->gabaritManager = $this->_gabaritManager;
                 $hook->gabaritsList = $gabaritsList;
+                $hook->idVersion = BACK_ID_VERSION;
                 $hook->idApi = $this->_api['id'];
 
                 $hook->exec('list' . $indexConfig);
@@ -174,9 +175,91 @@ class Page extends Main
      */
     public function childrenAction()
     {
+        $gabaritsList = 0;
+
+        /** Si on veut n'afficher que certains gabarits **/
+        if (isset($_GET['c']) && intval($_GET['c'])) {
+            $indexConfig = intval($_GET['c']);
+        } else {
+            $indexConfig = 0;
+        }
+
+        /** Récupération de la liste de la page et des droits utilisateurs **/
+        $currentConfigPageModule = $this->_configPageModule[$indexConfig];
+        $gabaritsListPage = $currentConfigPageModule['gabarits'];
+        $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+        $gabaritsListUser = $configPageModule['gabarits'];
+
+        /** Option de blocage de l'affichage des gabarits enfants **/
+        if (isset($currentConfigPageModule['noChild'])
+            && $currentConfigPageModule['noChild'] === true
+        ) {
+            $this->_view->noChild = true;
+        }
+        if (isset($currentConfigPageModule['urlRedir'])) {
+            $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
+        }
+
+        if (isset($currentConfigPageModule['urlAjax'])) {
+            $this->_view->urlAjax = $currentConfigPageModule['urlAjax'];
+        }
+
+        if (isset($currentConfigPageModule['childName'])) {
+            $this->_view->childName = $currentConfigPageModule['childName'];
+        }
+
+        if (isset($currentConfigPageModule['noType'])
+            && $currentConfigPageModule['noType'] === true
+        ) {
+            $this->_view->noType = true;
+        }
+
+        /** Génération de la liste des gabarits à montrer **/
+        if ($gabaritsListPage == '*') {
+            $gabaritsList = $gabaritsListUser;
+        } else {
+            if ($gabaritsListUser == '*') {
+                $gabaritsList = $gabaritsListPage;
+            } else {
+                $gabaritsList = array();
+                foreach ($gabaritsListPage as $gabId) {
+                    if (in_array($gabId, $gabaritsListUser)) {
+                        $gabaritsList[] = $gabId;
+                    }
+                    unset($gabId);
+                }
+            }
+        }
+        unset($gabaritsListPage, $gabaritsListUser);
+
+        if ($gabaritsList === '*') {
+            $gabaritsList = 0;
+        }
+
+
         $this->_view->main(false);
-        $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION,
-            $this->_api['id'], $_REQUEST['id_parent']);
+
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->gabaritManager = $this->_gabaritManager;
+        $hook->gabaritsList = $gabaritsList;
+        $hook->idVersion = BACK_ID_VERSION;
+        $hook->idApi = $this->_api['id'];
+        $hook->idParent = $_REQUEST['id_parent'];
+
+        $hook->exec('list' . $indexConfig);
+
+        /** Chargement par défaut **/
+        if (!isset($hook->list) || empty($hook->list)) {
+            $this->_pages = $this->_gabaritManager->getList(
+                BACK_ID_VERSION, $this->_api['id'], $_REQUEST['id_parent'],
+                $gabaritsList
+            );
+        } else {
+            $this->_pages = $hook->list;
+        }
 
         if (count($this->_pages) == 0) {
             exit();
