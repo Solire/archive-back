@@ -53,11 +53,15 @@
                                             <i>Type : <?php echo $this->gabarits[$page->getMeta("id_gabarit")]["label"] ?></i>
 <?php
                 }
-
-                if ($page->getMeta('nbre_enfants') > 0) {
+                $nbChild = $page->getMeta('nbre_enfants');
+                if (!empty($nbChild)) {
+                    $displayChild = $page->getMeta('aff_enfants');
+                    if (empty($displayChild)) {
+                        $displayChild = $page->getMeta('nbre_enfants');
+                    }
 ?>
                                             |
-                                            <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?> </span><?php echo $this->childName; ?></i>
+                                            <i><span class="page-nbre-enfants"><?php echo $displayChild; ?> </span><?php echo $this->childName; ?></i>
 <?php
                 }
 ?>
