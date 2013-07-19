@@ -226,6 +226,13 @@ class Main extends \Slrfw\Controller
                     . $this->_view->site,
         );
 
+        /** On indique que l'on est dans une autre api **/
+        if ($this->_api['id'] != 1) {
+            $this->_view->breadCrumbs[] = array(
+                    'label' => $this->_api['label'],
+            );
+        }
+
         $this->_view->appConfig = $this->_appConfig;
 
         /**
