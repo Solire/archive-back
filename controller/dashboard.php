@@ -2,8 +2,7 @@
 
 namespace App\Back\Controller;
 
-class Dashboard extends Main
-{
+class Dashboard extends Main {
 
     private $_cache = null;
     private $_config = null;
@@ -35,14 +34,13 @@ class Dashboard extends Main
 
             foreach ($configsName as $configKey => $configName) {
                 $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
-                
+
                 $frontController = \Slrfw\FrontController::getInstance();
                 $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
-                
+
                 if (!$configPath) {
                     $this->pageNotFound();
                 }
-                
                 $datatable = null;
 
                 foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {

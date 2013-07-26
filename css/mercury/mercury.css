@@ -1237,7 +1237,7 @@ html, body {
  * Buttons TODO: Refactor to a more generic button
  *----------------------------------------------------------------------------*/
 
-.btn {
+/*.btn {
   -webkit-background-clip: padding;
   -moz-background-clip: padding;
   background-clip: padding-box;
@@ -1285,7 +1285,7 @@ html, body {
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Overrides for the blue "important" button */
+ Overrides for the blue "important" button 
 .btn.important {
   background: #268bd2;
   border: 1px solid #16527c;
@@ -1304,7 +1304,7 @@ html, body {
 .btn.important:hover,
 .btn.important.active {
   border: 1px solid #0f3550;
-}
+}*/
 
 /*
  * mercury.css

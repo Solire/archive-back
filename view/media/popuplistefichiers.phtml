@@ -129,11 +129,7 @@
 
 </style>
         <div>
-            <div class="btn-a gradient-green">
-            <a href="#" id="pickfiles">
-                ajouter un fichier
-            </a>
-                </div>
+            <a href="#" class="btn btn-small btn-success" id="pickfiles"><i class="icon-folder-open"></i> Ajouter un fichier</a>
         </div>
 
         <table id="tableau" class="display" style="width:100%;">
@@ -158,11 +154,12 @@
                     </td>
                     <td><?php echo $file['poids']; ?></td>
                     <td><?php echo \Slrfw\Tools::formate_date_nombre(substr($file['date_crea'], 0, 10), '-', '/'); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
-                    <td>
-                        <div class="btn-a gradient-blue">
-                            <a href="<?php echo $file['path']; ?>" target="_blank" class="previsu"><img alt="Voir" src="app/back/img/voir.png" /></a>
-                        </diV>
-
+                    <td class="center">
+                        <div class="btn-toolbar">
+                            <div class="btn-group">
+                                <a href="<?php echo $file['path']; ?>" class="btn btn-info previsu" title="Visualiser"><i class="icon-camera"></i></a>
+                            </div>
+                        </div>
                     </td>
                 </tr>
 

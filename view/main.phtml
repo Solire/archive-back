@@ -123,7 +123,7 @@
     foreach ($this->mainVersions as $version) {
 ?>
                                         <li>
-                                            <a style="cursor:pointer;" onclick="$.cookie('id_version', <?php echo $version['id'] ?>, {path: 'back/'}); document.location.href = document.location.href; return false;">
+                                            <a style="cursor:pointer;" onclick="$.cookie('back_id_version', <?php echo $version['id'] ?>, {path: '/'}); document.location.href = document.location.href; return false;">
                                                 <img style="width: 16px; height: 16px;display: block;float: left;margin-top: 1px;" alt="" src="app/back/img/flags/all/16/<?php echo strtolower($version['suf']) ?>.png" />&nbsp;&nbsp;<?php echo $version['nom'] ?>
                                             </a>
                                         </li>
@@ -178,103 +178,7 @@
 <?php
     }
 
-    /** Si le tableau de board est activé */
-    if ($this->appConfig->get('board', 'active')) {
-        if ($this->controller == 'back/board') {
-?>
-                                    <li class="gradient-blue text-light-white"><a href="back/board/start.html">Tableau de bord</a></li>
-<?php
-        } else {
-?>
-                                    <li><a href="back/board/start.html">Tableau de bord</a></li>
-<?php
-        }
-?>
-                                    <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-<?php
-    }
-?>
-<?php
-    $countConfig = 0;
-    foreach ($this->menuPage as $value) {
-        if ($value['display'] === true) {
-            $countConfig++;
-        }
-    }
-    if ($countConfig > 1) {
-?>
-                                    <li class="dropdown<?php echo $this->controller == "back/page" ? ' gradient-blue text-light-white' : ''; ?>">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Pages <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-<?php
-        foreach ($this->menuPage as $indexMenuPage => $mPage) {
-            if ($value['display'] !== true) {
-                continue;
-            }
-            $active = "";
-            if (isset($_GET["c"]) && $_GET["c"] == $indexMenuPage) {
-                $active = "active";
-            }
-?>
-                                            <li class="<?php echo $active; ?>"><a href="back/page/liste.html?c=<?php echo $indexMenuPage ?>"> <?php echo $mPage["label"] ?></a></li>
-<?php
-        }
-?>
-                                        </ul>
-                                    </li>
-<?php
-    }
-    else {
-?>
-                                    <li<?php echo $this->controller == "back/page" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/page/liste.html">Pages</a></li>
-<?php
-    }
-?>
-                                    <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-                                    <li<?php echo $this->controller == "back/media" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/media/start.html">Fichiers</a></li>
-                                    <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-                                    <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "translate" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/dashboard/start.html?name=translate" class="bis">Textes statiques</a></li>
-<?php
-    if ($this->utilisateur->get("niveau") == "solire") {
-?>
-                                    <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-<?php
-        if ($this->api["name"] == "mobile") {
-?>
-
-                                    <li class="dropdown<?php echo $this->controller == "back/dashboard" && ($_GET["name"] == "redirection" || $_GET["name"] == "redirection_mobile") ? ' gradient-blue text-light-white' : ''; ?>">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Redirections <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=redirection">Redirections 301 permanentes</a></li>
-                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection_mobile" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=redirection_mobile">Correspondances Desktop/Mobile</a></li>
-                                        </ul>
-                                    </li>
-<?php
-        }
-        else {
-?>
-                                    <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "redirection" ? ' class="gradient-blue text-light-white"' : ''; ?>><a href="back/dashboard/start.html?name=redirection" class="bis">Redirections 301</a></li>
-<?php
-        }
-    }
-
-    if ($this->utilisateur->get("niveau") == "solire") {
-        $class = '';
-        if ($this->controller == "back/dashboard" && ($_GET["name"] == "back_log" || $_GET["name"] == "utilisateur")) {
-            $class = ' gradient-blue text-light-white';
-        }
-
-?>
-                                    <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
-                                    <li class="dropdown<?php echo $class; ?>">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> + <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "back_log" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=back_log" class="bis">Logs</a></li>
-                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "utilisateur" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=utilisateur" class="bis">Utilisateurs</a></li>
-                                        </ul>
-                                    </li>
-<?php
-    }
+    $this->add('menu-' . $this->api['id'] . '.phtml');
 ?>
                                 </ul>
                             </nav>

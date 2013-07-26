@@ -14,8 +14,10 @@ $(function(){
     .dialog({
         open: function(){
             $('.ui-widget-overlay').hide().fadeIn();
-            if(!$('.ui-dialog-buttonset button').hasClass("btn-a"))
-                $('.ui-dialog-buttonset button').attr("class", "").addClass("btn-a gradient-blue").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+            if(!$('.ui-dialog-buttonset button').hasClass("btn")) {
+                $('.ui-dialog-buttonset button:eq(0)').attr("class", "").addClass("btn btn-warning btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+                $('.ui-dialog-buttonset button:eq(1)').attr("class", "").addClass("btn btn-default btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+            }
         },
         beforeClose: function(){
             $('.ui-widget-overlay').remove();
@@ -57,36 +59,36 @@ $(function(){
     var confirmOpen = function(sort_elmt) {
         var sort_box = sort_elmt.parent();
         var id_gab_page = parseInt(sort_elmt.attr('id').split('_').pop());
+        var titleElemDel = sort_elmt.attr("data-titre")
+        var heading = 'Confirmation de suppression de "' + titleElemDel + '"';
+        var question = 'Etes-vous sûr de vouloir supprimer "' + titleElemDel + '" ? ';
+        var cancelButtonTxt = 'Annuler';
+        var okButtonTxt = 'Confirmer';
 
-        confirm.dialog('option', 'buttons', {
-            "Ok" : function(){
-                $.post(
-                    'back/page/delete.html',
-                    {
-                        id_gab_page : id_gab_page
-                    },
-                    function(data){
-                        if(data.status == 'success')
-                            sort_elmt.slideUp('fast', function(){
-                                $(this).remove();
-                                sort_box.sortable('refresh');
-                                confirm.dialog("close")
-                                $.sticky("La page a été supprimée", {
-                                    type:"success"
-                                });
-                            })
-                    },
-                    'json'
-                    );
-            },
-            "Annuler" : function(){
-                $(this).dialog("close");
-            }
-        }).dialog('open');
-        $(".supprimer", sort_elmt).effect("transfer", {
-            to: confirm.dialog("widget"),
-            className: "ui-effects-transfer"
-        }, 500);
+        var callback = function() {
+            $.post(
+                'back/page/delete.html',
+                {
+                    id_gab_page : id_gab_page
+                },
+                function(data){
+                    if(data.status == 'success')
+                        sort_elmt.slideUp('fast', function(){
+                            $(this).remove();
+                            sort_box.sortable('refresh');
+                            var heading = 'Confirmation de suppression de "' + titleElemDel + '"';
+                            var message = '"' + titleElemDel + '"'
+                                + ' a été supprimé avec succès'
+                            var closeButtonTxt = 'Fermer';
+                            myModal.message(heading, message, closeButtonTxt, 2500);
+                        })
+                },
+                'json'
+                );
+            };
+
+            myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
+
 
     }
 
@@ -184,10 +186,21 @@ $(function(){
 
     //// OUVERTURE / FERMETURE DES PAGES PARENTES.
     $('legend').live('click', function(){
-        var $legend = $(this)
+        var $legend = $(this),
+            url = "back/page/children.html";
+        if ($legend.hasClass("noChild")) {
+            if ($legend.data("url") !== undefined) {
+                document.location.href = $legend.data("url");
+            }
+            return false;
+        }
+        if ($legend.data("ajax") !== undefined) {
+            url = $legend.data("ajax");
+        }
+
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
 
-            $legend.find('span.ui-icon-plus').addClass("ui-icon-moins")
+            $legend.find('i.icon-chevron-down').addClass("icon-chevron-up").removeClass("icon-chevron-down")
             if (!$(this).next('div').hasClass('children-loaded')) {
                 var id = $(this).parent().attr('id').split('_').pop();
 
@@ -196,7 +209,7 @@ $(function(){
                     mode: 'queue',
                     port: 'ajaxWhois',
                     type: 'GET',
-                    url: 'back/page/children.html',
+                    url: url,
                     data: {
                         id_parent : id
                     },
@@ -218,7 +231,7 @@ $(function(){
             }
         }
         else {
-            $legend.find('span.ui-icon-plus').toggleClass("ui-icon-moins")
+            $legend.find('i.icon-chevron-down, i.icon-chevron-up').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
             $(this).next('div').slideToggle(500);
             $(this).siblings('.cat-modif').slideToggle(500);
         }
@@ -238,7 +251,7 @@ $(function(){
      */
     function saveState() {
         var saveStateListPage = []
-        $("legend .ui-icon-moins").each(function(){
+        $("legend i.icon-chevron-up").each(function(){
             saveStateListPage.push($(this).parents("fieldset:first").attr("id"))
         })
 
@@ -267,11 +280,16 @@ $(function(){
         $.each(saveStateListPage, function(id, item) {
 
             var id = item.split('_').pop();
+            if ($("#" + item).find("legend:first").data("ajax") !== undefined) {
+                var url = $("#" + item).find("legend:first").data("ajax");
+            } else {
+                var url = "back/page/children.html";
+            }
             $.ajax({
                 mode: 'queue',
                 port: 'ajaxWhois',
                 type: 'GET',
-                url: 'back/page/children.html',
+                url: url,
                 data: {
                     id_parent : id
                 },
@@ -279,8 +297,7 @@ $(function(){
                     currentState++;
                     var $legend = $("#" + item).find("legend:first")
                     var $divToLoad = $("#" + item).find(".sort-box:first")
-
-                    $legend.find('span.ui-icon-plus').addClass("ui-icon-moins")
+                    $legend.find('i.icon-chevron-down').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
                     $divToLoad.html(data)
                     $divToLoad.addClass('children-loaded');
                     if (data != '') {

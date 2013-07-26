@@ -7,13 +7,19 @@
             /** Group */
             if (count($gabaritGroup["gabarit"]) > 1) {
 ?>
-                            <div class="btn-create-container dropdown">
-                                <div class="btn-a btn-create gradient-green  dropdown-toggle">
-                                    <a href="#" class="group-gabarit">
-                                        <img src="app/back/img/white/plus_alt_16x16.png" />
-                                        <?php echo $gabaritGroup['label'] ?>
-                                    </a>
-                                </div>
+                            
+                            <div style="margin-right: 10px;" class="btn-group">
+                                <a href="#" data-toggle="dropdown" class="btn btn-success btn-small"> <?php echo $gabaritGroup['label'] ?></a>
+                                <a href="#" data-toggle="dropdown" class="btn btn-success btn-small dropdown-toggle">
+                                    <i style="padding:1px 0px 0px 0px;" class="icon-chevron-down icon-white"></i>
+                                </a>
+                                
+                                
+                                                        
+                            
+                            
+                            
+                            
 
                                 <ul class="dropdown-menu">
 <?php
@@ -24,7 +30,7 @@
                     }
 ?>
                                     <li>
-                                        <a href="back/page/display.html?id_gabarit=<?php echo $gabarit['id'] ?>"><?php echo $gabarit['label'] ?></a>
+                                        <i></i> <a href="back/page/display.html?id_gabarit=<?php echo $gabarit['id'] ?>"><?php echo $gabarit['label'] ?></a>
                                     </li>
 <?php
                 }
@@ -37,11 +43,10 @@
             /** Gabarit simple */
             else {
 ?>
-                            <div class="btn-a gradient-green" style="float:left;margin-right:10px;">
-                                <a href="back/page/display.html?id_gabarit=<?php echo $gabaritGroup['gabarit'][0]['id'] ?>">
-                                    <?php echo $gabaritGroup['label'] . $gabaritGroup['gabarit'][0]["label"] ?>
-                                </a>
-                            </div>
+                            <a style="margin-right: 10px;" class="btn btn-small btn-success btn-crea" href="back/page/display.html?id_gabarit=<?php echo $gabaritGroup['gabarit'][0]['id'] ?>">
+                                <?php echo $gabaritGroup['label'] . $gabaritGroup['gabarit'][0]["label"] ?>
+                            </a>
+                            
 <?php
             }
 ?>

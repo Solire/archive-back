@@ -101,7 +101,7 @@ class Main extends \Slrfw\Controller
         $this->_css->addLibrary('back/css/bootstrap/bootstrap.min.css');
         $this->_css->addLibrary('back/css/bootstrap/bootstrap-responsive.min.css');
 
-        $this->_css->addLibrary('http://www.solire.fr/style_solire_fw/css/back/newstyle-1.3.css');
+        $this->_css->addLibrary('back/css/newstyle-1.3.css');
         $this->_css->addLibrary('back/css/sticky.css');
 
         $this->_view->site = \Slrfw\Registry::get('project-name');
@@ -144,15 +144,15 @@ class Main extends \Slrfw\Controller
         } elseif (isset($_POST['id_version'])) {
             $id_version = $_POST['id_version'];
             $url = '/' . \Slrfw\Registry::get('baseroot');
-            setcookie('id_version', $id_version, 0, $url);
+            setcookie('back_id_version', $id_version, 0, $url);
             if (!defined('BACK_ID_VERSION')) {
                 define('BACK_ID_VERSION', $id_version);
             }
-        } elseif (isset($_COOKIE['id_version'])
-            && isset($this->_versions[$_COOKIE['id_version']])
+        } elseif (isset($_COOKIE['back_id_version'])
+            && isset($this->_versions[$_COOKIE['back_id_version']])
         ) {
             if (!defined('BACK_ID_VERSION')) {
-                define('BACK_ID_VERSION', $_COOKIE['id_version']);
+                define('BACK_ID_VERSION', $_COOKIE['back_id_version']);
             }
         } else {
             if (!defined('BACK_ID_VERSION')) {
@@ -224,8 +224,14 @@ class Main extends \Slrfw\Controller
         $this->_view->breadCrumbs[] = array(
             'label' => '<img src="app/back/img/gray_dark/home_12x12.png"> '
                     . $this->_view->site,
-            'url'   => './',
         );
+
+        /** On indique que l'on est dans une autre api **/
+        if ($this->_api['id'] != 1) {
+            $this->_view->breadCrumbs[] = array(
+                    'label' => $this->_api['label'],
+            );
+        }
 
         $this->_view->appConfig = $this->_appConfig;
 
@@ -233,8 +239,25 @@ class Main extends \Slrfw\Controller
          * On recupere la configuration du module pages (Menu + liste)
          */
         $path = \Slrfw\FrontController::search('config/page.cfg.php');
-        include $path;
-        $this->_configPageModule = $config;
+        $completConfig = array();
+        $appList = \Slrfw\FrontController::getAppDirs();
+        foreach ($appList as $app) {
+            $path = new \Slrfw\Path(
+                $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+            );
+
+            if ($path->get() == false) {
+                continue;
+            }
+            include $path->get();
+
+            foreach ($config as $key => $value) {
+                $completConfig[$key] = $value;
+            }
+            unset($config, $key, $value);
+        }
+
+        $this->_configPageModule = $completConfig;
         unset($path, $config);
         $this->_view->menuPage = array();
         foreach ($this->_configPageModule as $configPage) {

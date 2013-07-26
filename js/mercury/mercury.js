@@ -38,7 +38,7 @@ window.Mercury = {
         // toolbars, along with button groups.
         //
         // Some toolbars are custom (the snippets toolbar for instance), and to denote that use _custom: true.  You can then
-        // build the toolbar yourself with it's own behavior.
+        // build the toolbar yourself with it's own behavior.previe
         //
         // Buttons can be grouped, and a button group is simply a way to wrap buttons for styling -- they can also handle
         // enabling or disabling all the buttons within it by using a context.  The table button group is a good example of
@@ -14121,7 +14121,7 @@ Showdown.converter = function() {
             var height, toolbarHeight, width;
             width = jQuery(window).width();
             height = this.statusbar.top();
-            toolbarHeight = this.toolbar.height() + 42;
+            toolbarHeight = this.toolbar.height() + 40;
             Mercury.displayRect = {
                 top: toolbarHeight,
                 left: 0,
@@ -15972,11 +15972,11 @@ Showdown.converter = function() {
         Toolbar.prototype.show = function() {
             this.visible = true;
             this.element.css({
-                top: -this.element.outerHeight() - 42,
+                top: -this.element.outerHeight() - 40,
                 display: 'block'
             });
             return this.element.animate({
-                top: '42'
+                top: '40'
             }, 200, 'easeInOutSine');
         };
 
@@ -16934,11 +16934,13 @@ Showdown.converter = function() {
 
         Region.prototype.togglePreview = function() {
             if (this.previewing) {
+                $(".mercury-preview-button").html('<i class="icon-edit"></i> Masquer les zones éditables');
                 this.previewing = false;
                 this.element.attr(Mercury.config.regions.attribute, this.type());
                 if (Mercury.region === this)
                     return this.focus();
             } else {
+                $(".mercury-preview-button").html('<i class="icon-edit"></i> Afficher les zones éditables');
                 this.previewing = true;
                 this.element.removeAttr(Mercury.config.regions.attribute);
                 return Mercury.trigger('region:blurred', {
@@ -18880,7 +18882,7 @@ Showdown.converter = function() {
                 width = '100%';
                 height = this.element.height();
             } else {
-                width = this.element.width();
+                width = this.element.width()+2;
                 height = this.element.height();
             }
             value = this.element.text();

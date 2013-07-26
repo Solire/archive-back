@@ -78,7 +78,7 @@ $(function(){
         $.post(action, data, function(response) {
             $('#modalCrop').modal("hide");
             $inputFile.val(response.filename_front);
-            $inputFile.parent().find(".previsu").attr("href", response.filename_front);
+            $inputFile.siblings(".previsu").attr("href", response.filename_front);
             loadSelectImages($inputFile.parents("#mercury_media:first")[0])
         }, "json");
     });
@@ -93,9 +93,9 @@ $(function(){
         $('.wShow').html("");
         $('.hShow').html("");
 
-        var src = $(this).parent().prev().find('a').attr("href");
+        var src = $(this).siblings('.previsu').attr("href");
 
-        $inputFile = $(this).parent().parent().find("#media_image_url");
+        $inputFile = $(this).siblings("#media_image_url");
 
         var $overlay = $('<div class="loading-overlay"><div class="circle"></div><div class="circle1"></div></div>').hide();
         $("body").prepend($overlay);
@@ -104,7 +104,6 @@ $(function(){
             'margin-top' : marginTop + "px"
         });
         $overlay.fadeIn(500);
-
         $("<img>", {
             src: src
         }).load(function(){

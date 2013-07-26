@@ -14,12 +14,16 @@
         foreach ($this->versions as $id_version => $version) {
             $page = $this->pages[$id_version];
 ?>
-                            <div style="height: 54px;float: left;">
-                                <div class="btn-a gradient-blue" style="margin-bottom: 5px;display:block;">
-                                    <a title="<?php echo $version['nom']; ?>" class="openlang <?php echo $id_version == BACK_ID_VERSION ? 'active' : 'translucide'; ?>">
-                                        Langue : <img src="app/back/img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
+                            <div style="float: left;margin-right: 10px;" class="btn-group">
+                                    <a title="<?php echo ($this->pages[BACK_ID_VERSION]->getMeta() ? '' : 'Page en cours de création en version : ') . $version['nom']; ?>" class="openlang <?php echo $id_version == BACK_ID_VERSION ? '' : 'translucide'; ?> btn btn-default btn-small">
+                                        <?php if($this->pages[BACK_ID_VERSION]->getMeta()) { ?>
+                                            <img src="app/back/img/flags/png/<?php echo strtolower($version['suf']); ?>.png" alt="<?php echo $version['nom']; ?>" />
+                                        <?php } else { ?>
+                                            <i class="icon-time" alt="Page en cours de création en version <?php echo $version['nom']; ?>"></i>
+                                        <?php } ?>
+                                        
                                     </a>
-                                </div>
+                                    
 
 <?php
             if ($page->getMeta("rewriting") != "") {
@@ -28,16 +32,17 @@
                     || !$page->getMeta("visible")
                 ) {
 ?>
-                                <div style="margin-left: 6px;margin-top: -7px;">
-                                    <label style="color:#A1A1A1;display:inline;text-shadow:none;margin-left:10px;" for="visible-<?php echo $id_version; ?>">Visible : </label>
-                                    <input class="visible-lang visible-lang-<?php echo $page->getMeta("id") . '-' . $id_version; ?>" style="margin:0;" value="<?php echo $page->getMeta("id") . '|' . $id_version; ?>" id="visible-<?php echo $id_version; ?>" type="checkbox"<?php if ($page->getMeta("visible")) { echo ' checked="checked"'; }?> />
-                                </div>
+                                    <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
+                                        <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta("id_version"); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo $page->getMeta("id_version"); ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
+                                        <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
+                                    </a>
 <?php
                 }
             }else {
                 if (count($this->versions) > 1) {
 ?>
-                                <span class="notification gradient-red" style="margin-left: 6px;">Non traduit</span>
+                                <a href="" class="openlang-trad btn btn-small btn-danger" title="Non traduit"><i class="icon-globe"></i></a>
+            
 <?php
                 }
             }
@@ -72,8 +77,8 @@
 ?>
                             </select>
 
-                            <button class="btn-a gradient-green fl compareversion-submit" style="padding: 9px 18px; font-size: 12px; display: block; font-family: Arial; line-height: 12px;">Comparer</button>
-                            <button class="btn-a gradient-green fl compareversion-hide" style="padding: 9px 18px; font-size: 12px; display: block; font-family: Arial; line-height: 12px;">Cacher</button>
+                            <button class="btn btn-small btn fl compareversion-submit" style="margin-right: 10px;margin-left: 5px;"><i class="icon-resize-small"></i> Comparer</button>
+                            <button class="btn btn-small btn fl compareversion-hide" style=""><i class="icon-remove"></i> Cacher</button>
                         </div>
 <?php
         }
@@ -103,7 +108,7 @@
     if (isset($_GET['popup']) && $_GET['popup'] == 'more') {
 ?>
 
-                        <div class="modal  hide fade" id="modalMore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div style="width: 616px;margin-left: -308px" class="modal  hide fade" id="modalMore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                 <h3 id="myModalLabel">Que voulez-vous faire ?</h3>
@@ -121,8 +126,17 @@
                 || !$page->getMeta('visible')
             ) {
 ?>
-                                    <dt>Gérer la visibité :</dt><br /><dd><img src="app/back/img/flags/png/<?php echo strtolower($this->versions[BACK_ID_VERSION]['suf']); ?>.png" alt="" />
-                                    <input class="visible-lang visible-lang-<?php echo $page->getMeta("id") . '-' . BACK_ID_VERSION; ?>" style="margin:0;" value="<?php echo $page->getMeta('id') . '|' . BACK_ID_VERSION; ?>" id="visible-<?php echo BACK_ID_VERSION; ?>" style="margin:0;" <?php echo ($page->getMeta('visible') ? 'checked="checked"' : ''); ?> type="checkbox" /><dd>
+                                    <dt>Gérer la visibité :</dt><br /><dd>
+                                        <div class="btn-group">
+                                            <a title="<?php echo $version['nom']; ?>" class="btn btn-default btn-small">
+                                                <img src="app/back/img/flags/png/<?php echo strtolower($this->mainVersions[$page->getMeta("id_version")]["suf"]); ?>.png" alt="<?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>" />
+                                            </a>    
+                                            <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
+                                                <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo BACK_ID_VERSION; ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo BACK_ID_VERSION; ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
+                                                <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
+                                            </a>    
+                                        </div>
+                                        
 <?php
             }
         }
@@ -141,7 +155,7 @@
                                     <dt>Créer un nouveau contenu :</dt>
                                     <br />
                                     <dd>
-                                        <div style="min-height: 50px;">
+                                        <div style="min-height: 90px;">
                                             <?php $this->add("template/button.phtml"); ?>
                                         </div>
                                     </dd>
@@ -149,9 +163,14 @@
                             </div>
 
                             <div class="modal-footer">
-                                <button class="btn-a gradient-grey btn-large" onclick="var link = $('.back-to-list a').attr('href');window.location = link;">Quitter</button>
-                                <button class="btn-a gradient-grey btn-large" data-dismiss="modal" onclick="$('.formprev').click()" aria-hidden="true"><b>Prévisualiser</b></button>
-                                <button class="btn-a gradient-blue btn-large" data-dismiss="modal" aria-hidden="true">Continuer l'édition de cette page</button>
+                                <button class="btn btn-default  btn-small" onclick="var link = $('.back-to-list').attr('href');window.location = link;">Retour à la liste des pages</button>
+                                <?php
+                                    $page = $this->pages[BACK_ID_VERSION];
+                                    if ($page->getGabarit()->getView()) {
+                                ?>
+                                <a class="btn btn-default  btn-small"  href="<?php echo $this->pagePath; ?>" target="_blank">Consulter cette page dans le site</a>
+                                <?php } ?>
+                                <button class="btn btn-default  btn-small" data-dismiss="modal" aria-hidden="true">Reprendre l'édition de cette page</button>
                             </div>
                         </div>
 <?php

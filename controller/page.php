@@ -40,6 +40,8 @@ class Page extends Main
      * Liste les gabarits
      *
      * @return void
+     * @hook back/ list<indexConfig> Pour remplacer le chargement d'une config
+     * particulière
      */
     public function listeAction()
     {
@@ -64,6 +66,32 @@ class Page extends Main
         $gabaritsListPage = $currentConfigPageModule['gabarits'];
         $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
         $gabaritsListUser = $configPageModule['gabarits'];
+
+        /** Option de blocage de l'affichage des gabarits enfants **/
+        if (isset($currentConfigPageModule['noChild'])
+            && $currentConfigPageModule['noChild'] === true
+        ) {
+            $this->_view->noChild = true;
+            if (isset($currentConfigPageModule['urlRedir'])) {
+                $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
+            }
+        }
+
+        /** Chargement du titre de la page **/
+        if (isset($currentConfigPageModule['label'])) {
+            $this->_view->label = $currentConfigPageModule['label'];
+        }
+
+        if (isset($currentConfigPageModule['childName'])) {
+            $this->_view->childName = $currentConfigPageModule['childName'];
+        }
+
+        if (isset($currentConfigPageModule['noType'])
+            && $currentConfigPageModule['noType'] === true
+        ) {
+            $this->_view->noType = true;
+        }
+
         unset($configPageModule);
 
         /** Génération de la liste des gabarits à montrer **/
@@ -98,9 +126,24 @@ class Page extends Main
                     );
                 }
             } else {
-                $this->_pages = $this->_gabaritManager->getList(
-                    BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
-                );
+                $hook = new \Slrfw\Hook();
+                $hook->setSubdirName('back');
+
+                $hook->gabaritManager = $this->_gabaritManager;
+                $hook->gabaritsList = $gabaritsList;
+                $hook->idVersion = BACK_ID_VERSION;
+                $hook->idApi = $this->_api['id'];
+
+                $hook->exec('list' . $indexConfig);
+
+                /** Chargement par défaut **/
+                if (!isset($hook->list) || empty($hook->list)) {
+                    $this->_pages = $this->_gabaritManager->getList(
+                        BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
+                    );
+                } else {
+                    $this->_pages = $hook->list;
+                }
                 $this->_view->pagesGroup[0] = 1;
             }
         } else {
@@ -132,9 +175,91 @@ class Page extends Main
      */
     public function childrenAction()
     {
+        $gabaritsList = 0;
+
+        /** Si on veut n'afficher que certains gabarits **/
+        if (isset($_GET['c']) && intval($_GET['c'])) {
+            $indexConfig = intval($_GET['c']);
+        } else {
+            $indexConfig = 0;
+        }
+
+        /** Récupération de la liste de la page et des droits utilisateurs **/
+        $currentConfigPageModule = $this->_configPageModule[$indexConfig];
+        $gabaritsListPage = $currentConfigPageModule['gabarits'];
+        $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+        $gabaritsListUser = $configPageModule['gabarits'];
+
+        /** Option de blocage de l'affichage des gabarits enfants **/
+        if (isset($currentConfigPageModule['noChild'])
+            && $currentConfigPageModule['noChild'] === true
+        ) {
+            $this->_view->noChild = true;
+        }
+        if (isset($currentConfigPageModule['urlRedir'])) {
+            $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
+        }
+
+        if (isset($currentConfigPageModule['urlAjax'])) {
+            $this->_view->urlAjax = $currentConfigPageModule['urlAjax'];
+        }
+
+        if (isset($currentConfigPageModule['childName'])) {
+            $this->_view->childName = $currentConfigPageModule['childName'];
+        }
+
+        if (isset($currentConfigPageModule['noType'])
+            && $currentConfigPageModule['noType'] === true
+        ) {
+            $this->_view->noType = true;
+        }
+
+        /** Génération de la liste des gabarits à montrer **/
+        if ($gabaritsListPage == '*') {
+            $gabaritsList = $gabaritsListUser;
+        } else {
+            if ($gabaritsListUser == '*') {
+                $gabaritsList = $gabaritsListPage;
+            } else {
+                $gabaritsList = array();
+                foreach ($gabaritsListPage as $gabId) {
+                    if (in_array($gabId, $gabaritsListUser)) {
+                        $gabaritsList[] = $gabId;
+                    }
+                    unset($gabId);
+                }
+            }
+        }
+        unset($gabaritsListPage, $gabaritsListUser);
+
+        if ($gabaritsList === '*') {
+            $gabaritsList = 0;
+        }
+
+
         $this->_view->main(false);
-        $this->_pages = $this->_gabaritManager->getList(BACK_ID_VERSION,
-            $this->_api['id'], $_REQUEST['id_parent']);
+
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->gabaritManager = $this->_gabaritManager;
+        $hook->gabaritsList = $gabaritsList;
+        $hook->idVersion = BACK_ID_VERSION;
+        $hook->idApi = $this->_api['id'];
+        $hook->idParent = $_REQUEST['id_parent'];
+
+        $hook->exec('list' . $indexConfig);
+
+        /** Chargement par défaut **/
+        if (!isset($hook->list) || empty($hook->list)) {
+            $this->_pages = $this->_gabaritManager->getList(
+                BACK_ID_VERSION, $this->_api['id'], $_REQUEST['id_parent'],
+                $gabaritsList
+            );
+        } else {
+            $this->_pages = $hook->list;
+        }
 
         if (count($this->_pages) == 0) {
             exit();
@@ -168,12 +293,17 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
         $this->_javascript->addLibrary('back/js/join-simple.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
-        $this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
+        $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
         $this->_javascript->addLibrary('back/js/jquery/ui.spinner.min.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi/jquery.tokeninput.js');
         $this->_javascript->addLibrary('back/js/autocomplete_multi.js');
         $this->_javascript->addLibrary('back/js/compareversion.js');
+
+        //Gmap
+        $this->_javascript->addLibrary('http://maps.google.com/maps/api/js?sensor=false');
+        $this->_javascript->addLibrary('back/js/jquery/gmap3.min.js');
+
 
         $this->_css->addLibrary('back/css/jcrop/jquery.Jcrop.min.css');
         $this->_css->addLibrary('back/css/ui.spinner.css');
@@ -182,6 +312,8 @@ class Page extends Main
         $this->_css->addLibrary('back/css/jquery.qtip.min.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input-facebook.css');
+
+
 
         $this->_css->addLibrary('back/css/affichegabarit.css');
 
@@ -206,6 +338,9 @@ class Page extends Main
                 foreach ($page->getParents() as $parent) {
                     $path = $parent->getMeta('rewriting') . '/' . $path;
                 }
+
+                if($id_version == BACK_ID_VERSION)
+                    $this->_view->pagePath = $path . "?mode_previsualisation=1";
 
                 $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
                 $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
@@ -350,21 +485,25 @@ class Page extends Main
 
         $this->_page = $this->_gabaritManager->save($_POST);
 
-        $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
-                    . 'page/display.html?id_gab_page='
-                    . $this->_page->getMeta('id') . '">'
-                    . $this->_page->getMeta('titre') . '</a>';
-
-        $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                    . 'Bcc: contact@solire.fr ' . "\r\n"
-                    . 'X-Mailer: PHP/' . phpversion();
-
         $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
 
-        \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-            $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
-            $contenu, $headers, 'text/html');
+        //Envoi de mail à solire
+        if($this->_appConfig->get('general', 'mail-notification')) {
+            $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
+                        . 'page/display.html?id_gab_page='
+                        . $this->_page->getMeta('id') . '">'
+                        . $this->_page->getMeta('titre') . '</a>';
+
+            $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                        . 'Bcc: contact@solire.fr ' . "\r\n"
+                        . 'X-Mailer: PHP/' . phpversion();
+
+            \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
+                $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
+                $contenu, $headers, 'text/html');
+        }
+
 
         $json = array(
             'status'        => 'success',
@@ -449,8 +588,8 @@ class Page extends Main
 
 
         $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"]) 
-                && $_REQUEST["no_version"] == 1 
+        if (isset($_REQUEST["no_version"])
+                && $_REQUEST["no_version"] == 1
                 || ($_REQUEST["table"] == "gab_page")
                 || !$typeGabPage) {
             $filterVersion = 1;
@@ -472,7 +611,7 @@ class Page extends Main
                 . " WHERE $filterVersion "
                 . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
                 . " AND $labelField  LIKE '%$term%'";
-        
+
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
         exit(json_encode($json));
@@ -623,7 +762,7 @@ class Page extends Main
         }
 
         if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
-            if ($this->_gabaritManager->setVisible($idVersion, ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
+            if ($this->_gabaritManager->setVisible($idVersion, BACK_ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
                 $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
                 $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');

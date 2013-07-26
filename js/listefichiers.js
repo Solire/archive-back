@@ -19,64 +19,43 @@ var orderclasses = ["ui-icon-carat-2-n-s", "ui-icon-carat-1-n", "ui-icon-carat-1
 $(".delete-file").live("click", function (e) {
     e.preventDefault()
     var tr = $(this).parents('tr').first();
-    if (confirm("Voulez-vous vraiment supprimmer ce fichier ? ")) {
+    var heading = 'Confirmation de suppression de fichier';
+    var question = 'Etes-vous sur de vouloir supprimer ce fichier ? ';
+    var cancelButtonTxt = 'Annuler';
+    var okButtonTxt = 'Confirmer';
+
+    var callback = function() {
         $.post('back/media/delete.html', {
             id_media_fichier : tr.attr('id').split('_').pop()
         }, function(data){
             if(data.status == 'success'){
-                tr.fadeOut(500, function(){
-                    $(this).remove()
-                });
+                oTable.fnReloadAjax()
             }
         },'json');
+        var heading = 'Confirmation de suppression de fichier';
+        var message = 'Le fichier'
+            + ' a été supprimé avec succès'
+        var closeButtonTxt = 'Fermer';
+        myModal.message(heading, message, closeButtonTxt, 2500);
+
     }
+
+    myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);    
 })
 
 
-function reloadDatatable(data) {
-    if(oTable != null) {
-        oTable.fnDestroy();
+function reloadDatatable(idGabPage) {
+    if(idGabPage != 0)
+        $("#colright").show()
+    else {
+        $("#colright").hide()
     }
-
-    $('#foldercontent').html(data);
-
-    $("#tableau").css({
-        width : "100%"
-    })
-    oTable = $("#tableau").dataTable({
-        "bJQueryUI": true,
-        "aoColumns": [
-        {
-            "bSortable": false
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        {
-            "bSortable": false
-        },
-        ],
-        'oLanguage': {
-            "sProcessing": "Chargement...",
-            "sLengthMenu": "Montrer _MENU_ fichiers par page",
-            "sZeroRecords": "Aucun fichier trouvé",
-            "sEmptyTable": "Pas de fichier",
-            "sInfo": "fichiers _START_ à  _END_ sur _TOTAL_ fichiers",
-            "sInfoEmpty": "Aucun fichier",
-            "sInfoFiltered": "(filtre sur _MAX_ fichiers)",
-            "sInfoPostFix": "",
-            "sSearch": "",
-            "sUrl": "",
-            "oPaginate": {
-                "sFirst": "",
-                "sPrevious": "",
-                "sNext": "",
-                "sLast": ""
-            }
-        }
-    } )
+    var oTable = eval("oTable_" + $("table.display").attr("id").substr(8));
+    
+    var oSettings = oTable.fnSettings();
+    if(oSettings.sAjaxSource.indexOf("&filter[]") != -1)
+        oSettings.sAjaxSource = oSettings.sAjaxSource.substr(0, oSettings.sAjaxSource.indexOf("&filter[]"))
+    oTable.fnReloadAjax(oSettings.sAjaxSource + '&filter[]=media_fichier.id_gab_page|' + idGabPage);
     $('.dataTables_filter input').attr("placeholder", "Recherche...");
 }
 
@@ -134,14 +113,16 @@ $(function () {
 
 
     basehref = $('base').attr('href');
-
-    reloadDatatable("")
+    //reloadDatatable(0)
 
     //////////////////// JSTREE ////////////////////
     tree = $("#folders").jstree({
         "plugins" : ["themes", "json_data", "ui", "crrm", "cookies", "search", "types", "hotkeys"],//, "contextmenu"
         "core" : {
             "html_titles" : true
+        },
+        "themes" : {
+            "theme" : "bootstrap"
         },
         "json_data" : {
             "ajax" : {
@@ -180,24 +161,10 @@ $(function () {
 
         if (restype == "page") {
             $('#pickfiles').fadeIn(200);
-            $('#foldercontent').html('<tr><td colspan="6">chargement ... </td></tr>');
-
-            $.post(
-                "back/media/list.html",
-                {
-                    id_gab_page: resid,
-                    search: $('#search').val(),
-                    orderby: orderby
-                },
-                function(data){
-
-                    reloadDatatable(data)
-
-                }
-                );
+            reloadDatatable(resid)
         }
         else {
-            reloadDatatable("")
+            reloadDatatable(0)
             $('#pickfiles').fadeOut(200);
         }
     });
@@ -290,103 +257,30 @@ $(function () {
         var response = $.parseJSON(info.response);
 
         if(response.status != "error") {
-            var ligne = '';
-
-            ligne += '<td><a href="' + response.url + '" id="fileid_' + response.id + '" target="_blank" class="previsu">';
-
-            var ext = file.name.split('.').pop().toLowerCase();
-            if (extensionsImage.indexOf(ext) != -1)
-                ligne += '<img class="vignette" src="' + response.mini_url + '" alt="' + ext + '" /></a></td>';
-            else
-                ligne += '<img class="vignette" src="img/back/' + ext + '.png" alt="' + ext + '" /></a></td>';
-
-
-            ligne += '<td>' + response.size + '</td>';
-            ligne += '<td>' + response.width + '</td>';
-            ligne += '<td>' + response.height + '</td>';
-            ligne += '<td>' + response.date.substr(0, 10) + '<br />' + response.date.substr(11) + '</td>';
-            ligne += '<td>Non</td>';
-            ligne += '<td><div class="btn-a gradient-blue"><a class="previsu" href="' + response.path + '"><img src="app/back/img/voir.png" alt="Prévisualisation"></a></div>';
-            ligne += '<div class="btn-a gradient-blue"><a class="delete-file" href="#"><img src="app/back/img/white/trash_stroke_16x16.png" alt="Supprimer"></a></div></td>'
-
-
-            file.tr.attr("id", "fileid_" + response.id);
-            file.tr.html(ligne);
+            oTable.fnReloadAjax();
         }
     });
 
-    image = $(null);
-
-
-    var previsu = $('<div>', {
-        id: 'previsu'
-    }).dialog({
-        title : "Prévisualisation",
-        buttons: [
-        {
-            text : "Supprimer",
-            click : function(){
-                var tr = image.parents('tr').first();
-                $.post('back/media/delete.html', {
-                    id_media_fichier : tr.attr('id').split('_').pop()
-                }, function(data){
-                    if(data.status == 'success'){
-                        tr.fadeOut(500, function(){
-                            $(this).remove()
-                        });
-                    }
-                },'json');
-                $(this).dialog("close");
-            }
-        },
-        {
-            text : "Annuler",
-            click : function(){
-                $(this).dialog("close");
-            }
-        }
-        ],
-        autoOpen: false,
-        close: function(event, ui){
-            image = $(null);
-        },
-        height: "auto",
-        width: "auto",
-        maxHeight : $(window).height()-230,
-        maxWidth : $(window).width()-180
-    }).css({
-        "max-height" : $(window).height()-230,
-        "max-width" : $(window).width()-180
-    });
-
-    $('.previsu').live('click', function(){
-        previsu.dialog('close');
+    image = $(null)
+    
+    $('.previsu').live('click', function(e) {
+        e.preventDefault();
         image = $(this);
+
         var link = $(this).attr('href');
         var ext = link.split('.').pop().toLowerCase();
-        if (extensionsImage.indexOf(ext) != -1) {
+        if ($.inArray(ext, extensionsImage) != -1) {
             $('<img>', {
-                'src' : link
-            }).load(function(){
-                if (extensionsImage.indexOf(ext) != -1) {
-                    previsu.dialog( "option" , "height" , "auto" );
-                    previsu.dialog( "option" , "maxWidth" , $(window).width()-180 );
-                    previsu.dialog( "option" , "maxHeight" , $(window).height()-230 );
-
-                    previsu.html(this);
-                }
-                else {
-                    previsu.dialog( "option" , "height" , 0 );
-                    previsu.html('');
-                }
-
-                previsu.dialog('open');
-                previsu.dialog('option', 'position', "center");
+                'src': link
+            }).load(function() {
+                myModal.message("Prévisualisation", $(this), "Fermer", false, true)
             });
-
-            return false;
+        } else {
+            
         }
     });
+
+    
 
     $('#search').keyup(function(){
         $('#node_' + resid + ' > a').click()

@@ -138,15 +138,27 @@ class Board extends Main
      */
     private function boardDatatable($opt = null)
     {
+        $configName = 'board';
+        $gabarits = array();
         if (empty($opt)) {
-            $configName = 'board';
+            $gabarits = $this->_gabarits;
         } else {
-            $configName = 'board-' . $opt;
+            
+            /** Récupération de la liste de la page et des droits utilisateurs **/
+            $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
+            $gabaritsListUser = $configPageModule['gabarits'];
+            foreach ($this->_gabarits as $keyId => $gabarit) {
+                if(in_array($gabarit["id"], $gabaritsListUser))
+                    $gabarits[$keyId] = $gabarit;
+            }
+            unset($configPageModule);
         }
 
         $configPath = \Slrfw\FrontController::search(
             'config/datatable/' . $configName . '.cfg.php'
         );
+        
+        $this->_gabarits = $gabarits;
 
         $datatableClassName = '\\App\\Back\\Datatable\\Board';
         /** @todo Chargement des fichiers des differentes app */
@@ -166,6 +178,7 @@ class Board extends Main
 
         $datatable->setUtilisateur($this->_utilisateur);
         $datatable->setGabarits($this->_gabarits);
+        $datatable->setVersions($this->_versions);
 
         /** On cré un filtre pour les gabarits de l'api courante */
         $idsGabarit = array();
