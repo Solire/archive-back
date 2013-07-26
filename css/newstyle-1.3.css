@@ -811,6 +811,16 @@ form  .line {
     clear: both;
 }
 
+form .line.tier {
+    width: 30%;
+    text-align: center;
+    display: inline-block;
+}
+
+form .line.tier label{
+    width: 100px;
+}
+
 form  .line .content {
     padding-top:12px;
     float:left;

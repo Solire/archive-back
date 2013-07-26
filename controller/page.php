@@ -82,6 +82,10 @@ class Page extends Main
             $this->_view->label = $currentConfigPageModule['label'];
         }
 
+        if (isset($currentConfigPageModule['urlAjax'])) {
+            $this->_view->urlAjax = $currentConfigPageModule['urlAjax'];
+        }
+
         if (isset($currentConfigPageModule['childName'])) {
             $this->_view->childName = $currentConfigPageModule['childName'];
         }
