@@ -280,7 +280,10 @@ $(function(){
         $.each(saveStateListPage, function(id, item) {
 
             var id = item.split('_').pop();
-            if ($("#" + item).find("legend:first").data("ajax") !== undefined) {
+           if (typeof $("#" + item).html() === "undefined") {
+               return;
+           }
+           if ($("#" + item).find("legend:first").data("ajax") !== undefined) {
                 var url = $("#" + item).find("legend:first").data("ajax");
             } else {
                 var url = "back/page/children.html";
