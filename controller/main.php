@@ -283,5 +283,40 @@ class Main extends \Slrfw\Controller
         $this->_view->pagesNonTraduites = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_ASSOC);
     }
+
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendSuccess(array $data = array())
+    {
+        $return = array(
+            'status' => 'success',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
+    }
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendError(array $data = array())
+    {
+        $return = array(
+            'status' => 'error',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
+    }
 }
 
