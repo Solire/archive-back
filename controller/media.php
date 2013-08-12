@@ -32,7 +32,7 @@ class Media extends Main {
      */
     public function startAction()
     {
-        
+
         $this->fileDatatable();
         $this->_javascript->addLibrary('back/js/jquery/jquery.hotkeys.js');
         $this->_javascript->addLibrary('back/js/jstree/jquery.jstree.js');
@@ -100,7 +100,7 @@ class Media extends Main {
 
         $this->_view->files = $this->_files;
     }
-    
+
     /**
      * Génération du datatable des fichiers
      *
@@ -110,15 +110,15 @@ class Media extends Main {
     {
         $configName = 'file';
         $gabarits = array();
-        
+
         $configPath = \Slrfw\FrontController::search(
             'config/datatable/' . $configName . '.cfg.php'
         );
-        
+
         $datatableClassName = '\\App\\Back\\Datatable\\File';
-        
+
         $datatable = null;
-        
+
         foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {
             $datatableClassName = '\\' . $appDir["name"] . "\\Back\\Datatable\\" . $configName;
             if (class_exists($datatableClassName)) {
@@ -129,14 +129,14 @@ class Media extends Main {
                 break;
             }
         }
-        
+
         if ($datatable == null) {
             $datatable = new \Slrfw\Datatable\Datatable(
                     $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
             );
-        }  
+        }
 
-        
+
         $datatable->start();
 
         if (isset($_GET['json']) || (isset($_GET['nomain'])
@@ -265,7 +265,7 @@ class Media extends Main {
             $json = $this->_fileManager->uploadGabPage($this->_upload_path,
                 $id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir,
                 $apercuDir);
-            
+
             $json['size'] = \Slrfw\Tools::format_taille($json['size']);
             if (isset($json['minipath'])) {
                 $json['minipath'] = $json['minipath'];
@@ -490,7 +490,7 @@ class Media extends Main {
             $dir = $id_gab_page ? $id_gab_page : 'temp-' . $id_temp;
 
             foreach ($files as $file) {
-                if (!$tinyMCE || \Slrfw\Gabarit\fileManager::isImage($file['rewriting'])) {
+                if (!$tinyMCE || \Slrfw\Model\fileManager::isImage($file['rewriting'])) {
                     $path       = $dir . DS
                                 . $file['rewriting'];
                     $vignette   = $dir . DS

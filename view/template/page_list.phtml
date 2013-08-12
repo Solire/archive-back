@@ -1,11 +1,24 @@
 <?php
         if (count($this->pages) > 0) {
             foreach ($this->pages as $page) {
+                $htmlUrl = '';
+                if (isset($this->urlRedir)) {
+                    $htmlUrl .= ' data-url="' . $this->urlRedir . $page->getMeta('id') . '"';
+                }
+                if (isset($this->urlAjax)) {
+                    $htmlUrl = ' data-ajax="' . $this->urlAjax . '"';
+                }
+                if ((isset($this->noChild) && $this->noChild === true) || $page->getMeta('nbre_enfants') == 0) {
+                    $class = ' class="noChild"';
+                } else {
+                    $class = '';
+                }
 ?>
                                 <fieldset data-titre="<?php echo $page->getMeta('titre'); ?>" style="<?php echo isset($this->margin) ? 'margin-left:30px;' : '' ; ?>" class="<?php if ($this->utilisateur->get("niveau") == "solire" || $this->gabarits[$page->getMeta("id_gabarit")]["sortable"]) { ?>sort-elmt<?php } ?>" id="gab_page_<?php echo $page->getMeta('id'); ?>">
-                                    <legend title="<?php echo $page->getMeta('rewriting') ?>">
+                                    <legend<?php echo $htmlUrl; ?> data-ajax="back/page/children.html?c=102" title="<?php echo $page->getMeta('rewriting') ?>"<?php echo $class; ?>>
 <?php
-                if ($page->getMeta('nbre_enfants') > 0) {
+
+                if ($page->getMeta('nbre_enfants') > 0 && (isset($this->noChild) && $this->noChild === false || !isset($this->noChild))) {
 ?>
                                         <a href="#" class="btn btn-default btn-small"><i class="icon-chevron-down"></i></a>
 <?php
@@ -26,6 +39,7 @@
 <?php
                 if ($page->getMeta("id_gabarit") != 1
                     && $page->getMeta("id_gabarit") != 2
+                    && (isset($this->noType) && $this->noType === false || !isset($this->noType))
                 ) {
 
                     if ($page->getMeta("date_modif") != "0000-00-00 00:00:00"
@@ -39,11 +53,15 @@
                                             <i>Type : <?php echo $this->gabarits[$page->getMeta("id_gabarit")]["label"] ?></i>
 <?php
                 }
-
-                if ($page->getMeta('nbre_enfants') > 0) {
+                $nbChild = $page->getMeta('nbre_enfants');
+                if (!empty($nbChild)) {
+                    $displayChild = $page->getMeta('aff_enfants');
+                    if (empty($displayChild)) {
+                        $displayChild = $page->getMeta('nbre_enfants');
+                    }
 ?>
                                             |
-                                            <i><span class="page-nbre-enfants"><?php echo $page->getMeta('nbre_enfants'); ?></span> page(s)</i>
+                                            <i><span class="page-nbre-enfants"><?php echo $displayChild; ?> </span><?php echo $this->childName; ?></i>
 <?php
                 }
 ?>
@@ -92,7 +110,7 @@
                                                     <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta("id_version"); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo $page->getMeta("id_version"); ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
                                                     <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
                                                 </a>
-                                                
+
 <?php
                     }
                     if ($page->getMeta("rewriting") == "") {
@@ -121,8 +139,7 @@
                                 </fieldset>
 <?php
             }
-        }
-        else {
+        } else {
 ?>
 
                                 <p>Aucune page</p>

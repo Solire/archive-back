@@ -88,7 +88,7 @@ $(function(){
             };
 
             myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
-        
+
 
     }
 
@@ -186,7 +186,18 @@ $(function(){
 
     //// OUVERTURE / FERMETURE DES PAGES PARENTES.
     $('legend').live('click', function(){
-        var $legend = $(this)
+        var $legend = $(this),
+            url = "back/page/children.html";
+        if ($legend.hasClass("noChild")) {
+            if ($legend.data("url") !== undefined) {
+                document.location.href = $legend.data("url");
+            }
+            return false;
+        }
+        if ($legend.data("ajax") !== undefined) {
+            url = $legend.data("ajax");
+        }
+
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
 
             $legend.find('i.icon-chevron-down').addClass("icon-chevron-up").removeClass("icon-chevron-down")
@@ -198,7 +209,7 @@ $(function(){
                     mode: 'queue',
                     port: 'ajaxWhois',
                     type: 'GET',
-                    url: 'back/page/children.html',
+                    url: url,
                     data: {
                         id_parent : id
                     },
@@ -269,11 +280,16 @@ $(function(){
         $.each(saveStateListPage, function(id, item) {
 
             var id = item.split('_').pop();
+            if ($("#" + item).find("legend:first").data("ajax") !== undefined) {
+                var url = $("#" + item).find("legend:first").data("ajax");
+            } else {
+                var url = "back/page/children.html";
+            }
             $.ajax({
                 mode: 'queue',
                 port: 'ajaxWhois',
                 type: 'GET',
-                url: 'back/page/children.html',
+                url: url,
                 data: {
                     id_parent : id
                 },

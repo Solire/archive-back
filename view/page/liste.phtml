@@ -1,4 +1,8 @@
-                        <h1>Liste des pages</h1>
+<?php if (isset($this->label)) { ?>
+                <h1><?php echo $this->label; ?></h1>
+<?php } else { ?>
+                <h1>Liste des pages</h1>
+<?php } ?>
 
 <?php $this->add('breadcrumbs.phtml'); ?>
 
@@ -12,8 +16,8 @@
         if (isset($this->gabaritByGroup) && $this->gabaritByGroup) {
 ?>
                         <fieldset id="gab_page_6" class="sort-elmt">
-                            <legend title="<?php echo $this->gabarits[$keyGroup]["label"]; ?>  ">
-                                <?php echo $this->gabarits[$keyGroup]["label"]; ?>
+                            <legend title="<?php echo $this->gabarits[$keyGroup]['label']; ?>  ">
+                                <?php echo $this->gabarits[$keyGroup]['label']; ?>
                             </legend>
 <?php
             $this->pages = $group;
