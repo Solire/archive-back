@@ -449,8 +449,8 @@ class Page extends Main
 
 
         $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"]) 
-                && $_REQUEST["no_version"] == 1 
+        if (isset($_REQUEST["no_version"])
+                && $_REQUEST["no_version"] == 1
                 || ($_REQUEST["table"] == "gab_page")
                 || !$typeGabPage) {
             $filterVersion = 1;
@@ -472,7 +472,7 @@ class Page extends Main
                 . " WHERE $filterVersion "
                 . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
                 . " AND $labelField  LIKE '%$term%'";
-        
+
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
         exit(json_encode($json));
@@ -603,7 +603,7 @@ class Page extends Main
             );
         }
 
-        exit(json_encode($pages));
+        echo json_encode($pages);
     }
 
     /**
@@ -613,6 +613,7 @@ class Page extends Main
     public function visibleAction()
     {
         $this->_view->enable(false);
+        $this->_view->main(false);
 
         $json = array('status' => 'error');
 
@@ -635,7 +636,7 @@ class Page extends Main
         }
 
 
-        exit(json_encode($json));
+        echo json_encode($json);
     }
 
     /**
@@ -645,6 +646,7 @@ class Page extends Main
     public function deleteAction()
     {
         $this->_view->enable(false);
+        $this->_view->main(false);
 
         $json = array('status' => "error");
 
@@ -657,7 +659,7 @@ class Page extends Main
             }
         }
 
-        exit(json_encode($json));
+        echo json_encode($json);
     }
 
     /**
@@ -688,8 +690,6 @@ class Page extends Main
         }
 
         echo $ok ? 'Succès' : 'Echec';
-
-        return false;
     }
 
     protected function getButton($currentConfigPageModule)
