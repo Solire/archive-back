@@ -39,34 +39,10 @@
         <meta name="viewport" content="width=1220; user-scalable=yes" />
 
         <base href="<?php echo $this->url; ?>" />
-
-        <!--[if lte IE 8]>
-        <link rel="stylesheet" href="ie8.css" type="text/css" />
-        <![endif]-->
-
-        <!--[if lte IE 7]>
-        <link rel="stylesheet" href="ie.css" type="text/css" />
-        <![endif]-->
-
-        <!--[if lte IE 6]>
-           <link rel="stylesheet" href="ie6.css" type="text/css" />
-        <![endif]-->
-
-<?php echo $this->css; ?>
-
-        <style type="text/css">
-            .option1, .option1:disabled {color:#fff; background-color:#3485C9; padding-top:5px;}
-            .option2, .option2:disabled {color:#fff; background-color:#67A5D7; padding-top:2px; padding-left:15px;}
-            .option3 {font-size:1em; padding-left:40px;}
-            .ui-autocomplete {max-height:100px; overflow-y:auto; overflow-x:hidden; padding-right:20px;}
-            #tableau td {text-align:center;}
-
-            form fieldset{margin-left:0;}
-            form fieldset fieldset{margin-left:30px;}
-        </style>
-
-<?php echo $this->javascript; ?>
-
+<?php
+    echo $this->css;
+    echo $this->javascript;
+?>
     </head>
 
     <body>
@@ -194,7 +170,9 @@
             <section>
                 <article>
                     <div id="corps">
-<?php echo $this->content(); ?>
+<?php
+    echo $this->content();
+?>
                     </div>
 
                     <div id="footer">
