@@ -4,23 +4,17 @@
 ?>
                         <div style="float:left;">
 <?php
-            /** Group */
             if (count($gabaritGroup["gabarit"]) > 1) {
+                /**
+                 *  Group
+                 */
 ?>
-                            
+
                             <div style="margin-right: 10px;" class="btn-group">
                                 <a href="#" data-toggle="dropdown" class="btn btn-success btn-small"> <?php echo $gabaritGroup['label'] ?></a>
                                 <a href="#" data-toggle="dropdown" class="btn btn-success btn-small dropdown-toggle">
                                     <i style="padding:1px 0px 0px 0px;" class="icon-chevron-down icon-white"></i>
                                 </a>
-                                
-                                
-                                                        
-                            
-                            
-                            
-                            
-
                                 <ul class="dropdown-menu">
 <?php
                 foreach ($gabaritGroup["gabarit"] as $gabarit) {
@@ -39,14 +33,15 @@
                             </div>
 
 <?php
-            }
-            /** Gabarit simple */
-            else {
+            } else {
+                /**
+                 * Gabarit simple
+                 */
 ?>
                             <a style="margin-right: 10px;" class="btn btn-small btn-success btn-crea" href="back/page/display.html?id_gabarit=<?php echo $gabaritGroup['gabarit'][0]['id'] ?>">
                                 <?php echo $gabaritGroup['label'] . $gabaritGroup['gabarit'][0]["label"] ?>
                             </a>
-                            
+
 <?php
             }
 ?>

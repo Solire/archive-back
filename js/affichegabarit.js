@@ -3,50 +3,49 @@ var sort_elmt = $(null);
 var sortpar = $(null);
 var basehref = '';
 
-
 function addMarker(map3, lat, lng) {
-        map3.gmap3({
-            marker: {
-                tag: 'myMarker',
-                callback: function(marker) {
-                    map3.data("marker", marker)
-                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour supprimer le marqueur')
-                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Supprimer le marqueur')
+    map3.gmap3({
+        marker: {
+            tag: 'myMarker',
+            callback: function(marker) {
+                map3.data("marker", marker)
+                $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour supprimer le marqueur')
+                $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Supprimer le marqueur')
+                $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
+                $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
+                $('input.gmap_zoom', map3.parents(".line:first")).val(map3.gmap3("get").getZoom());
+            },
+            latLng: [lat, lng],
+            options: {
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            },
+            events: {
+                dragend: function(marker) {
                     $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
                     $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
-                    $('input.gmap_zoom', map3.parents(".line:first")).val(map3.gmap3("get").getZoom());
-                },
-                latLng: [lat, lng],
-                options: {
-                    draggable: true,
-                    animation: google.maps.Animation.DROP
-                },
-                events: {
-                    dragend: function(marker) {
-                        $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
-                        $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
-                    }
                 }
             }
-        })
-    }
+        }
+    })
+}
 
-    function removeMarker(map3) {
-        map3.gmap3({
-            clear: {
-                callback: function() {
-                    map3.data("marker", null)
-                    $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour ajouter un marqueur')
-                    $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Ajouter un marqueur')
-                    $('input.gmap_lat', map3.parents(".line:first")).val("");
-                    $('input.gmap_lng', map3.parents(".line:first")).val("");
-                    $('input.gmap_zoom', map3.parents(".line:first")).val("");
-                },
-                tag: 'myMarker'
-            }
+function removeMarker(map3) {
+    map3.gmap3({
+        clear: {
+            callback: function() {
+                map3.data("marker", null)
+                $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour ajouter un marqueur')
+                $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Ajouter un marqueur')
+                $('input.gmap_lat', map3.parents(".line:first")).val("");
+                $('input.gmap_lng', map3.parents(".line:first")).val("");
+                $('input.gmap_zoom', map3.parents(".line:first")).val("");
+            },
+            tag: 'myMarker'
+        }
 
-        })
-    }
+    })
+}
 
 
 var initTinyMCE = function() {
@@ -86,8 +85,6 @@ $(function() {
      */
     // Create variables (in this scope) to hold the API and image size
     var jcrop_api, boundx, boundy, $inputFile;
-
-
 
     function updatePreview(c)
     {
@@ -147,7 +144,7 @@ $(function() {
     $('.spinner').spinner({
         min: 0
     });
-    
+
     $(".back-to-list").click(function(e) {
         e.preventDefault()
         var heading = 'Quitter';
@@ -158,10 +155,10 @@ $(function() {
         var callback = function() {
             document.location.href = href;
         }
-        
+
         myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
-        
-        
+
+
     })
 
     $(".form-crop-submit").bind("click", function() {
@@ -272,14 +269,10 @@ $(function() {
 
     });
 
-
-
     /**
      * Popup apres sauvegarde de la page
      */
     $('#modalMore').modal();
-
-
 
     $.datepicker.regional['fr'] = {
         closeText: 'Fermer',
@@ -371,7 +364,7 @@ $(function() {
 
     var $delBtnClone = $('.delBloc:first').clone();
     $('.delBloc.to-remove').remove();
-    
+
     var $sortBtnClone = $('.sort-move:first').clone();
     $('.sort-move.to-remove').remove();
 
@@ -427,9 +420,6 @@ $(function() {
             $(".301-remove", $fieldSet301).addClass("translucide");
         }
     });
-
-
-
 
     $('.btn-changevisible').live('click', function(e) {
         e.preventDefault()
@@ -558,7 +548,6 @@ $(function() {
         }
     });
 
-
     function MarkerControl(controlDiv, map, map3) {
         var chicago = new google.maps.LatLng(41.850033, -87.6500523);
 
@@ -602,8 +591,6 @@ $(function() {
         });
     }
 
-    
-
     /**
      * Champ de type map
      */
@@ -640,7 +627,7 @@ $(function() {
                         addMarker($this, lat, lng)
                     }
                 }
-           },
+            },
         });
         var map = $(this).gmap3("get")
 
@@ -949,7 +936,6 @@ $(function() {
     }).load('back/media/popuplistefichiers.html?id_gab_page=' + $('[name=id_gab_page]').val(), function() {
         var heading = 'Importer des fichiers';
         var closeButtonTxt = 'Fermer';
-
         $('.uploader_popup').click(function(e) {
             e.preventDefault();
             myModal.message(heading, $uploaderPopUp, closeButtonTxt);
@@ -957,8 +943,6 @@ $(function() {
             if (oTable == null) {
                 reloadDatatable();
             }
-
-
             uploaderInit();
         });
     });
@@ -969,45 +953,25 @@ $(function() {
                 checked = $this.is(':checked');
 
         $.post(
-                'back/page/visible.html',
-                {
-                    id_gab_page: id_gab_page,
-                    visible: checked ? 1 : 0
-                },
-        function(data) {
-            if (data.status != 'success') {
-                $this.attr('checked', !checked);
-            }
-        },
-                'json'
-                );
+            'back/page/visible.html',
+            {
+                id_gab_page: id_gab_page,
+                visible: checked ? 1 : 0
+            },
+            function(data) {
+                if (data.status != 'success') {
+                    $this.attr('checked', !checked);
+                }
+            },
+            'json'
+        );
     });
-
-//    if ($('form').length > 1) {
-//
-//        $('form').not('form:first').each(function(){
-//            var formu = $(this);
-//            $('.form-controle:not([name="titre_rew"])', formu).attr('autocomplete','off').tipsy({
-//                trigger: 'focus',
-//                gravity: 'n',
-//                opacity: 1,
-//                html: true,
-//                title: function(){
-//                    var name = $(this).attr("name");
-//                    var eq = $('.form-controle[name="' + name + '"]', formu).index($(this));
-//                    return $('form:first .form-controle[name="' + name + '"]').eq(eq).val();
-//                }
-//            });
-//        });
-//    }
 
     /*
      * Message daide
      */
     $('form').each(function() {
-
         var formu = $(this);
-
 
         $('.form-controle:not([name="titre_rew"])', formu).livequery(function() {
             var id = $(this).attr("id").split("_");
