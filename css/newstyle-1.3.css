@@ -2354,3 +2354,52 @@ img.grayscale {
     -o-filter: grayscale(100%);
 }
 
+form .line.form-line .line {
+    margin: 0;
+}
+
+.option1, .option1:disabled {
+    background-color:#ccc;
+    color : #000;
+    /*background-color:#3485C9;*/
+    padding-top:5px;
+}
+
+.option2, .option2:disabled {
+    background-color:#fff;
+    color : #000;
+    /*background-color:#67A5D7;*/
+    padding-top:2px;
+    padding-left:15px;
+}
+
+.option3, .option3:disabled {
+    background-color:#fff;
+    color : #000;
+    font-size:1em;
+    padding-left:40px;
+}
+
+.option1:disabled, .option2:disabled, .option3:disabled{
+    color:#aaa;
+    font-style: italic;
+}
+
+.ui-autocomplete {
+    max-height:100px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:20px;
+}
+
+#tableau td {
+    text-align:center;
+}
+
+form fieldset{
+    margin-left:0;
+}
+
+form fieldset fieldset{
+    margin-left:30px;
+}

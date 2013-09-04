@@ -54,20 +54,26 @@ class Page extends Main
                . 'FROM `gab_gabarit` '
                . 'WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
 
-        /** Si on veut n'afficher que certains gabarits **/
+        /**
+         * Si on veut n'afficher que certains gabarits
+         */
         if (isset($_GET['c']) && intval($_GET['c'])) {
             $indexConfig = intval($_GET['c']);
         } else {
             $indexConfig = 0;
         }
 
-        /** Récupération de la liste de la page et des droits utilisateurs **/
+        /**
+         * Récupération de la liste de la page et des droits utilisateurs
+         */
         $currentConfigPageModule = $this->_configPageModule[$indexConfig];
         $gabaritsListPage = $currentConfigPageModule['gabarits'];
         $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
         $gabaritsListUser = $configPageModule['gabarits'];
 
-        /** Option de blocage de l'affichage des gabarits enfants **/
+        /**
+         * Option de blocage de l'affichage des gabarits enfants
+         */
         if (isset($currentConfigPageModule['noChild'])
             && $currentConfigPageModule['noChild'] === true
         ) {
@@ -77,7 +83,9 @@ class Page extends Main
             }
         }
 
-        /** Chargement du titre de la page **/
+        /**
+         * Chargement du titre de la page
+         */
         if (isset($currentConfigPageModule['label'])) {
             $this->_view->label = $currentConfigPageModule['label'];
         }
@@ -98,7 +106,9 @@ class Page extends Main
 
         unset($configPageModule);
 
-        /** Génération de la liste des gabarits à montrer **/
+        /**
+         * Génération de la liste des gabarits à montrer
+         */
         if ($gabaritsListPage == '*') {
             $gabaritsList = $gabaritsListUser;
         } else {
@@ -116,12 +126,14 @@ class Page extends Main
         }
         unset($gabaritsListPage, $gabaritsListUser);
 
-
-
-        //Si on liste que certains gabarits
+        /**
+         * Si on liste que certains gabarits
+         */
         if ($gabaritsList != '*' && count($gabaritsList) > 0) {
             $query .= ' AND id IN ( ' . implode(', ', $gabaritsList) . ')';
-            //Permet de séparer les différents gabarits
+            /**
+             * Permet de séparer les différents gabarits
+             */
             if (isset($_GET['gabaritByGroup'])) {
                 $this->_view->gabaritByGroup = true;
                 foreach ($gabaritsList as $gabariId) {
@@ -140,7 +152,9 @@ class Page extends Main
 
                 $hook->exec('list' . $indexConfig);
 
-                /** Chargement par défaut **/
+                /**
+                 *  Chargement par défaut
+                 */
                 if (!isset($hook->list) || empty($hook->list)) {
                     $this->_pages = $this->_gabaritManager->getList(
                         BACK_ID_VERSION, $this->_api['id'], 0, $gabaritsList
@@ -837,55 +851,89 @@ class Page extends Main
 
     protected function getButton($currentConfigPageModule)
     {
-        //Liste des début de label à regrouper pour les boutons de création
-        $groupIdentifications = array("Rubrique ", "Sous rubrique ", "Page ");
+        /**
+         * Liste des début de label à regrouper pour les boutons de création
+         */
+        $groupIdentifications = array('Rubrique ', 'Sous rubrique ', 'Page ');
         foreach ($this->_gabarits as $gabarit) {
             $found = false;
 
             $gabaritsGroup = array(
-                "label" => $gabarit["label"],
+                'label' => $gabarit['label'],
             );
 
-            //Si utilisateur standart à le droit de créer ce type de gabarit ou si utilisateur solire
-            if ($gabarit["creable"] || $this->_utilisateur->get("niveau") == "solire") {
+            /**
+             * Si utilisateur standart à le droit de créer ce type de gabarit
+             * ou si utilisateur solire
+             */
+            if ($gabarit['creable']
+                || $this->_utilisateur->get('niveau') == 'solire'
+            ) {
+                /**
+                 * Si on a un regroupement des boutons personnalisés dans le
+                 * fichier de config
+                 */
+                if (isset($currentConfigPageModule['boutons'])
+                    && isset($currentConfigPageModule['boutons']['groups'])
+                ) {
+                    $groups = $currentConfigPageModule['boutons']['groups'];
 
-                //Si on a un regroupement des boutons personnalisés dans le fichier de config
-                if (isset($currentConfigPageModule["boutons"]) && isset($currentConfigPageModule["boutons"]["groups"])) {
-                    foreach ($currentConfigPageModule["boutons"]["groups"] as $customGroup) {
-                        //Si le gabarit courant appartien à un des groupes personnalisés
-                        if (in_array($gabarit["id"], $customGroup["gabarits"])) {
-                            $gabaritsGroup = array(
-                                "label" => $customGroup["label"],
-                            );
+                    foreach ($groups as $customGroup) {
+                        /**
+                         * Si le gabarit courant appartien à un des groupes
+                         * personnalisés
+                         */
+                        $gabarits = $customGroup['gabarits'];
+                        if (in_array($gabarit['id'], $gabarits)) {
                             $found = true;
+                        } else {
+                            if (isset($gabarits[$gabarit['id']])
+                                && is_array($gabarits[$gabarit['id']])
+                            ) {
+                                $found = true;
+                                $gabarit['label'] = $gabarits[$gabarit['id']]['label'];
+                            }
+                        }
+
+                        if ($found) {
+                            $gabaritsGroup = array(
+                                'label' => $customGroup['label'],
+                            );
                             break;
                         }
                     }
                 }
 
-                //On parcourt les Début de label à regrouper
+
+                /**
+                 * On parcourt les Début de label à regrouper
+                 */
                 if ($found == false) {
                     foreach ($groupIdentifications as $groupIdentification) {
-                        if (preg_match("/^$groupIdentification/", $gabarit["label"])) {
+                        if (preg_match('/^' . $groupIdentification . '/', $gabarit['label'])) {
                             $gabaritsGroup = array(
-                                "label" => $groupIdentification,
+                                'label' => $groupIdentification,
                             );
-                            $gabarit["label"] = ucfirst(trim(preg_replace("#^" . $groupIdentification . "#", "", $gabarit["label"])));
+                            $gabarit['label'] = ucfirst(trim(preg_replace('#^' . $groupIdentification . '#', '', $gabarit['label'])));
                             $found = true;
                             break;
                         }
                     }
                 }
-                $gabaritsGroup["gabarit"][] = $gabarit;
+
+
+                $gabaritsGroup['gabarit'][] = $gabarit;
                 if (!$found) {
-                    $gabaritsGroup["label"] = "";
+                    $gabaritsGroup['label'] = '';
                     $this->_view->gabaritsBtn[] = $gabaritsGroup;
                 } else {
+                    $key = md5($gabaritsGroup['label']);
 
-                    if (isset($this->_view->gabaritsBtn[md5($gabaritsGroup["label"])]))
-                        $this->_view->gabaritsBtn[md5($gabaritsGroup["label"])]["gabarit"][] = $gabarit;
-                    else
-                        $this->_view->gabaritsBtn[md5($gabaritsGroup["label"])] = $gabaritsGroup;
+                    if (isset($this->_view->gabaritsBtn[$key])) {
+                        $this->_view->gabaritsBtn[$key]['gabarit'][] = $gabarit;
+                    } else {
+                        $this->_view->gabaritsBtn[$key] = $gabaritsGroup;
+                    }
                 }
             }
         }

@@ -242,6 +242,7 @@ class Main extends \Slrfw\Controller
         $path = \Slrfw\FrontController::search('config/page.cfg.php');
         $completConfig = array();
         $appList = \Slrfw\FrontController::getAppDirs();
+        unset($config);
         foreach ($appList as $app) {
             $path = new \Slrfw\Path(
                 $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
@@ -252,9 +253,20 @@ class Main extends \Slrfw\Controller
             }
             include $path->get();
 
-            foreach ($config as $key => $value) {
-                $completConfig[$key] = $value;
+            if (!isset($config)) {
+                $exc = new \Exception('fichier de config erroné [' . $path->get() . ']');
+                throw $exc;
             }
+
+            /**
+             * équivalent à '$completConfig = $config + $completConfig;' ?
+             */
+//            foreach ($config as $key => $value) {
+//                $completConfig[$key] = $value;
+//            }
+
+            $completConfig = $completConfig + $config;
+
             unset($config, $key, $value);
         }
 
