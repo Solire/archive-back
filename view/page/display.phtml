@@ -21,9 +21,9 @@
                                         <?php } else { ?>
                                             <i class="icon-time" alt="Page en cours de création en version <?php echo $version['nom']; ?>"></i>
                                         <?php } ?>
-                                        
+
                                     </a>
-                                    
+
 
 <?php
             if ($page->getMeta("rewriting") != "") {
@@ -42,7 +42,7 @@
                 if (count($this->versions) > 1) {
 ?>
                                 <a href="" class="openlang-trad btn btn-small btn-danger" title="Non traduit"><i class="icon-globe"></i></a>
-            
+
 <?php
                 }
             }
@@ -62,29 +62,29 @@
 <?php
         if (count($this->versions) > 1) {
 ?>
-                        <div style="margin-top:0" class="clearin"></div>
+                            <div style="margin-top:0" class="clearin"></div>
 
-                        <div>
-                            <select class="compareversion-other fl" style="display:block;">
+                            <div>
+                                <select class="compareversion-other fl" style="display:block;">
 <?php
             foreach ($this->versions as $id_version => $version) {
                 if ($id_version != $page->getMeta('id_version')) {
 ?>
-                                <option value="<?php echo $id_version . '|' . strtolower($version['suf']); ?>"><?php echo $version['nom']; ?></option>
+                                    <option value="<?php echo $id_version . '|' . strtolower($version['suf']); ?>"><?php echo $version['nom']; ?></option>
 <?php
                 }
             }
 ?>
-                            </select>
+                                </select>
 
-                            <button class="btn btn-small btn fl compareversion-submit" style="margin-right: 10px;margin-left: 5px;"><i class="icon-resize-small"></i> Comparer</button>
-                            <button class="btn btn-small btn fl compareversion-hide" style=""><i class="icon-remove"></i> Cacher</button>
-                        </div>
+                                <button class="btn btn-small btn fl compareversion-submit" style="margin-right: 10px;margin-left: 5px;"><i class="icon-resize-small"></i> Comparer</button>
+                                <button class="btn btn-small btn fl compareversion-hide" style=""><i class="icon-remove"></i> Cacher</button>
+                            </div>
 <?php
         }
 ?>
 
-                        <div style="margin-top:0" class="clearin"></div>
+                            <div style="margin-top:0" class="clearin"></div>
 <?php
         if (isset($this->redirections[$page->getMeta('id_version')])) {
             $redirections = $this->redirections[$page->getMeta('id_version')];
@@ -130,13 +130,13 @@
                                         <div class="btn-group">
                                             <a title="<?php echo $version['nom']; ?>" class="btn btn-default btn-small">
                                                 <img src="app/back/img/flags/png/<?php echo strtolower($this->mainVersions[$page->getMeta("id_version")]["suf"]); ?>.png" alt="<?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>" />
-                                            </a>    
+                                            </a>
                                             <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
                                                 <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo BACK_ID_VERSION; ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo BACK_ID_VERSION; ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
                                                 <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
-                                            </a>    
+                                            </a>
                                         </div>
-                                        
+
 <?php
             }
         }
