@@ -37,7 +37,7 @@ var myModal = {
         if(widthAuto) {
             appendClass = " modal-auto-width";
         }
-        
+
         if(!zIndex) {
             zIndex = "";
         } else {
@@ -96,10 +96,9 @@ function rescale(){
 $(function() {
 
     $(window).bind("resize", rescale);
-    
+
     $('body').on('show', '.modal', function () {
-        rescale()
-        console.log("modal show event fired")
+        rescale();
     });
 
     $(".visible-lang").live("click", function() {

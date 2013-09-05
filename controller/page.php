@@ -22,7 +22,7 @@ class Page extends Main
 {
     /**
      *
-     * @var \Slrfw\Gabarit\gabaritPage
+     * @var \Slrfw\Model\gabaritPage
      */
     protected $_page = null;
 
@@ -314,10 +314,11 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/autocomplete_multi.js');
         $this->_javascript->addLibrary('back/js/compareversion.js');
 
-        //Gmap
+        /**
+         * Gmap
+         */
         $this->_javascript->addLibrary('http://maps.google.com/maps/api/js?sensor=false');
         $this->_javascript->addLibrary('back/js/jquery/gmap3.min.js');
-
 
         $this->_css->addLibrary('back/css/jcrop/jquery.Jcrop.min.css');
         $this->_css->addLibrary('back/css/ui.spinner.css');
@@ -326,9 +327,6 @@ class Page extends Main
         $this->_css->addLibrary('back/css/jquery.qtip.min.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input.css');
         $this->_css->addLibrary('back/css/autocomplete_multi/token-input-facebook.css');
-
-
-
         $this->_css->addLibrary('back/css/affichegabarit.css');
 
         $id_gab_page = isset($_GET['id_gab_page']) ? $_GET['id_gab_page'] : 0;
@@ -341,41 +339,56 @@ class Page extends Main
         $this->_redirections    = array();
 
         if ($id_gab_page) {
-            $query = 'SELECT * FROM `version` WHERE `id_api` = ' . $this->_api['id'];
-            $this->_versions = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+            $query  = 'SELECT *'
+                    . ' FROM `version`'
+                    . ' WHERE `id_api` = ' . $this->_api['id'];
+            $this->_versions = $this->_db->query($query)->fetchAll(
+                \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
 
             foreach ($this->_versions as $id_version => $version) {
-                $page = $this->_gabaritManager->getPage($id_version, BACK_ID_API, $id_gab_page);
+                $page = $this->_gabaritManager->getPage($id_version,
+                    BACK_ID_API, $id_gab_page);
                 $this->_pages[$id_version] = $page;
 
-                $path = $page->getMeta('rewriting') . $page->getGabarit()->getExtension();
+                $path   = $page->getMeta('rewriting')
+                        . $page->getGabarit()->getExtension();
                 foreach ($page->getParents() as $parent) {
                     $path = $parent->getMeta('rewriting') . '/' . $path;
                 }
 
-                if($id_version == BACK_ID_VERSION)
+                if ($id_version == BACK_ID_VERSION) {
                     $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                }
 
-                $query  = 'SELECT `old` FROM `redirection` WHERE `new` LIKE ' . $this->_db->quote($path);
-                $this->_redirections[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_COLUMN);
+                $query  = 'SELECT `old`'
+                        . ' FROM `redirection`'
+                        . ' WHERE `new` LIKE ' . $this->_db->quote($path);
+                $this->_redirections[$id_version] = $this->_db->query($query)
+                    ->fetchAll(\PDO::FETCH_COLUMN);
 
                 $query  = 'SELECT * '
                         . 'FROM `main_element_commun_author_google` '
                         . 'WHERE `id_version` = ' . $id_version;
-                $this->_authors[$id_version] = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+                $this->_authors[$id_version] = $this->_db->query($query)
+                    ->fetchAll(\PDO::FETCH_ASSOC);
             }
         } else {
-            $query = 'SELECT * FROM `version` WHERE `id` = ' . BACK_ID_VERSION;
-            $this->_versions = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+            $query  = 'SELECT *'
+                    . ' FROM `version`'
+                    . ' WHERE `id` = ' . BACK_ID_VERSION;
+            $this->_versions = $this->_db->query($query)->fetchAll(
+                \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
 
-            $page = $this->_gabaritManager->getPage(BACK_ID_VERSION, BACK_ID_API, 0, $id_gabarit);
+            $page = $this->_gabaritManager->getPage(BACK_ID_VERSION,
+                    BACK_ID_API, 0, $id_gabarit);
             $this->_pages[BACK_ID_VERSION] = $page;
             $this->_redirections[BACK_ID_VERSION] = array();
 
             $query  = 'SELECT * '
                     . 'FROM `main_element_commun_author_google` '
                     . 'WHERE `id_version` = ' . BACK_ID_VERSION;
-            $this->_authors[BACK_ID_VERSION] = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+            $this->_authors[BACK_ID_VERSION] = $this->_db->query($query)
+                ->fetchAll(\PDO::FETCH_ASSOC);
         }
 
         $this->_view->versions = $this->_versions;
@@ -426,6 +439,7 @@ class Page extends Main
     }
 
     /**
+     * Page appelé pour la sauvegarde d'une page
      *
      * @return void
      */
