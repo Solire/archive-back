@@ -43,19 +43,15 @@ class Dashboard extends Main {
                 }
                 $datatable = null;
 
-                foreach (\Slrfw\FrontController::getAppDirs() as $appDir) {
-                    $datatableClassName = '\\' . $appDir["name"] . "\\Back\\Datatable\\" . $configName;
-                    if (class_exists($datatableClassName)) {
-                        $datatable = new $datatableClassName(
-                                $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
-                        );
+                $datatableClassName = "Back\\Datatable\\" . $configName;
+                $datatableClassName = \Slrfw\FrontController::searchClass($datatableClassName);
 
-                        break;
-                    }
-                }
-
-                if ($datatable == null) {
+                if ($datatable === false) {
                     $datatable = new \Slrfw\Datatable\Datatable(
+                            $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                    );
+                } else {
+                    $datatable = new $datatableClassName(
                             $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 }
