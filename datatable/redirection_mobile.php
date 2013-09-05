@@ -1,7 +1,6 @@
 <?php
 
-namespace Slrfw\Datatable;
-
+namespace App\Back\Datatable;
 
 /**
  * Description of BoardDatatable
