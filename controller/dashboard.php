@@ -41,18 +41,20 @@ class Dashboard extends Main {
                 if (!$configPath) {
                     $this->pageNotFound();
                 }
-                $datatable = null;
+//                $datatable = null;
 
                 $datatableClassName = "Back\\Datatable\\" . $configName;
                 $datatableClassName = \Slrfw\FrontController::searchClass($datatableClassName);
 
-                if ($datatable === false) {
+                if ($datatableClassName === false) {
                     $datatable = new \Slrfw\Datatable\Datatable(
-                            $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                        $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                        '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 } else {
                     $datatable = new $datatableClassName(
-                            $_GET, $configPath, $this->_db, '/back/css/datatable/', '/back/js/datatable/', 'app/back/img/datatable/'
+                        $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                        '/back/js/datatable/', 'app/back/img/datatable/'
                     );
                 }
 
@@ -60,13 +62,18 @@ class Dashboard extends Main {
                 $datatableString = $datatable;
                 $data = $datatableString;
 
-                if ($configKey == 0 && (!isset($_GET["nomain"]) || $_GET["nomain"] == 0)) {
+                if ($configKey == 0 &&
+                    (!isset($_GET["nomain"]) || $_GET["nomain"] == 0)
+                ) {
                     $sBreadCrumbs = $this->_buildBreadCrumbs($datatable->getBreadCrumbs());
                     //On ajoute le chemin de fer
                     $datatable->beforeHtml($sBreadCrumbs);
                 }
 
-                if (isset($_GET["json"]) || (isset($_GET["nomain"]) && $_GET["nomain"] == 1)) {
+                if (isset($_GET["json"])
+                    || (isset($_GET["nomain"])
+                    && $_GET["nomain"] == 1)
+                ) {
                     echo $data;
                     exit();
                 }
