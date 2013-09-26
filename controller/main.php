@@ -46,6 +46,7 @@ class Main extends \Slrfw\Controller
      * Always execute before other method in controller
      *
      * @return void
+     * @hook back/ start Ajouter facilement des traitements au start du back
      */
     public function start()
     {
@@ -294,6 +295,48 @@ class Main extends \Slrfw\Controller
 
         $this->_view->pagesNonTraduites = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_ASSOC);
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->ctrl = $this;
+
+        $hook->exec('start');
+    }
+
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendSuccess(array $data = array())
+    {
+        $return = array(
+            'status' => 'success',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
+    }
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendError(array $data = array())
+    {
+        $return = array(
+            'status' => 'error',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
     }
 }
 
