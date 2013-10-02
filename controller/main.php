@@ -118,7 +118,13 @@ class Main extends \Slrfw\Controller
             $this->_view->action = '';
         }
 
-        $this->_gabaritManager = new \Slrfw\Model\gabaritManager();
+        $className = \Slrfw\FrontController::searchClass('Model\gabaritManager');
+        if ($className !== false) {
+            $this->_gabaritManager = new $className();
+        } else {
+            $this->_gabaritManager = new \Slrfw\Model\gabaritManager();
+        }
+
         $this->_fileManager = new \Slrfw\Model\fileManager();
 
         $query = 'SELECT `version`.id, `version`.* '
