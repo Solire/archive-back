@@ -384,11 +384,11 @@ $(function() {
                 $(this).append($delBtnClone.clone())
             if ($(this).find(".sort-move").length == 0)
                 $(this).prepend($sortBtnClone.clone())
-        })
+        });
 
-        $this.find('.form-date').datepicker($.datepicker.regional['fr']);
+        $('.form-date', clone).removeClass('hasDatepicker').val('').datepicker($.datepicker.regional['fr']);
 
-        initAutocompletePat();
+        initAutocompletePat(clone);
         $('textarea', clone).autogrow({
             minHeight: 150
         });
@@ -643,8 +643,8 @@ $(function() {
 
     $('.form-date').datepicker($.datepicker.regional['fr']);
 
-    function initAutocompletePat() {
-        $('.form-file').each(function() {
+    function initAutocompletePat(elmt) {
+        $('.form-file', elmt).each(function() {
             var tthis = $(this);
 
             tthis.autocomplete({
@@ -763,7 +763,7 @@ $(function() {
         });
     }
 
-    initAutocompletePat();
+    initAutocompletePat('body');
 
     if ($('.langue').length > 1) {
         $('.openlang, .openlang-trad').click(function(e) {
