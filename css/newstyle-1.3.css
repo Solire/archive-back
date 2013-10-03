@@ -1257,8 +1257,8 @@ form input, form textarea {
 form textarea {
     /*    width: 400px;*/
     /*    max-width: 400px;*/
-    /*    height: 150px;*/
-    line-height: 150%;
+    height : 325px;
+    line-height : 150%;
 }
 
 form .gmap:hover, form .gmap:focus, form input:hover, form textarea:hover, form input:focus, form textarea:focus, form .defaultSkin table.mceLayout:focus {

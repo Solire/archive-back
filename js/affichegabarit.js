@@ -321,22 +321,15 @@ $(function() {
 
     $('textarea.tiny').tinymce('enable');
 
-    $('label > .switch-editor').live('click', function(e) {
+    $('.switch-editor a').live('click', function(e) {
         e.preventDefault();
 
         var textarea = $(this).parent().nextAll('textarea');
 
-        if (textarea.is('textarea')) {
-            if ($(this).children().eq(0).hasClass('translucide')) {
-                $(this).children().eq(0).removeClass('translucide');
-                $(this).children().eq(1).addClass('translucide');
-            }
-            else {
-                $(this).children().eq(0).addClass('translucide');
-                $(this).children().eq(1).removeClass('translucide');
-            }
-
+        if ($(this).hasClass('btn-default') && textarea.length > 0) {
             textarea.tinymce('change');
+            $(this).removeClass('btn-default').addClass('btn-info');
+            $(this).siblings().removeClass('btn-info').addClass('btn-default');
         }
     });
 
@@ -385,9 +378,9 @@ $(function() {
         $('.form-date', clone).removeClass('hasDatepicker').val('').datepicker($.datepicker.regional['fr']);
 
         initAutocompletePat(clone);
-        $('textarea', clone).autogrow({
-            minHeight: 150
-        });
+//        $('textarea', clone).autogrow({
+//            minHeight: 150
+//        });
         $('textarea.tiny', adupliquer).tinymce('enable');
         $('textarea.tiny', clone).tinymce('enable');
     });
@@ -1048,9 +1041,9 @@ $(function() {
 
     });
 
-    $('textarea').autogrow({
-        minHeight: 150
-    });
+//    $('textarea').autogrow({
+//        minHeight: 150
+//    });
 });
 
 var oTable = null;

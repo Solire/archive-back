@@ -126,9 +126,9 @@ class Board extends \Slrfw\Datatable\Datatable {
             || $data["visible"] == 0)
             && $data["rewriting"] != ""
         ) {
-            $actionHtml .= '<a class="btn btn-small btn-info visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">
+            $actionHtml .= '<a class="btn btn-small ' . ($data["visible"] > 0 ? 'btn-success' : 'btn-default' ) . ' visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">
                                 <input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>
-                                <i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') . '"></i>
+                                <i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close') . '"></i>
                             </a>';
         }
 
