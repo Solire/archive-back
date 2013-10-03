@@ -300,8 +300,8 @@ class Page extends Main
      */
     public function displayAction()
     {
-        $this->_javascript->addLibrary('back/js/tiny_mce/tiny_mce.js');
-        $this->_javascript->addLibrary('back/js/tiny_mce/jquery.solire.tiny_mce.js');
+        $this->_javascript->addLibrary('back/js/tinymce-4.0.5/tinymce.min.js', false);
+        $this->_javascript->addLibrary('back/js/tinymce-4.0.5/jquery.solire.tinymce.js');
 
         $this->_javascript->addLibrary('back/js/autocomplete.js');
         $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
