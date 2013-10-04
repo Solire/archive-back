@@ -255,9 +255,7 @@ class Page extends Main
             $gabaritsList = 0;
         }
 
-
         $this->_view->main(false);
-
 
         $hook = new \Slrfw\Hook();
         $hook->setSubdirName('back');
@@ -273,7 +271,7 @@ class Page extends Main
         /** Chargement par défaut **/
         if (!isset($hook->list) || empty($hook->list)) {
             $this->_pages = $this->_gabaritManager->getList(
-                BACK_ID_VERSION, $this->_api['id'], $_REQUEST['id_parent'],
+                BACK_ID_VERSION, $this->_api['id'], $_GET['id_parent'],
                 $gabaritsList
             );
         } else {
@@ -927,7 +925,7 @@ class Page extends Main
      *
      *
      * @param type $currentConfigPageModule
-     * 
+     *
      * @return void
      */
     protected function getButton($currentConfigPageModule)

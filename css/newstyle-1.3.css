@@ -2270,6 +2270,7 @@ ul.ui-autocomplete li a {
 
 .navbar .nav > li > a, .new_items > li > a {
     font-size: 13px;
+    font-weight: bold;
 }
 
 .new_items > li > a {
