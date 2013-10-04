@@ -89,6 +89,9 @@
                                 </div>
                             </li>
 
+<?php
+    if (count($this->mainVersions) > 1) {
+?>
                             <li class="divider-vertical hidden-phone hidden-tablet"></li>
 
                             <li class="dropdown">
@@ -96,7 +99,7 @@
 
                                 <ul class="dropdown-menu">
 <?php
-    foreach ($this->mainVersions as $version) {
+        foreach ($this->mainVersions as $version) {
 ?>
                                         <li>
                                             <a style="cursor:pointer;" onclick="$.cookie('back_id_version', <?php echo $version['id'] ?>, {path: '/'}); document.location.href = document.location.href; return false;">
@@ -104,10 +107,13 @@
                                             </a>
                                         </li>
 <?php
-    }
+        }
 ?>
                                 </ul>
                             </li>
+<?php
+    }
+?>
 
                             <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
 
