@@ -189,6 +189,7 @@ class Page extends Main
 
     /**
      *
+     *
      * @return void
      */
     public function childrenAction()
@@ -296,6 +297,7 @@ class Page extends Main
 
     /**
      *
+     *
      * @return void
      */
     public function displayAction()
@@ -309,7 +311,6 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/jquery/jquery.tipsy.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.qtip.min.js');
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
-        $this->_javascript->addLibrary('back/js/join-simple.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
         $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
@@ -452,29 +453,32 @@ class Page extends Main
         $this->_view->main(false);
         $this->_view->enable(false);
 
-        if (isset($_GET["edit-front"]) && $_GET["edit-front"] == 1) {
+        if (isset($_GET['edit-front']) && $_GET['edit-front'] == 1) {
 
-            $dataRaw = json_decode($_POST["content"], true);
+            $dataRaw = json_decode($_POST['content'], true);
             $data = array(
-                "id_version"    =>  $dataRaw["id_version"]["value"],
-                "id_gab_page"    =>  $dataRaw["id_gab_page"]["value"],
-                "id_api"    =>  $dataRaw["id_api"]["value"],
+                'id_version'    =>  $dataRaw['id_version']['value'],
+                'id_gab_page'    =>  $dataRaw['id_gab_page']['value'],
+                'id_api'    =>  $dataRaw['id_api']['value'],
             );
-            $page = $this->_gabaritManager->getPage($dataRaw["id_version"]["value"], $dataRaw["id_api"]["value"], $dataRaw['id_gab_page']["value"], 0);
+            $page = $this->_gabaritManager->getPage(
+                $dataRaw['id_version']['value'],
+                $dataRaw['id_api']['value'],
+                $dataRaw['id_gab_page']['value'], 0);
             $pageSave = false;
 
             foreach ($dataRaw as $k => $d) {
-                $val = isset($d["value"]) ? $d["value"] : false;
+                $val = isset($d['value']) ? $d['value'] : false;
                 if ($val === false) {
-                    if (isset($d["attributes"]["src"])) {
-                        $filePathPart = explode("/", $d["attributes"]["src"]);
+                    if (isset($d['attributes']['src'])) {
+                        $filePathPart = explode('/', $d['attributes']['src']);
                         $val = $filePathPart[1];
                     }
                 }
 
                 if ($val !== false) {
 
-                    if (strpos($k, "-") !== false) {
+                    if (strpos($k, '-') !== false) {
                         $fieldPart = explode('-', $k);
                         if (!isset($data[$fieldPart[0]])) {
                             $data[$fieldPart[0]] = array();
@@ -492,7 +496,7 @@ class Page extends Main
 
                         $data[$fieldPart[0]][] = $val;
                     } else {
-                        if (substr($k, 0, 5) == "champ") {
+                        if (substr($k, 0, 5) == 'champ') {
                             $pageSave = true;
                             $data[$k] = array(
                                 $val
@@ -508,9 +512,9 @@ class Page extends Main
 
             $blocs = $page->getBlocs();
             foreach ($blocs as $bloc) {
-                $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']["value"], $dataRaw["id_version"]["value"], $data, true);
+                $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']['value'], $dataRaw['id_version']['value'], $data, true);
             }
-            exit("1");
+            exit('1');
         }
 
 
@@ -539,15 +543,15 @@ class Page extends Main
 
         $json = array(
             'status'        => 'success',
-            'search'        => '?id_gab_page=' . $this->_page->getMeta("id") . '&popup=more',
-            'id_gab_page'   => $this->_page->getMeta("id"),
+            'search'        => '?id_gab_page=' . $this->_page->getMeta('id') . '&popup=more',
+            'id_gab_page'   => $this->_page->getMeta('id'),
         );
 
         if (isset($_POST['id_temp']) && $_POST['id_temp']) {
             $upload_path = $this->_mainConfig->get('upload', 'path');
 
             $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
-            $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta("id");
+            $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta('id');
 
             $succes = rename($tempDir, $targetDir);
 
@@ -559,22 +563,23 @@ class Page extends Main
         }
 
 
-        if($json["status"] == "error") {
-            $this->_log->logThis(   "$typeSave de page échouée",
-                                    $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
+        if($json['status'] == 'error') {
+            $this->_log->logThis(   $typeSave . 'de page échouée',
+                                    $this->_utilisateur->get('id'),
+                                    '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                    . $this->_versions[$_POST['id_version']]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
         } else {
-            $this->_log->logThis(   "$typeSave de page réussie",
-                                    $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a>');
+            $this->_log->logThis(   $typeSave . 'de page réussie',
+                                    $this->_utilisateur->get('id'),
+                                    '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                    . $this->_versions[$_POST['id_version']]['nom'] . '" /></a>');
         }
 
         echo(json_encode($json));
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -592,13 +597,17 @@ class Page extends Main
         $pages = $this->_gabaritManager->getSearch(BACK_ID_VERSION, $_GET['term'], $_REQUEST['id_gabarit']);
         foreach ($pages as $page) {
             if (!in_array($page->getMeta('id'), $dejaLiees))
-                $json[] = array("value" => $page->getMeta('id'), "label" => $page->getMeta('titre'), "visible" => $page->getMeta('titre'));
+                $json[] = array('value' => $page->getMeta('id'), 'label' => $page->getMeta('titre'), 'visible' => $page->getMeta('titre'));
         }
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -608,48 +617,54 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST["term"];
-        $idField = $_REQUEST["id_field"];
-        $idGabPage = $_REQUEST["id_gab_page"];
-        $typeGabPage = $_REQUEST["type_gab_page"];
-        $queryFilter = str_replace("[ID]", $idGabPage, $_REQUEST["query_filter"]);
-        $table = $_REQUEST["table"];
-        $labelField = "";
-        $lang = $_REQUEST["id_version"];
-        $gabPageJoin = "";
+        $term = $_REQUEST['term'];
+        $idField = $_REQUEST['id_field'];
+        $idGabPage = $_REQUEST['id_gab_page'];
+        $typeGabPage = $_REQUEST['type_gab_page'];
+        $queryFilter = str_replace('[ID]', $idGabPage, $_REQUEST['query_filter']);
+        $table = $_REQUEST['table'];
+        $labelField = '';
+        $lang = $_REQUEST['id_version'];
+        $gabPageJoin = '';
 
 
-        $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"])
-                && $_REQUEST["no_version"] == 1
-                || ($_REQUEST["table"] == "gab_page")
-                || !$typeGabPage) {
+        $filterVersion = '`' . $table . '`.id_version = ' . $lang;
+        if (isset($_REQUEST['no_version'])
+            && $_REQUEST['no_version'] == 1
+            || ($_REQUEST['table'] == 'gab_page')
+            || !$typeGabPage
+        ) {
             $filterVersion = 1;
         } else {
-            $gabPageJoin = "INNER JOIN gab_page ON visible = 1 AND suppr = 0 AND gab_page.id = `$table`.$idField " . ($filterVersion != 1 ? "AND gab_page.id_version = $lang" : "");
+            $gabPageJoin = 'INNER JOIN gab_page ON visible = 1'
+                    . ' AND suppr = 0'
+                    . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` '
+                    . ($filterVersion != 1 ? 'AND gab_page.id_version = ' . $lang : '');
         }
 
-
-
-        if (substr($_REQUEST["label_field"], 0, 9) == "gab_page.") {
-            $labelField = $_REQUEST["label_field"];
+        if (substr($_REQUEST['label_field'], 0, 9) == 'gab_page.') {
+            $labelField = $_REQUEST['label_field'];
         } else {
-            $labelField = "`$table`.`" . $_REQUEST["label_field"] . "`";
+            $labelField = '`' . $table . '`.' . $_REQUEST['label_field'];
         }
 
-        $sql = "SELECT `$table`.$idField id, $labelField label"
-                . " FROM `$table`"
-                . " $gabPageJoin"
-                . " WHERE $filterVersion "
-                . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
-                . " AND $labelField  LIKE '%$term%'";
-
+        $quotedTerm = $this->_db->quote('%' . $term . '%');
+        $sql    = 'SELECT `' . $table . '`.`' . $idField . '` id, ' . $labelField . ' label'
+                . ' FROM `' . $table . '`'
+                . ' ' . $gabPageJoin
+                . ' WHERE ' . $filterVersion . ' '
+                . ($queryFilter != '' ? 'AND (' . $queryFilter . ')' : '')
+                . ' AND ' . $labelField . '  LIKE ' . $quotedTerm;
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -659,21 +674,26 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST["term"];
-        $table = "old_link";
-        $labelField = "`$table`.`link`";
+        $term = $_REQUEST['term'];
+        $table = 'old_link';
+        $labelField = '`' . $table . '`.`link`';
 
+        $quotedTerm = $this->_db->quote('%' . $term . '%');
 
-        $sql = "SELECT $labelField label"
-                . " FROM `$table`"
-                . " WHERE $labelField  LIKE '%$term%'";
+        $sql = 'SELECT `' . $labelField . '` label'
+                . ' FROM `' . $table . '`'
+                . ' WHERE `' . $labelField . '` LIKE ' . $quotedTerm;
 
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -685,7 +705,7 @@ class Page extends Main
         $pages = array();
 
 
-        $qSearch = isset($_GET["term"]) ? $_GET["term"] : "";
+        $qSearch = isset($_GET['term']) ? $_GET['term'] : '';
 
         /*
          * Traitement de la chaine de recherche
@@ -693,96 +713,117 @@ class Page extends Main
 
         $searchTab = array();
 
-        //Variable qui contient la chaine de recherche
+        /**
+         * Variable qui contient la chaine de recherche
+         */
         $this->filter = new \stdClass();
         $stringSearch = strip_tags(trim($qSearch));
         $this->filter->stringSearch = $stringSearch;
 
-        //Si un seul mot
-        if (strpos($stringSearch, " ") === false) {
+        /**
+         * Si un seul mot
+         */
+        if (strpos($stringSearch, ' ') === false) {
             $searchTab[0] = $stringSearch;
         } else {
-            //Si plusieurs  mots on recupere un tableau de mots
-            $searchTab = preg_split("#[ ]+#", $stringSearch);
+            /**
+             * Si plusieurs  mots on recupere un tableau de mots
+             */
+            $searchTab = preg_split('#[ ]+#', $stringSearch);
         }
 
-        //Tableau de mot(s)
+        /**
+         * Tableau de mot(s)
+         */
         $this->filter->words = $searchTab;
 
-        //On teste si un mot est supérieurs à 3 caractères
-        $this->filter->errors["len_words"] = true;
+        /**
+         * On teste si un mot est supérieurs à 3 caractères
+         */
+        $this->filter->errors['len_words'] = true;
         for ($i = 0, $I = count($this->filter->words); $i < $I; $i++) {
-            if (trim($this->filter->words[$i]) != "" && strlen(trim($this->filter->words[$i])) >= 2) {
-                $this->filter->errors["len_words"] = false;
+            if (trim($this->filter->words[$i]) != '' && strlen(trim($this->filter->words[$i])) >= 2) {
+                $this->filter->errors['len_words'] = false;
             }
         }
 
-        if ($this->filter->errors["len_words"]) {
+        if ($this->filter->errors['len_words']) {
             echo json_encode(null);
             return;
         }
 
-        //Pour chaque mot ou essaie de mettre au singulier ou pluriel
-        // + Traitement de la chaine de recherche (elimine mot trop court
-        $mode[] = "s";
-        $mode[] = "p";
+        /**
+         * Pour chaque mot ou essaie de mettre au singulier ou pluriel
+         * + Traitement de la chaine de recherche (elimine mot trop court
+         */
+        $mode[] = 's';
+        $mode[] = 'p';
         $i = 0;
         foreach ($this->filter->words as $t1) {
             foreach ($mode as $m) {
                 if (strlen($t1) >= 2) {
-                    $this->filter->wordsAdvanced[$i++] = (($m == "s") ? $this->singulier($t1) : $this->pluriel($t1));
+                    $this->filter->wordsAdvanced[$i++] = (($m == 's') ? $this->singulier($t1) : $this->pluriel($t1));
                 }
             }
         }
 
-        //Tri des mots par strlen
+        /**
+         * Tri des mots par strlen
+         */
         if (is_array($this->filter->wordsAdvanced))
-            usort($this->filter->wordsAdvanced, array($this, "length_cmp"));
+            usort($this->filter->wordsAdvanced, array($this, 'length_cmp'));
 
         if ($qSearch != null) {
-            $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote("%" . $this->filter->stringSearch . "%");
+            $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote('%' . $this->filter->stringSearch . '%');
 
             if (isset($this->filter->wordsAdvanced) && is_array($this->filter->wordsAdvanced) && count($this->filter->wordsAdvanced) > 0)
                 foreach ($this->filter->wordsAdvanced as $word) {
-                    $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote("%" . $word . "%");
+                    $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote('%' . $word . '%');
                 }
 
             foreach ($filterWords as $filterWord) {
-                $orderBy[] = "IF($filterWord , 0, 1)";
+                $orderBy[] = 'IF(' . $filterWord . ' , 0, 1)';
             }
         }
 
-        $query  = "SELECT `gab_page`.`id` id, gab_page.titre label, gab_page.titre visible, gab_gabarit.label gabarit_label,  CONCAT('page/display.html?id_gab_page=', `gab_page`.`id`) url"
-                . " FROM `gab_page`"
-                . " LEFT JOIN `gab_gabarit`"
-                . "     ON `gab_page`.id_gabarit = `gab_gabarit`.id"
-                . "     AND `gab_gabarit`.editable = 1"
-                . " WHERE `gab_page`.`id_version` = " . BACK_ID_VERSION
-                . " AND `gab_gabarit`.`id_api` = " . $this->_api["id"]
-                . " AND `gab_page`.`suppr` = 0 "
-                . (isset($filterWords) ? " AND (" . implode(" OR ", $filterWords) . ")" : '')
-                . " ORDER BY " . implode(",", $orderBy) . " LIMIT 10";
+        $query  = 'SELECT `gab_page`.`id` id, gab_page.titre label,'
+                . ' gab_page.titre visible, gab_gabarit.label gabarit_label,'
+                . ' CONCAT("page/display.html?id_gab_page=", `gab_page`.`id`) url'
+                . ' FROM `gab_page`'
+                . ' LEFT JOIN `gab_gabarit`'
+                . ' ON `gab_page`.id_gabarit = `gab_gabarit`.id'
+                . ' AND `gab_gabarit`.editable = 1'
+                . ' WHERE `gab_page`.`id_version` = ' . BACK_ID_VERSION
+                . ' AND `gab_gabarit`.`id_api` = ' . $this->_api['id']
+                . ' AND `gab_page`.`suppr` = 0 '
+                . (isset($filterWords) ? ' AND (' . implode(' OR ', $filterWords) . ')' : '')
+                . ' ORDER BY ' . implode(',', $orderBy) . ' LIMIT 10';
 
         $pagesFound = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($pagesFound as $page) {
             $pages[] = array(
-                "label" => \Slrfw\Tools::highlightedSearch($page["label"], $this->filter->wordsAdvanced, true),
-                "id" => $page["id"],
-                "gabarit_label" => $page["gabarit_label"],
-                "url" => $page["url"],
+                'label' => \Slrfw\Tools::highlightedSearch($page['label'], $this->filter->wordsAdvanced, true),
+                'id' => $page['id'],
+                'gabarit_label' => $page['gabarit_label'],
+                'url' => $page['url'],
             );
         }
 
-        exit(json_encode($pages));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($pages);
     }
 
     /**
+     *
      *
      * @return void
      */
     public function visibleAction()
     {
+        $this->_view->main(false);
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
@@ -795,43 +836,51 @@ class Page extends Main
 
         if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
             if ($this->_gabaritManager->setVisible($idVersion, BACK_ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
-                $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
-                $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $type = $_POST['visible'] == 1 ? 'Page rendu visible' : 'Page rendu invisible';
+                $this->_log->logThis($type . ' avec succès', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');
-                $json['status'] = "success";
+                $json['status'] = 'success';
             } else {
-                $this->_log->logThis("$type échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $this->_log->logThis($type . ' échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" /><br /><span style="color:red;">Error</span>');
             }
         }
 
-
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
     public function deleteAction()
     {
+        $this->_view->main(false);
         $this->_view->enable(false);
 
-        $json = array('status' => "error");
+        $json = array('status' => 'error');
 
         if (is_numeric($_POST['id_gab_page'])) {
             if ($this->_gabaritManager->delete($_POST['id_gab_page'])) {
-                $this->_log->logThis("Suppression de page réussie", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page']);
-                $json['status'] = "success";
+                $this->_log->logThis('Suppression de page réussie', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page']);
+                $json['status'] = 'success';
             } else {
-                $this->_log->logThis("Suppression de page échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>');
+                $this->_log->logThis('Suppression de page échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>');
             }
         }
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -842,27 +891,45 @@ class Page extends Main
         $this->_view->main(false);
         $this->_view->enable(false);
 
-        $prepStmt = $this->_db->prepare("UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id");
+        $json = array('status' => 'error');
+
+        $prepStmt = $this->_db->prepare('UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id');
         foreach ($_POST['positions'] as $id => $ordre) {
-            $prepStmt->bindValue(":ordre", $ordre, \PDO::PARAM_INT);
-            $prepStmt->bindValue(":id", $id, \PDO::PARAM_INT);
+            $prepStmt->bindValue(':ordre', $ordre, \PDO::PARAM_INT);
+            $prepStmt->bindValue(':id', $id, \PDO::PARAM_INT);
             $tmp = $prepStmt->execute();
             if ($ok) {
                 $ok = $tmp;
-                $this->_log->logThis("Changement d'ordre réalisé avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $id . '<br />'
-                        . "<b>Ordre</b> : " . $ordre . '<br />');
-            } else {
-                $this->_log->logThis("Changement d'ordre échoué", $this->_utilisateur->get("id"), "<b>Id</b> : " . $id
-                        . "<b>Ordre</b> : " . $ordre . '<br />'
-                        . '<br /><span style="color:red;">Error</span>');
             }
         }
 
-        echo $ok ? 'Succès' : 'Echec';
+        if ($ok) {
+            $this->_log->logThis(
+                'Changement d\'ordre réalisé avec succès',
+                $this->_utilisateur->get('id'),
+                '<b>Id</b> : ' . $id . '<br />' . '<b>Ordre</b> : ' . $ordre . '<br />');
 
-        return false;
+            $json['status'] = 'success';
+        } else {
+            $this->_log->logThis(
+                'Changement d\'ordre échoué',
+                $this->_utilisateur->get('id'),
+                '<b>Id</b> : ' . $id . '<b>Ordre</b> : ' . $ordre . '<br /><br /><span style="color:red;">Error</span>');
+        }
+
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
+    /**
+     *
+     *
+     * @param type $currentConfigPageModule
+     * 
+     * @return void
+     */
     protected function getButton($currentConfigPageModule)
     {
         /**
@@ -953,20 +1020,41 @@ class Page extends Main
         }
     }
 
+    /**
+     *
+     *
+     * @param string $mot
+     *
+     * @return string
+     */
     protected function singulier($mot)
     {
-        return (substr($mot, -1) == "s") ? substr($mot, 0, -1) : $mot;
+        return (substr($mot, -1) == 's') ? substr($mot, 0, -1) : $mot;
     }
 
+    /**
+     *
+     *
+     * @param string $mot
+     *
+     * @return string
+     */
     protected function pluriel($mot)
     {
-        return (substr($mot, -1) == "s") ? $mot : ($mot . 's');
+        return (substr($mot, -1) == 's') ? $mot : ($mot . 's');
     }
 
+    /**
+     *
+     *
+     * @param string $a
+     * @param string $b
+     *
+     * @return int
+     */
     protected function length_cmp($a, $b)
     {
         return strlen($b) - strlen($a);
     }
-
 }
 
