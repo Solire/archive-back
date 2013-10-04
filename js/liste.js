@@ -158,7 +158,7 @@ $(function(){
         $.post('back/page/order.html', {
             'positions' : positions
         }, function(data){
-            if(data == "Succès") {
+            if(data.status == "success") {
                 $.sticky("Succès du déplacement", {
                     type:"success"
                 });
