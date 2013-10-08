@@ -2359,6 +2359,14 @@ form .line.form-line .line {
     margin: 0;
 }
 
+option {
+    cursor: pointer;
+    font-weight: bold;
+}
+option:disabled {
+    cursor: not-allowed;
+}
+
 .option1, .option1:disabled {
     background-color:#ccc;
     color : #000;
