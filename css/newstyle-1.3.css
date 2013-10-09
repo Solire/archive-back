@@ -2368,7 +2368,7 @@ option:disabled {
 }
 
 .option1, .option1:disabled {
-    background-color:#ccc;
+    background-color:#fff;
     color : #000;
     /*background-color:#3485C9;*/
     padding-top:5px;
