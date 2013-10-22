@@ -80,7 +80,7 @@ $(function() {
      * Redimensionnement et recadrage des images
      */
     // Create variables (in this scope) to hold the API and image size
-    var jcrop_api, boundx, boundy, $inputFile;
+    var jcrop_api, boundx, boundy, $inputFile, $inputAlt;
 
     function updatePreview(c)
     {
@@ -100,7 +100,6 @@ $(function() {
 
             updateCoords(c);
         }
-
     }
 
     function updateCoords(c)
@@ -155,6 +154,11 @@ $(function() {
 
     })
 
+    $('.form-crop-ok').bind('click', function() {
+        $inputAlt.val($('#image-alt').val());
+        $('#modalCrop').modal('hide');
+    });
+
     $('.form-crop-submit').bind('click', function() {
         if ($(this).hasClass('disabled'))
             return false;
@@ -165,6 +169,7 @@ $(function() {
             $inputFile.val(response.filename);
             $inputFile.siblings('.previsu').attr('href', response.path);
         }, 'json');
+        $inputAlt.val($('#image-alt').val());
     });
 
     $('.crop').live('click', function(e) {
@@ -172,9 +177,10 @@ $(function() {
         openCropDialog.call(this);
     });
 
-    var openCropDialog = function()
-    {
-        var aspectRatio = 0;
+    var openCropDialog = function(){
+        var aspectRatio = 0,
+            visuelId,
+            fieldset;
 
         $('.img-info, .expected-width, .expected-height, .expected-width-height').hide();
         $('.force-selection input').attr('checked', 'checked');
@@ -185,6 +191,10 @@ $(function() {
         var src = $(this).siblings('.previsu').attr('href');
 
         $inputFile = $(this).siblings('.form-file');
+
+        visuelId = $inputFile.attr('data-visuel-id');
+        fieldset = $inputFile.parents('fieldset:first');
+        $inputAlt = $('input[type=hidden][data-visuel-id=' + visuelId + ']', fieldset);
 
         var $overlay = $('<div class="loading-overlay"><div class="circle"></div><div class="circle1"></div></div>').hide();
         $('body').prepend($overlay);
@@ -235,10 +245,11 @@ $(function() {
             var imageNameInfos = $inputFile.val().split('.');
             var imageExtension = imageNameInfos.pop();
             var imageName = imageNameInfos.join('');
+            var imageAlt = $inputAlt.val();
 
+            $('#image-alt').val(imageAlt);
             $('#image-name').val(imageName);
             $('#image-extension').val(imageExtension);
-
 
             $('#modalCrop table tr:first td:first').html('<img src="" class="img-polaroid" id="crop-target" alt="" />');
             $('#modalCrop #filepath').val(src);
@@ -668,8 +679,9 @@ $(function() {
 
                     $(this).autocomplete('close');
 
-                    openCropDialog.call($(this).siblings('.crop'));
-
+                    if (isImage) {
+                        openCropDialog.call($(this).siblings('.crop'));
+                    }
                 }
             }).focus(function() {
                 if (this.value == '') {
