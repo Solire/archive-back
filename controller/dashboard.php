@@ -35,15 +35,14 @@ class Dashboard extends Main {
             foreach ($configsName as $configKey => $configName) {
                 $datatableClassName = '\\App\\Back\\Datatable\\' . $configName;
 
-                $frontController = \Slrfw\FrontController::getInstance();
-                $configPath = $frontController::search("config/datatable/" . $configName . ".cfg.php");
+                $configPath = \Slrfw\FrontController::search('config/datatable/' . $configName . '.cfg.php');
 
                 if (!$configPath) {
                     $this->pageNotFound();
                 }
 //                $datatable = null;
 
-                $datatableClassName = "Back\\Datatable\\" . $configName;
+                $datatableClassName = 'Back\\Datatable\\' . $configName;
                 $datatableClassName = \Slrfw\FrontController::searchClass($datatableClassName);
 
                 if ($datatableClassName === false) {
@@ -63,16 +62,16 @@ class Dashboard extends Main {
                 $data = $datatableString;
 
                 if ($configKey == 0 &&
-                    (!isset($_GET["nomain"]) || $_GET["nomain"] == 0)
+                    (!isset($_GET['nomain']) || $_GET['nomain'] == 0)
                 ) {
                     $sBreadCrumbs = $this->_buildBreadCrumbs($datatable->getBreadCrumbs());
                     //On ajoute le chemin de fer
                     $datatable->beforeHtml($sBreadCrumbs);
                 }
 
-                if (isset($_GET["json"])
-                    || (isset($_GET["nomain"])
-                    && $_GET["nomain"] == 1)
+                if (isset($_GET['json'])
+                    || (isset($_GET['nomain'])
+                    && $_GET['nomain'] == 1)
                 ) {
                     echo $data;
                     exit();
@@ -87,7 +86,8 @@ class Dashboard extends Main {
     }
 
     private function _buildBreadCrumbs($additionnalBreadCrumbs) {
-        $this->_view->breadCrumbs = array_merge($this->_view->breadCrumbs, $additionnalBreadCrumbs);
+        $this->_view->breadCrumbs = array_merge($this->_view->breadCrumbs,
+            $additionnalBreadCrumbs);
         ob_start();
         $this->_view->add("breadcrumbs.phtml");
         $sBreadCrumbs = ob_get_clean();
@@ -96,4 +96,3 @@ class Dashboard extends Main {
 
 }
 
-//end class
