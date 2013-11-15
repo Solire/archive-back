@@ -27,6 +27,12 @@ class Page extends Main
     protected $_page = null;
 
     /**
+     *
+     * @var \Slrfw\Model\gabaritPage[]
+     */
+    protected $_pages = null;
+
+    /**
      * Toujours executé avant l'action.
      *
      * @return void
@@ -35,6 +41,121 @@ class Page extends Main
     {
         parent::start();
     }
+
+    /**
+     * Modifie les droits sur les pages
+     *
+     * @param array $pages
+     * @param array $gabarits
+     *
+     * @return void
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
+     * @hook back/ pagedelete Pour autoriser / interdire la suppression d'une page
+     * @hook back/ pageorder Pour autoriser / interdire la modification de l'ordre
+     * de pages
+     */
+    public function checkPrivileges($pages, $gabarits)
+    {
+        $ids = array();
+        foreach ($pages as $page) {
+            $gabarit = $gabarits[$page->getMeta('id_gabarit')];
+
+            $page->makeVisible = true;
+            $page->makeHidden  = $gabarit['make_hidden'];
+            $page->deletable   = $gabarit['deletable'];
+            $page->sortable    = $gabarit['sortable'];
+
+            $ids[] = $page->getMeta('id');
+            $p[$page->getMeta('id')] = $page;
+        }
+
+
+        /**
+         * On vérifie la possibilité de rendre invisble pour
+         * chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->gabaritManager = $this->_gabaritManager;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->visible        = 0;
+
+        $hook->exec('pagevisible');
+
+        if ($hook->permission !== null) {
+            foreach ($hook->permission as $id => $permission) {
+                $p[$id]->makeHidden  = $permission;
+            }
+        }
+
+
+        /**
+         * On vérifie la possibilité de rendre visible pour
+         * chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->visible        = 1;
+
+        $hook->exec('pagevisible');
+
+        if ($hook->permission !== null) {
+            foreach ($hook->permission as $id => $permission) {
+                $p[$id]->makeVisible  = $permission;
+            }
+        }
+
+
+        /**
+         * On vérifie la possibilité d'ordonner chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+
+        $hook->exec('pageorder');
+
+        if ($hook->permission !== null) {
+            foreach ($hook->permission as $id => $permissions) {
+                $p[$id]->sortable  = $permission;
+            }
+        }
+
+
+        /**
+         * On vérifie la possibilité d'ordonner chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+
+        $hook->exec('pagedelete');
+
+        if ($hook->permission !== null) {
+            foreach ($hook->permission as $id => $permissions) {
+                $p[$id]->deletable  = $permission;
+            }
+        }
+    }
+
 
     /**
      * Liste les gabarits
@@ -176,9 +297,9 @@ class Page extends Main
         );
         $this->getButton($currentConfigPageModule);
 
-        $this->_view->gabarits = $this->_db->query($query)->fetchAll(
-            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
-        );
+        $this->checkPrivileges($this->_pages, $this->_gabarits);
+
+        $this->_view->gabarits = $this->_gabarits;
         $this->_view->pages = $this->_pages;
 
         $this->_view->breadCrumbs[] = array(
@@ -188,7 +309,7 @@ class Page extends Main
     }
 
     /**
-     *
+     * Affichage des enfants d'une page
      *
      * @return void
      */
@@ -282,19 +403,22 @@ class Page extends Main
             exit();
         }
 
-        $this->_view->pages = $this->_pages;
-
         $query  = 'SELECT `gab_gabarit`.id, `gab_gabarit`.*'
                 . ' FROM `gab_gabarit`'
                 . ' WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
         $this->_gabarits = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
         );
+
+        $this->checkPrivileges($this->_pages, $this->_gabarits);
+
+        $this->_view->pages = $this->_pages;
+
         $this->_view->gabarits = $this->_gabarits;
     }
 
     /**
-     *
+     * Affichage du formulaire de création / d'édition d'une page
      *
      * @return void
      */
@@ -445,6 +569,9 @@ class Page extends Main
      * Page appelé pour la sauvegarde d'une page
      *
      * @return void
+     * @hook back/ pagesaved Après la création / modification d'une page. Si les
+     * données envoyés sont les mêmes que celles enregistrées en BDD, cette
+     * évènement n'est pas déclenché
      */
     public function saveAction()
     {
@@ -452,6 +579,9 @@ class Page extends Main
         $this->_view->enable(false);
 
         if (isset($_GET['edit-front']) && $_GET['edit-front'] == 1) {
+            /**
+             * Sauvegarde partielle sur le middleoffice
+             */
 
             $dataRaw = json_decode($_POST['content'], true);
             $data = array(
@@ -462,7 +592,9 @@ class Page extends Main
             $page = $this->_gabaritManager->getPage(
                 $dataRaw['id_version']['value'],
                 $dataRaw['id_api']['value'],
-                $dataRaw['id_gab_page']['value'], 0);
+                $dataRaw['id_gab_page']['value'],
+                0
+            );
             $pageSave = false;
 
             foreach ($dataRaw as $k => $d) {
@@ -504,82 +636,170 @@ class Page extends Main
                 }
             }
 
+            $modif = false;
+
             if ($pageSave) {
-                $this->_gabaritManager->savePage($page, $data, true);
+                $modifTmp = $this->_gabaritManager->savePage($page, $data, true);
+
+                if (!$modif && $modifTmp) {
+                    $modif = $modifTmp;
+                }
             }
 
             $blocs = $page->getBlocs();
             foreach ($blocs as $bloc) {
-                $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']['value'], $dataRaw['id_version']['value'], $data, true);
+                $modifTmp = $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']['value'], $dataRaw['id_version']['value'], $data, true);
+
+                if (!$modif && $modifTmp) {
+                    $modif = $modifTmp;
+                }
             }
-            exit('1');
-        }
 
+            if ($modif) {
+                $this->_page = $this->_gabaritManager->getPage(
+                    $dataRaw['id_version']['value'],
+                    $dataRaw['id_api']['value'],
+                    $dataRaw['id_gab_page']['value'],
+                    0
+                );
+            }
 
-
-        $this->_page = $this->_gabaritManager->save($_POST);
-
-        $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
-
-        //Envoi de mail à solire
-        if($this->_appConfig->get('general', 'mail-notification')) {
-            $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
-                        . 'page/display.html?id_gab_page='
-                        . $this->_page->getMeta('id') . '">'
-                        . $this->_page->getMeta('titre') . '</a>';
-
-            $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                        . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                        . 'Bcc: contact@solire.fr ' . "\r\n"
-                        . 'X-Mailer: PHP/' . phpversion();
-
-            \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-                $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
-                $contenu, $headers, 'text/html');
-        }
-
-
-        $json = array(
-            'status'        => 'success',
-            'search'        => '?id_gab_page=' . $this->_page->getMeta('id') . '&popup=more',
-            'id_gab_page'   => $this->_page->getMeta('id'),
-        );
-
-        if (isset($_POST['id_temp']) && $_POST['id_temp']) {
-            $upload_path = $this->_mainConfig->get('upload', 'path');
-
-            $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
-            $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta('id');
-
-            $succes = rename($tempDir, $targetDir);
-
-            $query  = 'UPDATE `media_fichier` SET'
-                    . ' `id_gab_page` = ' . $this->_page->getMeta('id') . ','
-                    . ' `id_temp` = 0'
-                    . ' WHERE `id_temp` = ' . $_POST['id_temp'];
-            $this->_db->exec($query);
-        }
-
-
-        if($json['status'] == 'error') {
-            $this->_log->logThis(   $typeSave . 'de page échouée',
-                                    $this->_utilisateur->get('id'),
-                                    '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST['id_version']]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
+            $json = array(
+                'status' => 'success',
+            );
         } else {
-            $this->_log->logThis(   $typeSave . 'de page réussie',
-                                    $this->_utilisateur->get('id'),
-                                    '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST['id_version']]['nom'] . '" /></a>');
+            $modif = false;
+
+            if ($_POST['id_gab_page'] > 0) {
+                $updating = true;
+                $typeSave = 'Modification';
+            } else {
+                $updating = false;
+                $typeSave = 'Création';
+            }
+
+            $res = $this->_gabaritManager->save($_POST);
+
+            if ($res === null) {
+                $this->redirectError(404);
+            }
+
+            if ($res === false) {
+                /**
+                 * Dans le cas d'une mise-à-jour où les données étaient les
+                 * mêmes que celles préenregistrées en BDD.
+                 */
+
+                $modif = false;
+
+                $json = array(
+                    'status'        => 'success',
+                    'search'        => '?id_gab_page=' . $_POST['id_gab_page']
+                                     . '&popup=more',
+                    'id_gab_page'   => $_POST['id_gab_page'],
+                );
+            } else {
+                /**
+                 * Création de page ou modification effective
+                 */
+
+                $modif = true;
+
+                $this->_page = $res;
+
+                if($this->_appConfig->get('general', 'mail-notification')) {
+                    /**
+                     * Envoi de mail à solire
+                     */
+
+                    $subject    = $typeSave . ' de contenu sur '
+                                . $this->_mainConfig->get('project', 'name');
+
+                    $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
+                                . 'page/display.html?id_gab_page='
+                                . $this->_page->getMeta('id') . '">'
+                                . $this->_page->getMeta('titre') . '</a>';
+
+                    $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                                . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                                . 'Bcc: contact@solire.fr ' . "\r\n"
+                                . 'X-Mailer: PHP/' . phpversion();
+
+                    \Slrfw\Tools::mail_utf8(
+                        'Modif site <modif@solire.fr>',
+                        $subject,
+                        $contenu,
+                        $headers,
+                        'text/html'
+                    );
+                }
+
+                $json = array(
+                    'status'        => 'success',
+                    'search'        => '?id_gab_page=' . $this->_page->getMeta('id')
+                                     . '&popup=more',
+                    'id_gab_page'   => $this->_page->getMeta('id'),
+                );
+
+                if (isset($_POST['id_temp']) && $_POST['id_temp']) {
+                    /**
+                     * Déplacement des fichiers utilisés dans la page.
+                     */
+
+                    $upload_path = $this->_mainConfig->get('upload', 'path');
+
+                    $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
+                    $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta('id');
+
+                    $succes = rename($tempDir, $targetDir);
+
+                    $query  = 'UPDATE `media_fichier` SET'
+                            . ' `id_gab_page` = ' . $this->_page->getMeta('id') . ','
+                            . ' `id_temp` = 0'
+                            . ' WHERE `id_temp` = ' . $_POST['id_temp'];
+                    $this->_db->exec($query);
+                }
+
+
+                if($json['status'] == 'error') {
+                    $this->_log->logThis(   $typeSave . 'de page échouée',
+                                            $this->_utilisateur->get('id'),
+                                            '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                            . $this->_versions[$_POST['id_version']]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
+                } else {
+                    $this->_log->logThis(   $typeSave . 'de page réussie',
+                                            $this->_utilisateur->get('id'),
+                                            '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                            . $this->_versions[$_POST['id_version']]['nom'] . '" /></a>');
+                }
+            }
+        }
+
+        if ($modif) {
+            /**
+             * Si une création ou une modification a été effectuée,
+             * on fait un hook
+             */
+
+            $hook = new \Slrfw\Hook();
+            $hook->setSubdirName('back');
+
+            $hook->page           = $this->_page;
+            $hook->db             = $this->_db;
+            $hook->utilisateur    = $this->_utilisateur;
+
+            $hook->exec('pagesaved');
         }
 
         echo(json_encode($json));
     }
 
     /**
-     *
+     * Autocomplete des pages
      *
      * @return void
+     * @deprecated ??? utiliser autocompleteJoinAction à la place
+     * @see Page::autocompleteJoinAction()
      */
     public function autocompleteAction()
     {
@@ -678,7 +898,7 @@ class Page extends Main
 
         $quotedTerm = $this->_db->quote('%' . $term . '%');
 
-        $sql = 'SELECT `' . $labelField . '` label'
+        $sql    = 'SELECT `' . $labelField . '` label'
                 . ' FROM `' . $table . '`'
                 . ' WHERE `' . $labelField . '` LIKE ' . $quotedTerm;
 
@@ -815,9 +1035,11 @@ class Page extends Main
     }
 
     /**
-     *
+     * Rendre une page visible / invisible
      *
      * @return void
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
      */
     public function visibleAction()
     {
@@ -825,14 +1047,36 @@ class Page extends Main
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
-
         $idVersion = BACK_ID_VERSION;
 
         if (isset($_POST['id_version']) && $_POST['id_version'] > 0) {
             $idVersion = intval($_POST['id_version']);
         }
 
-        if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->visible        = $_POST['visible'];
+        $hook->ids            = $_POST['id_gab_page'];
+
+        $hook->exec('pagevisible');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
+        if ($permission
+            && is_numeric($_POST['id_gab_page'])
+            && is_numeric($_POST['visible'])
+        ) {
             if ($this->_gabaritManager->setVisible($idVersion, BACK_ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
                 $type = $_POST['visible'] == 1 ? 'Page rendu visible' : 'Page rendu invisible';
                 $this->_log->logThis($type . ' avec succès', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
@@ -851,9 +1095,10 @@ class Page extends Main
     }
 
     /**
-     *
+     * Suppression d'une page (suppression logique en base)
      *
      * @return void
+     * @hook back/ pagedelete Pour autoriser / interdire la suppression d'une page
      */
     public function deleteAction()
     {
@@ -862,12 +1107,44 @@ class Page extends Main
 
         $json = array('status' => 'error');
 
-        if (is_numeric($_POST['id_gab_page'])) {
-            if ($this->_gabaritManager->delete($_POST['id_gab_page'])) {
-                $this->_log->logThis('Suppression de page réussie', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page']);
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $_POST['id_gab_page'];
+
+        $hook->exec('pagedelete');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
+        if ($permission
+            && is_numeric($_POST['id_gab_page'])
+        ) {
+            $delete = $this->_gabaritManager->delete($_POST['id_gab_page']);
+
+            if ($delete) {
+                $this->_log->logThis(
+                    'Suppression de page réussie',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $_POST['id_gab_page']
+                );
+
                 $json['status'] = 'success';
             } else {
-                $this->_log->logThis('Suppression de page échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>');
+                $this->_log->logThis(
+                    'Suppression de page échouée',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>'
+                );
             }
         }
 
@@ -878,9 +1155,11 @@ class Page extends Main
     }
 
     /**
-     *
+     * Modification de l'ordre de pages
      *
      * @return void
+     * @hook back/ pageorder Pour autoriser / interdire la modification de l'ordre
+     * de pages
      */
     public function orderAction()
     {
@@ -891,28 +1170,50 @@ class Page extends Main
 
         $json = array('status' => 'error');
 
-        $prepStmt = $this->_db->prepare('UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id');
-        foreach ($_POST['positions'] as $id => $ordre) {
-            $prepStmt->bindValue(':ordre', $ordre, \PDO::PARAM_INT);
-            $prepStmt->bindValue(':id', $id, \PDO::PARAM_INT);
-            $tmp = $prepStmt->execute();
-            if ($ok) {
-                $ok = $tmp;
-            }
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = array_keys($_POST['positions']);
+
+        $hook->exec('pageorder');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
         }
 
-        if ($ok) {
-            $this->_log->logThis(
-                'Changement d\'ordre réalisé avec succès',
-                $this->_utilisateur->get('id'),
-                '<b>Id</b> : ' . $id . '<br />' . '<b>Ordre</b> : ' . $ordre . '<br />');
+        if ($permission) {
+            $query  = 'UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id';
+            $prepStmt = $this->_db->prepare($query);
+            foreach ($_POST['positions'] as $id => $ordre) {
+                $prepStmt->bindValue(':ordre', $ordre, \PDO::PARAM_INT);
+                $prepStmt->bindValue(':id', $id, \PDO::PARAM_INT);
+                $tmp = $prepStmt->execute();
+                if ($ok) {
+                    $ok = $tmp;
+                }
+            }
 
-            $json['status'] = 'success';
-        } else {
-            $this->_log->logThis(
-                'Changement d\'ordre échoué',
-                $this->_utilisateur->get('id'),
-                '<b>Id</b> : ' . $id . '<b>Ordre</b> : ' . $ordre . '<br /><br /><span style="color:red;">Error</span>');
+            if ($ok) {
+                $this->_log->logThis(
+                    'Changement d\'ordre réalisé avec succès',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $id . '<br />' . '<b>Ordre</b> : ' . $ordre . '<br />');
+
+                $json['status'] = 'success';
+            } else {
+                $this->_log->logThis(
+                    'Changement d\'ordre échoué',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $id . '<b>Ordre</b> : ' . $ordre . '<br /><br /><span style="color:red;">Error</span>');
+            }
         }
 
         header('Cache-Control: no-cache, must-revalidate');

@@ -108,6 +108,8 @@ class Board extends \Slrfw\Datatable\Datatable {
      *
      * @param array $data Ligne courante de donnée
      * @return string Html des actions
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
      */
     public function buildAction(&$data) {
         $actionHtml = '<div class="btn-group">';
@@ -121,10 +123,32 @@ class Board extends \Slrfw\Datatable\Datatable {
                                 <i class="icon-pencil"></i>
                             </a>';
         }
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->visible        = $data["visible"] == 0 ? 1 : 0;
+        $hook->ids            = $data['id'];
+
+        $hook->exec('pagevisible');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
         if (($this->_utilisateur->get("niveau") == "solire"
             || $this->_gabarits[$data["id_gabarit"]]["make_hidden"]
             || $data["visible"] == 0)
             && $data["rewriting"] != ""
+            && $permission
         ) {
             $actionHtml .= '<a class="btn btn-small ' . ($data["visible"] > 0 ? 'btn-success' : 'btn-default' ) . ' visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">
                                 <input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>
