@@ -101,20 +101,30 @@ class User extends Main
     public function listeAction()
     {
         $configName = 'utilisateur';
+
         $configPath = \Slrfw\FrontController::search(
             'config/datatable/' . $configName . '.cfg.php'
         );
 
-        $datatableClassName = '\\App\\Back\\Datatable\\Utilisateur';
-        /** @todo Chargement des fichiers des differentes app */
-        try {
-            $datatable = new $datatableClassName(
-                $_GET, $configPath, $this->_db, './datatable/',
-                './datatable/', 'img/datatable/');
-        } catch (\Exception $exc) {
+        if (!$configPath) {
+            $this->pageNotFound();
+        }
+
+        $datatableClassName = 'Back\\Datatable\\' . $configName;
+        $datatableClassName = \Slrfw\FrontController::searchClass(
+            $datatableClassName
+        );
+
+        if ($datatableClassName === false) {
             $datatable = new \Slrfw\Datatable\Datatable(
-                $_GET, $configPath, $this->_db, './datatable/',
-                './datatable/', 'img/datatable/');
+                $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                '/back/js/datatable/', 'app/back/img/datatable/'
+            );
+        } else {
+            $datatable = new $datatableClassName(
+                $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                '/back/js/datatable/', 'app/back/img/datatable/'
+            );
         }
 
         /** On cré notre object datatable */
