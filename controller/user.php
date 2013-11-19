@@ -127,10 +127,6 @@ class User extends Main
             );
         }
 
-        /** On cré notre object datatable */
-        $datatable = new $datatableClassName($_GET, $configPath, $this->_db,
-            '/back/css/datatable/', '/back/js/datatable/', 'img/datatable/');
-
         $datatable->setUtilisateur($this->_utilisateur);
         $datatable->start();
         $datatable->setDefaultNbItems($this->_appConfig->get('board',
