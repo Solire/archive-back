@@ -93,7 +93,7 @@ $this->add('menuadd.phtml');
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> + <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
                                             <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "back_log" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=back_log" class="bis">Logs</a></li>
-                                            <li<?php echo $this->controller == "back/dashboard" && $_GET["name"] == "utilisateur" ? ' class="active"' : ''; ?>><a href="back/dashboard/start.html?name=utilisateur" class="bis">Utilisateurs</a></li>
+                                            <li<?php echo $this->controller == "back/user" && $_GET["action"] == "liste" ? ' class="active"' : ''; ?>><a href="back/user/liste.html" class="bis">Utilisateurs</a></li>
                                         </ul>
                                     </li>
 <?php
