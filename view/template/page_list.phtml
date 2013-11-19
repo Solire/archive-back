@@ -105,13 +105,19 @@
                                                 <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" class="btn btn-small btn-info" title="Modifier '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-pencil"></i></a>
 <?php
                     }
-                    if ((
-                            $this->utilisateur->get('niveau') == 'solire'
-                            || ($page->makeHidden && $page->getMeta('visible') == 1)
-                            || ($page->makeVisible && $page->getMeta('visible') == 0)
+
+                    if ($page->getMeta('rewriting') != ''
+                        && ($this->utilisateur->get("niveau") == "solire"
+                            || $gabarit['make_hidden'] > 0
+                            || $page->getMeta('visible') == 0
                         )
-                        && $page->getMeta('rewriting') != ''
                     ) {
+                        if ((
+                                ($page->makeHidden && $page->getMeta('visible') == 1)
+                                || ($page->makeVisible && $page->getMeta('visible') == 0)
+                            )
+                            && $page->getMeta('rewriting') != ''
+                        ) {
 ?>
                                                 <a class="btn btn-small <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?> visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta('visible') > 0 ? 'invisible' : 'visible' ) ?> sur le site">
                                                     <input type="checkbox" value="<?php echo $page->getMeta('id'); ?>|<?php echo $page->getMeta('id_version'); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta('id'); ?>-<?php echo $page->getMeta('id_version'); ?>" <?php echo ($page->getMeta('visible') > 0 ? ' checked="checked"' : '') ?> />
@@ -119,6 +125,14 @@
                                                 </a>
 
 <?php
+                        } else {
+?>
+                                                <span class="btn btn-small disabled <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?>" title="Vous n'avez pas les droits pour exécuter cette action" style="cursor:not-allowed;">
+                                                    <i class="<?php echo ($page->getMeta('visible') > 0 ? 'icon-eye-open' : 'icon-eye-close') ?>"></i>
+                                                </span>
+
+<?php
+                        }
                     }
 
                     if ($page->getMeta('rewriting') == '') {

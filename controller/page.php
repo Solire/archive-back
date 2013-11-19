@@ -80,19 +80,24 @@ class Page extends Main
         $hook->setSubdirName('back');
 
         $hook->permission     = null;
-        $hook->gabaritManager = $this->_gabaritManager;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
         $hook->visible        = 0;
 
         $hook->exec('pagevisible');
 
         if ($hook->permission !== null) {
-            foreach ($hook->permission as $id => $permission) {
-                $p[$id]->makeHidden  = $permission;
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->makeHidden  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->makeHidden  = $permission;
+                }
             }
         }
-
 
         /**
          * On vérifie la possibilité de rendre visible pour
@@ -105,13 +110,20 @@ class Page extends Main
         $hook->permission     = null;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
         $hook->visible        = 1;
 
         $hook->exec('pagevisible');
 
         if ($hook->permission !== null) {
-            foreach ($hook->permission as $id => $permission) {
-                $p[$id]->makeVisible  = $permission;
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->makeVisible  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->makeVisible  = $permission;
+                }
             }
         }
 
@@ -126,18 +138,25 @@ class Page extends Main
         $hook->permission     = null;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
 
         $hook->exec('pageorder');
 
         if ($hook->permission !== null) {
-            foreach ($hook->permission as $id => $permissions) {
-                $p[$id]->sortable  = $permission;
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->sortable  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->sortable  = $permission;
+                }
             }
         }
 
 
         /**
-         * On vérifie la possibilité d'ordonner chaque page
+         * On vérifie la possibilité de supprimer chaque page
          */
 
         $hook = new \Slrfw\Hook();
@@ -146,16 +165,22 @@ class Page extends Main
         $hook->permission     = null;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
 
         $hook->exec('pagedelete');
 
         if ($hook->permission !== null) {
-            foreach ($hook->permission as $id => $permissions) {
-                $p[$id]->deletable  = $permission;
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->deletable  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->deletable  = $permission;
+                }
             }
         }
     }
-
 
     /**
      * Liste les gabarits
@@ -475,7 +500,39 @@ class Page extends Main
             foreach ($this->_versions as $id_version => $version) {
                 $page = $this->_gabaritManager->getPage($id_version,
                     BACK_ID_API, $id_gab_page);
+
+                if (!$page || $page->getGabarit()->getEditable() == 0) {
+                    $this->pageNotFound();
+                }
+
                 $this->_pages[$id_version] = $page;
+
+                $hook = new \Slrfw\Hook();
+                $hook->setSubdirName('back');
+
+                $hook->permission     = null;
+                $hook->utilisateur    = $this->_utilisateur;
+                $hook->visible        = $page->getMeta('visible') > 0 ? 0 : 1;
+                $hook->ids            = $id_gab_page;
+                $hook->id_version     = $id_version;
+
+                $hook->exec('pagevisible');
+
+                $page->makeVisible = true;
+
+                if ($page->getGabarit()->getMake_hidden()) {
+                    $page->makeHidden  = true;
+                } else {
+                    $page->makeHidden  = false;
+                }
+
+                if ($hook->permission === false) {
+                    if ($hook->visible > 0) {
+                        $page->makeVisible = false;
+                    } else {
+                        $page->makeHidden  = false;
+                    }
+                }
 
                 $path   = $page->getMeta('rewriting')
                         . $page->getGabarit()->getExtension();
@@ -597,6 +654,10 @@ class Page extends Main
             );
             $pageSave = false;
 
+            if (!$page || $page->getGabarit()->getEditable() == 0) {
+                $this->pageNotFound();
+            }
+
             foreach ($dataRaw as $k => $d) {
                 $val = isset($d['value']) ? $d['value'] : false;
                 if ($val === false) {
@@ -681,7 +742,7 @@ class Page extends Main
             $res = $this->_gabaritManager->save($_POST);
 
             if ($res === null) {
-                $this->redirectError(404);
+                $this->pageNotFound();
             }
 
             if ($res === false) {
@@ -784,9 +845,8 @@ class Page extends Main
             $hook = new \Slrfw\Hook();
             $hook->setSubdirName('back');
 
-            $hook->page           = $this->_page;
-            $hook->db             = $this->_db;
-            $hook->utilisateur    = $this->_utilisateur;
+            $hook->page        = $this->_page;
+            $hook->utilisateur = $this->_utilisateur;
 
             $hook->exec('pagesaved');
         }
@@ -1040,6 +1100,8 @@ class Page extends Main
      * @return void
      * @hook back/ pagevisible Pour autoriser / interdire la modification de la
      * visibilité d'une page
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function visibleAction()
     {
@@ -1060,6 +1122,7 @@ class Page extends Main
         $hook->utilisateur    = $this->_utilisateur;
         $hook->visible        = $_POST['visible'];
         $hook->ids            = $_POST['id_gab_page'];
+        $hook->id_version     = BACK_ID_VERSION;
 
         $hook->exec('pagevisible');
 
@@ -1099,6 +1162,8 @@ class Page extends Main
      *
      * @return void
      * @hook back/ pagedelete Pour autoriser / interdire la suppression d'une page
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function deleteAction()
     {
@@ -1113,6 +1178,7 @@ class Page extends Main
         $hook->permission     = null;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = $_POST['id_gab_page'];
+        $hook->id_version     = BACK_ID_VERSION;
 
         $hook->exec('pagedelete');
 
@@ -1160,6 +1226,8 @@ class Page extends Main
      * @return void
      * @hook back/ pageorder Pour autoriser / interdire la modification de l'ordre
      * de pages
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function orderAction()
     {
@@ -1176,6 +1244,7 @@ class Page extends Main
         $hook->permission     = null;
         $hook->utilisateur    = $this->_utilisateur;
         $hook->ids            = array_keys($_POST['positions']);
+        $hook->id_version     = BACK_ID_VERSION;
 
         $hook->exec('pageorder');
 
