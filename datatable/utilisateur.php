@@ -12,18 +12,6 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
     protected $_utilisateur;
 
     /**
-     * Template de la vue de l'email
-     *
-     * @var string
-     */
-    protected $_contentMailView;
-
-    public function start()
-    {
-        parent::start();
-    }
-
-    /**
      * Défini l'utilisateur
      *
      * @param utilisateur $utilisateur Utilisateur courant
@@ -52,48 +40,33 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
 
     public function sendMailAction()
     {
-        $this->_contentMailView = 'utilisateur_identifiant.phtml';
         $idClient = intval($_GET['index']);
         $clientData = $this->_db->query('
             SELECT utilisateur.*
             FROM utilisateur
             WHERE utilisateur.id = ' . $idClient)->fetch();
         $password = \Slrfw\Tools::random(10);
-        require_once 'Zend/Mail.php';
-        $mail = new \Zend_Mail('utf-8');
 
-        $subject = 'Informations de connexion à l\'outil d\'administration de votre site';
-        $mailConfig = \Slrfw\Registry::get('email');
-        $from = 'contact@solire.fr';
-        $to = $clientData['email'];
+        $mail = new \Slrfw\Mail('utilisateur_identifiant');
+        $mail->setMainUse();
+        $mail->to      = $clientData['email'];
+        $mail->from    = 'contact@solire.fr';
+        $mail->subject = 'Informations de connexion à l\'outil d\'administration'
+                       . ' de votre site';
 
-        $this->urlAcces = \Slrfw\Registry::get("basehref") . 'back/';
-        $this->clientData = $clientData;
-        $this->clientData['pass'] = $password;
+        $mail->urlAcces = \Slrfw\Registry::get("basehref") . 'back/';
 
-        $templateMail = $this->output(__DIR__ .  '/view/mail/main.phtml');
-        $body = $templateMail;
-
-        $mail->setBodyHtml($body)
-                ->setFrom($from)
-                ->addTo($to)
-                ->setSubject($subject);
-
+        $clientData['pass'] = $password;
+        $mail->clientData = $clientData;
         $mail->send();
 
         $passwordCrypt = \Slrfw\Session::prepareMdp($password);
-
         $values = array(
             "pass" => $passwordCrypt,
         );
-
         $this->_db->update('utilisateur', $values, 'id = ' . $idClient);
-        exit(json_encode(array('status' => 1)));
-    }
 
-    public function contentMail()
-    {
-        include __DIR__ .  '/view/mail/' . $this->_contentMailView;
+        exit(json_encode(array('status' => 1)));
     }
 
     public function afterAddAction($insertId)
