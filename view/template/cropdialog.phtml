@@ -68,6 +68,10 @@
                                     <input type="text" id="image-name" name="image-name" class="input-xlarge" placeholder="Nom de l'image" value="" />
                                     <input type="hidden" id="image-extension" name="image-extension"  />
                                 </div>
+                                <div class="control-group radio">
+                                    <label class="">Légende de l'image</label>
+                                    <input type="text" id="image-alt" name="image-alt" class="input-xlarge" placeholder="Légende de l'image" value="" />
+                                </div>
                             </div>
 
                             <input type="hidden" id="filepath" name="filepath" />
@@ -86,6 +90,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-default btn-small" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Annuler</button>
+        <button class="btn btn-small btn-primary form-crop-ok"><i class="icon-ok"></i> Ok</button>
         <button class="btn btn-small btn-primary form-crop-submit disabled"><i class="icon-fullscreen"></i> Recadrer</button>
     </div>
 

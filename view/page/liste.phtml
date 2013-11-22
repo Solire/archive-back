@@ -30,18 +30,18 @@
             $this->pages = $group;
         }
 ?>
-                            <div class="sort-box" <?php echo isset($this->gabaritByGroup) && $this->gabaritByGroup ? 'style="display:none;"' : ''; ?>>
+                        <div class="sort-box" <?php echo isset($this->gabaritByGroup) && $this->gabaritByGroup ? 'style="display:none;"' : ''; ?>>
 <?php
     $this->add("template/page_list.phtml");
 ?>
-                            </div>
+                        </div>
 <?php
         /**
          * Si on affiche les pages par type de gabarits
          */
         if (isset($this->gabaritByGroup) && $this->gabaritByGroup) {
 ?>
-                        </fieldset>
+                    </fieldset>
 <?php
         }
     }

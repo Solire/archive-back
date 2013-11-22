@@ -97,5 +97,49 @@ class User extends Main
 
         echo json_encode($response);
     }
+
+    public function listeAction()
+    {
+        $configName = 'utilisateur';
+
+        $configPath = \Slrfw\FrontController::search(
+            'config/datatable/' . $configName . '.cfg.php'
+        );
+
+        if (!$configPath) {
+            $this->pageNotFound();
+        }
+
+        $datatableClassName = 'Back\\Datatable\\' . $configName;
+        $datatableClassName = \Slrfw\FrontController::searchClass(
+            $datatableClassName
+        );
+
+        if ($datatableClassName === false) {
+            $datatable = new \Slrfw\Datatable\Datatable(
+                $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                '/back/js/datatable/', 'app/back/img/datatable/'
+            );
+        } else {
+            $datatable = new $datatableClassName(
+                $_GET, $configPath, $this->_db, '/back/css/datatable/',
+                '/back/js/datatable/', 'app/back/img/datatable/'
+            );
+        }
+
+        $datatable->setUtilisateur($this->_utilisateur);
+        $datatable->start();
+        $datatable->setDefaultNbItems($this->_appConfig->get('board',
+            'nb-content-default'));
+
+        if (isset($_GET['json']) || (isset($_GET['nomain'])
+            && $_GET['nomain'] == 1)
+        ) {
+            echo $datatable;
+            exit();
+        }
+
+        $this->_view->datatableRender = $datatable;
+    }
 }
 

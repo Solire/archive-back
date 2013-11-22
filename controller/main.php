@@ -46,10 +46,57 @@ class Main extends \Slrfw\Controller
      * Always execute before other method in controller
      *
      * @return void
+     * @hook back/ start Ajouter facilement des traitements au start du back
      */
     public function start()
     {
         parent::start();
+
+        /**
+         * Système de log en BDD
+         */
+        $this->_log = new \Slrfw\Log($this->_db, '', 0, 'back_log');
+
+        /**
+         * Utilisateur connecté ?
+         */
+        $this->_utilisateur = new \Slrfw\Session('back');
+
+        if (isset($_POST['log']) && isset($_POST['pwd'])
+            && !empty($_POST['log']) && !empty($_POST['pwd'])
+        ) {
+            try {
+                $this->_utilisateur->connect($_POST['log'],
+                    $_POST['pwd']);
+            } catch (\Exception $exc) {
+                $log = 'Identifiant : ' . $_POST['log'];
+                $this->_log->logThis('Connexion échouée', 0, $log);
+                throw $exc;
+            }
+
+            $this->_log->logThis('Connexion réussie', $this->_utilisateur->id);
+
+            $message = 'Connexion réussie, vous allez être redirigé';
+
+            exit(json_encode(array('success' => true, 'message' => $message)));
+        }
+
+        if (!$this->_utilisateur->isConnected()
+            && (!isset($this->noRedirect) || $this->noRedirect === false)
+        ) {
+            $this->simpleRedirect('back/sign/start.html', true);
+        }
+
+        /**
+         * Si l'utilisateur a juste le droit de prévisualisation du site
+         *  = possibilité de voir le site sans tenir compte de la visibilité
+         * Alors On le redirige vers le front
+         */
+//        if ($this->_utilisateur->get('niveau') == 'voyeur') {
+//            if ($_GET['controller'] . '/' . $_GET['action'] != 'back/sign/signout') {
+//                $this->simpleRedirect('../', true);
+//            }
+//        }
 
         if (isset($_COOKIE['api'])) {
             $nameApi = $_COOKIE['api'];
@@ -66,8 +113,6 @@ class Main extends \Slrfw\Controller
         if (intval($idApi) == 0) {
             $idApi = 1;
         }
-
-        $this->_log = new \Slrfw\Log($this->_db, '', 0, 'back_log');
 
         $query = 'SELECT * '
                . 'FROM gab_api '
@@ -135,11 +180,6 @@ class Main extends \Slrfw\Controller
             \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
         );
 
-
-        if ($_POST) {
-            $this->_post = $_POST;
-        }
-
         if (isset($_GET['id_version'])) {
             $id_version = $_GET['id_version'];
             $url = '/' . \Slrfw\Registry::get('baseroot');
@@ -166,52 +206,14 @@ class Main extends \Slrfw\Controller
             }
         }
 
-        if (isset($this->_post['log']) && isset($this->_post['pwd'])
-            && ($this->_post['log'] == '' || $this->_post['pwd'] == '')
+        if (isset($_POST['log']) && isset($_POST['pwd'])
+            && ($_POST['log'] == '' || $_POST['pwd'] == '')
         ) {
             $retour = array(
                 'success' => false,
                 'message' => 'Veuillez renseigner l\'identifiant et le mot de passe'
             );
             exit(json_encode($retour));
-        }
-
-        $this->_utilisateur = new \Slrfw\Session('back');
-
-        if (isset($this->_post['log']) && isset($this->_post['pwd'])
-            && !empty($this->_post['log']) && !empty($this->_post['pwd'])
-        ) {
-            try {
-                $this->_utilisateur->connect($this->_post['log'],
-                    $this->_post['pwd']);
-            } catch (\Exception $exc) {
-                $log = 'Identifiant : ' . $this->_post['log'];
-                $this->_log->logThis('Connexion échouée', 0, $log);
-                throw $exc;
-            }
-
-            $this->_log->logThis('Connexion réussie', $this->_utilisateur->id);
-
-            $message = 'Connexion réussie, vous allez être redirigé';
-
-            exit(json_encode(array('success' => true, 'message' => $message)));
-        }
-
-        if (!$this->_utilisateur->isConnected()
-            && (!isset($this->noRedirect) || $this->noRedirect === false)
-        ) {
-            $this->simpleRedirect('back/sign/start.html', true);
-        }
-
-        /**
-         * Si l'utilisateur a juste le droit de prévisualisation du site
-         *  = possibilité de voir le site sans tenir compte de la visibilité
-         * Alors On le redirige vers le front
-         */
-        if ($this->_utilisateur->get('niveau') == 'voyeur') {
-            if ($_GET['controller'] . '/' . $_GET['action'] != 'back/sign/signout') {
-                $this->simpleRedirect('../', true);
-            }
         }
 
         $this->_view->utilisateur = $this->_utilisateur;
@@ -300,6 +302,48 @@ class Main extends \Slrfw\Controller
 
         $this->_view->pagesNonTraduites = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_ASSOC);
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->ctrl = $this;
+
+        $hook->exec('start');
+    }
+
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendSuccess(array $data = array())
+    {
+        $return = array(
+            'status' => 'success',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
+    }
+
+    /**
+     *
+     * @param array $data Données à passer en plus
+     *
+     * @return void
+     */
+    protected function sendError(array $data = array())
+    {
+        $return = array(
+            'status' => 'error',
+        );
+
+        $return += $data;
+
+        echo json_encode($return);
     }
 }
 

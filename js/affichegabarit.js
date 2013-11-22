@@ -8,12 +8,12 @@ function addMarker(map3, lat, lng) {
         marker: {
             tag: 'myMarker',
             callback: function(marker) {
-                map3.data("marker", marker)
-                $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour supprimer le marqueur')
-                $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Supprimer le marqueur')
-                $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
-                $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
-                $('input.gmap_zoom', map3.parents(".line:first")).val(map3.gmap3("get").getZoom());
+                map3.data('marker', marker)
+                $('.gmap-marker-button', map3.data('btn-marker')).attr('title', 'Cliquez pour supprimer le marqueur')
+                $('.gmap-marker-button div strong', map3.data('btn-marker')).html('Supprimer le marqueur')
+                $('input.gmap_lat', map3.parents('.line:first')).val(marker.position.lat());
+                $('input.gmap_lng', map3.parents('.line:first')).val(marker.position.lng());
+                $('input.gmap_zoom', map3.parents('.line:first')).val(map3.gmap3('get').getZoom());
             },
             latLng: [lat, lng],
             options: {
@@ -22,8 +22,8 @@ function addMarker(map3, lat, lng) {
             },
             events: {
                 dragend: function(marker) {
-                    $('input.gmap_lat', map3.parents(".line:first")).val(marker.position.lat());
-                    $('input.gmap_lng', map3.parents(".line:first")).val(marker.position.lng());
+                    $('input.gmap_lat', map3.parents('.line:first')).val(marker.position.lat());
+                    $('input.gmap_lng', map3.parents('.line:first')).val(marker.position.lng());
                 }
             }
         }
@@ -34,12 +34,12 @@ function removeMarker(map3) {
     map3.gmap3({
         clear: {
             callback: function() {
-                map3.data("marker", null)
-                $(".gmap-marker-button", map3.data("btn-marker")).attr("title", 'Cliquez pour ajouter un marqueur')
-                $(".gmap-marker-button div strong", map3.data("btn-marker")).html('Ajouter un marqueur')
-                $('input.gmap_lat', map3.parents(".line:first")).val("");
-                $('input.gmap_lng', map3.parents(".line:first")).val("");
-                $('input.gmap_zoom', map3.parents(".line:first")).val("");
+                map3.data('marker', null)
+                $('.gmap-marker-button', map3.data('btn-marker')).attr('title', 'Cliquez pour ajouter un marqueur')
+                $('.gmap-marker-button div strong', map3.data('btn-marker')).html('Ajouter un marqueur')
+                $('input.gmap_lat', map3.parents('.line:first')).val('');
+                $('input.gmap_lng', map3.parents('.line:first')).val('');
+                $('input.gmap_zoom', map3.parents('.line:first')).val('');
             },
             tag: 'myMarker'
         }
@@ -47,33 +47,29 @@ function removeMarker(map3) {
     })
 }
 
+tinymce.init({
+    mode                : 'none',
+    language            : 'fr_FR',
 
-var initTinyMCE = function() {
-    tinyMCE.init({
-        mode: 'none',
-        theme: 'advanced',
-        language: 'fr',
-        plugins: 'safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template',
-        width: '500px',
-        height: '290px',
-        entity_encoding: 'raw',
-        theme_advanced_buttons1: 'pasteword,|,bold,italic,underline,strikethrough,styleselect,|,formatselect,|,bullist,numlist,|,undo,redo,|,link,unlink',
-        theme_advanced_buttons2: '',
-        theme_advanced_buttons3: '',
-        theme_advanced_toolbar_location: 'top',
-        theme_advanced_toolbar_align: 'left',
-        theme_advanced_resizing: true,
-        theme_advanced_blockformats: 'h1,h2,h3,h4,h5,h6',
-        relative_urls: true,
-        convert_urls: true,
-        document_base_url: '../../../../',
-        content_css: 'app/back/css/style-tinymce.css',
-        external_image_list_url: 'back/media/autocomplete.html?tinyMCE',
-        external_link_list_url: 'sitemap.xml?visible=0&json=1&onlylink=1&tinymce=1'
-    });
-};
+//    width               :'100%',
+    height              :'290px',
+    entity_encoding     : 'raw',
 
-initTinyMCE();
+    plugins             : [
+        'advlist autolink lists link image charmap print preview anchor',
+        'searchreplace visualblocks fullscreen',
+        'insertdatetime media contextmenu paste'
+    ],
+    menubar             : false,
+    statusbar           : false,
+    toolbar             : 'insertfile undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image',
+
+//    relative_urls       : true,
+//    convert_urls        : true,
+    document_base_url   : '../../../../',
+    image_list          : 'back/media/autocomplete.html?tinyMCE',
+    link_list           : 'sitemap.xml?visible=0&json=1&onlylink=1&tinymce=1'
+});
 
 $(function() {
     $.cookie('id_gab_page', $('input[name=id_gab_page]').val(), {
@@ -84,7 +80,7 @@ $(function() {
      * Redimensionnement et recadrage des images
      */
     // Create variables (in this scope) to hold the API and image size
-    var jcrop_api, boundx, boundy, $inputFile;
+    var jcrop_api, boundx, boundy, $inputFile, $inputAlt;
 
     function updatePreview(c)
     {
@@ -100,13 +96,11 @@ $(function() {
                 marginTop: '-' + Math.round(ry * c.y) + 'px'
             });
 
-            $(".form-crop-submit").removeClass("disabled")
+            $('.form-crop-submit').removeClass('disabled')
 
             updateCoords(c);
         }
-
     }
-    ;
 
     function updateCoords(c)
     {
@@ -117,7 +111,6 @@ $(function() {
         $('.wShow').val(Math.round(c.w));
         $('.hShow').val(Math.round(c.h));
     }
-    ;
 
     $('#modalCrop').modal({
         show: false,
@@ -125,7 +118,7 @@ $(function() {
         keyboard: true
     }).addClass('modal-big');
 
-    $('.wShow, .hShow').bind("change", function() {
+    $('.wShow, .hShow').bind('change', function() {
 
         var w = parseInt($('.wShow').val());
         var h = parseInt($('.hShow').val());
@@ -145,13 +138,13 @@ $(function() {
         min: 0
     });
 
-    $(".back-to-list").click(function(e) {
+    $('.back-to-list').click(function(e) {
         e.preventDefault()
         var heading = 'Quitter';
         var question = 'Attention, les données saisies ne seront pas sauvegardées, malgré cela êtes-vous sûr de vouloir quitter cette page ? ';
         var cancelButtonTxt = 'Annuler';
         var okButtonTxt = 'Confirmer';
-        var href = $(this).attr("href");
+        var href = $(this).attr('href');
         var callback = function() {
             document.location.href = href;
         }
@@ -161,49 +154,65 @@ $(function() {
 
     })
 
-    $(".form-crop-submit").bind("click", function() {
-        if ($(this).hasClass("disabled"))
-            return false;
-        var action = "back/" + $(".form-crop").attr("action");
-        var data = $(".form-crop").serialize();
-        $.post(action, data, function(response) {
-            $('#modalCrop').modal("hide");
-            $inputFile.val(response.filename);
-            $inputFile.siblings(".previsu").attr("href", response.path);
-        }, "json");
+    $('.form-crop-ok').bind('click', function() {
+        $inputAlt.val($('#image-alt').val());
+        $('#modalCrop').modal('hide');
     });
 
-    $(".crop").live("click", function(e) {
-        var aspectRatio = 0;
+    $('.form-crop-submit').bind('click', function() {
+        if ($(this).hasClass('disabled'))
+            return false;
+        var action = 'back/' + $('.form-crop').attr('action');
+        var data = $('.form-crop').serialize();
+        $.post(action, data, function(response) {
+            $('#modalCrop').modal('hide');
+            $inputFile.val(response.filename);
+            $inputFile.siblings('.previsu').attr('href', response.path);
+        }, 'json');
+        $inputAlt.val($('#image-alt').val());
+    });
 
-        $(".img-info, .expected-width, .expected-height, .expected-width-height").hide();
-        $(".force-selection input").attr("checked", "checked");
-
+    $('.crop').live('click', function(e) {
         e.preventDefault();
-        $('.wShow').html("");
-        $('.hShow').html("");
+        openCropDialog.call(this);
+    });
 
-        var src = $(this).siblings(".previsu").attr("href");
+    var openCropDialog = function(){
+        var aspectRatio = 0,
+            visuelId,
+            fieldset;
 
-        $inputFile = $(this).siblings(".form-file");
+        $('.img-info, .expected-width, .expected-height, .expected-width-height').hide();
+        $('.force-selection input').attr('checked', 'checked');
+
+        $('.wShow').html('');
+        $('.hShow').html('');
+
+        var src = $(this).siblings('.previsu').attr('href');
+
+        $inputFile = $(this).siblings('.form-file');
+
+        visuelId = $inputFile.attr('data-visuel-id');
+        fieldset = $inputFile.parents('fieldset:first');
+        $inputAlt = $('input[type=hidden][data-visuel-id=' + visuelId + ']', fieldset);
 
         var $overlay = $('<div class="loading-overlay"><div class="circle"></div><div class="circle1"></div></div>').hide();
-        $("body").prepend($overlay);
-        var marginTop = Math.floor(($overlay.height() - $overlay.find(".circle").height()) / 2);
-        $overlay.find(".circle").css({
-            'margin-top': marginTop + "px"
+        $('body').prepend($overlay);
+        var marginTop = Math.floor(($overlay.height() - $overlay.find('.circle').height()) / 2);
+        $overlay.find('.circle').css({
+            'margin-top': marginTop + 'px'
         });
         $overlay.fadeIn(500);
 
-        $("<img>", {
+        $('<img>', {
             src: src
         }).load(function() {
             $('div.loading-overlay').remove();
-            $(".form-crop-submit").addClass("disabled")
+            $('.form-crop-submit').addClass('disabled')
 
-            var minWidth = $inputFile.attr("data-min-width");
-            var minHeight = $inputFile.attr("data-min-height");
-            $('.spinner').spinner("destroy");
+            var minWidth = $inputFile.attr('data-min-width');
+            var minHeight = $inputFile.attr('data-min-height');
+            $('.spinner').spinner('destroy');
             $('.spinner.wShow').spinner({
                 min: minWidth
             });
@@ -211,41 +220,42 @@ $(function() {
                 min: minHeight
             });
             if (parseInt(minWidth) > 0) {
-                $("#minwidthShow").html(minWidth);
-                $(".img-info, .expected-width").show();
-                $(".expected-width").find("input").attr("checked", "checked");
+                $('#minwidthShow').html(minWidth);
+                $('.img-info, .expected-width').show();
+                $('.expected-width').find('input').attr('checked', 'checked');
             }
 
             if (parseInt(minHeight) > 0) {
-                $("#minheightShow").html(minHeight);
-                $(".img-info, .expected-height").show();
-                $(".expected-height").find("input").attr("checked", "checked");
+                $('#minheightShow').html(minHeight);
+                $('.img-info, .expected-height').show();
+                $('.expected-height').find('input').attr('checked', 'checked');
             }
 
             if (parseInt(minHeight) > 0 && parseInt(minWidth) > 0) {
-                $("#minheightShow").html(minHeight);
-                $(".expected-width-height").show();
-                $(".expected-width-height").find("input").attr("checked", "checked");
-                $("label.expected-width").hide();
-                $("label.expected-height").hide();
+                $('#minheightShow').html(minHeight);
+                $('.expected-width-height').show();
+                $('.expected-width-height').find('input').attr('checked', 'checked');
+                $('label.expected-width').hide();
+                $('label.expected-height').hide();
                 aspectRatio = minWidth / minHeight;
             }
 
-            $("#minwidth").val(minWidth);
-            $("#minheight").val(minHeight);
+            $('#minwidth').val(minWidth);
+            $('#minheight').val(minHeight);
             var imageNameInfos = $inputFile.val().split('.');
             var imageExtension = imageNameInfos.pop();
-            var imageName = imageNameInfos.join("");
+            var imageName = imageNameInfos.join('');
+            var imageAlt = $inputAlt.val();
 
-            $("#image-name").val(imageName);
-            $("#image-extension").val(imageExtension);
+            $('#image-alt').val(imageAlt);
+            $('#image-name').val(imageName);
+            $('#image-extension').val(imageExtension);
 
-
-            $("#modalCrop table tr:first td:first ").html('<img src="" class="img-polaroid" id="crop-target" alt="" />');
-            $("#modalCrop #filepath").val(src);
-            $("#crop-target").add("#crop-preview").attr("src", src);
-            $(".jcrop-holder").remove();
-            $('#modalCrop').appendTo("body")
+            $('#modalCrop table tr:first td:first').html('<img src="" class="img-polaroid" id="crop-target" alt="" />');
+            $('#modalCrop #filepath').val(src);
+            $('#crop-target').add('#crop-preview').attr('src', src);
+            $('.jcrop-holder').remove();
+            $('#modalCrop').appendTo('body')
 
             $('#crop-target').Jcrop({
                 minSize: [minWidth, minHeight],
@@ -263,11 +273,9 @@ $(function() {
                 jcrop_api = this;
             });
 
-            $('#modalCrop').modal("show");
-
+            $('#modalCrop').modal('show');
         });
-
-    });
+    };
 
     /**
      * Popup apres sauvegarde de la page
@@ -296,8 +304,8 @@ $(function() {
 
     $.fn.clearForm = function() {
         var idnew;
-        this.find(".token-input-list").remove();
-        this.find('input, textarea, select').not('[name="visible[]"]').not(".join-param").not(".extensions").each(function() {
+        this.find('.token-input-list').remove();
+        this.find('input, textarea, select').not('[name="visible[]"]').not('.join-param').not('.extensions').each(function() {
             idnew = $(this).attr('id') + 'a';
             $(this).attr('id', idnew);
             $(this).prev('label').attr('for', idnew);
@@ -306,7 +314,7 @@ $(function() {
                 $(this).val('');
             else {
                 if ($(this).is('textarea')) {
-                    $(this).tinymce('disableOnly');
+                    $(this).tinymce('disable');
                     $(this).val('');
                 }
                 else {
@@ -323,28 +331,21 @@ $(function() {
         return this;
     };
 
-    $('textarea.tiny').tinymce('enableOnly');
+    $('textarea.tiny').tinymce('enable');
 
-    $('label > .switch-editor').live('click', function(e) {
+    $('.switch-editor a').live('click', function(e) {
         e.preventDefault();
 
-        var textarea = $(this).parent().next();
+        var textarea = $(this).parent().nextAll('textarea');
 
-        if (textarea.is('textarea')) {
-            if ($(this).children().eq(0).hasClass('translucide')) {
-                $(this).children().eq(0).removeClass('translucide');
-                $(this).children().eq(1).addClass('translucide');
-            }
-            else {
-                $(this).children().eq(0).addClass('translucide');
-                $(this).children().eq(1).removeClass('translucide');
-            }
-
+        if ($(this).hasClass('btn-default') && textarea.length > 0) {
             textarea.tinymce('change');
+            $(this).removeClass('btn-default').addClass('btn-info');
+            $(this).siblings().removeClass('btn-info').addClass('btn-default');
         }
     });
 
-    $(".sort-move").live("click", function(e) {
+    $('.sort-move').live('click', function(e) {
         e.preventDefault()
     })
 
@@ -354,10 +355,10 @@ $(function() {
             items: '.sort-elmt',
             handle: '.sort-move',
             start: function(e, ui) {
-                $('textarea', ui.item).tinymce('disableOnly');
+                $('textarea', ui.item).tinymce('disable');
             },
             stop: function(e, ui) {
-                $('textarea.tinymce-tmp-disabled', ui.item).tinymce('enableOnly');
+                $('textarea.tinymce-tmp-disabled', ui.item).tinymce('enable');
             }
         });
     });
@@ -373,40 +374,40 @@ $(function() {
 
         var $this = $(this);
         var adupliquer = $this.prev();
-        $('textarea.tiny', adupliquer).tinymce('disableOnly');
+        $('textarea.tiny', adupliquer).tinymce('disable');
         var clone = adupliquer.clone(false).clearForm();
-        clone.find("ul").remove();
+        clone.find('ul').remove();
         clone.insertBefore($this);
-        clone.find("legend").html("Bloc en cours de création");
+        clone.find('legend').html('Bloc en cours de création');
         $this.parents('.sort-box').sortable('refresh');
-        $this.siblings('.sort-elmt').find(".btn-bloc-action").each(function() {
-            if ($(this).find(".delBloc").length == 0)
+        $this.siblings('.sort-elmt').find('.btn-bloc-action').each(function() {
+            if ($(this).find('.delBloc').length == 0)
                 $(this).append($delBtnClone.clone())
-            if ($(this).find(".sort-move").length == 0)
+            if ($(this).find('.sort-move').length == 0)
                 $(this).prepend($sortBtnClone.clone())
         });
 
         $('.form-date', clone).removeClass('hasDatepicker').val('').datepicker($.datepicker.regional['fr']);
 
         initAutocompletePat(clone);
-        $('textarea', clone).autogrow({
-            minHeight: 150
-        });
-        $('textarea.tiny', adupliquer).tinymce('enableOnly');
-        $('textarea.tiny', clone).tinymce('enableOnly');
+//        $('textarea', clone).autogrow({
+//            minHeight: 150
+//        });
+        $('textarea.tiny', adupliquer).tinymce('enable');
+        $('textarea.tiny', clone).tinymce('enable');
     });
 
     $('.301-add').live('click', function(e) {
         e.preventDefault();
 
         var $this = $(this).parents('fieldset:first').find('.line:first');
-        var $fieldSet301 = $(this).parents("fieldset:first");
+        var $fieldSet301 = $(this).parents('fieldset:first');
         var adupliquer = $this;
         var clone = adupliquer.clone(false).clearForm();
-        $(".301-remove", clone).removeClass("translucide");
+        $('.301-remove', clone).removeClass('translucide');
         clone.insertAfter($(this).parents('fieldset:first').find('.line:last'));
-        if ($(".301-remove", $fieldSet301).length > 1) {
-            $(".301-remove", $fieldSet301).removeClass("translucide");
+        if ($('.301-remove', $fieldSet301).length > 1) {
+            $('.301-remove', $fieldSet301).removeClass('translucide');
         }
     });
 
@@ -414,31 +415,33 @@ $(function() {
         e.preventDefault();
 
         var $this = $(this).parents('.line:first');
-        var $fieldSet301 = $(this).parents("fieldset:first");
+        var $fieldSet301 = $(this).parents('fieldset:first');
         $this.remove();
-        if ($(".301-remove", $fieldSet301).length == 1) {
-            $(".301-remove", $fieldSet301).addClass("translucide");
+        if ($('.301-remove', $fieldSet301).length == 1) {
+            $('.301-remove', $fieldSet301).addClass('translucide');
         }
     });
 
     $('.btn-changevisible').live('click', function(e) {
         e.preventDefault()
-        var $this = $(".changevisible:checkbox", $(this).parents(".sort-elmt:first"));
+        var $this = $('.changevisible:checkbox', $(this).parents('.sort-elmt:first'));
 
-        if ($this.is(":checked")) {
-            $this.removeAttr("checked");
+        if ($this.is(':checked')) {
+            $this.removeAttr('checked');
         } else {
-            $this.attr("checked", "checked");
+            $this.attr('checked', 'checked');
         }
 
         if ($this.is(':checked')) {
             $this.next().val(1);
             $this.parent().first().next().removeClass('translucide');
-            $(this).find("i").removeClass("icon-eye-close translucide").addClass("icon-eye-open")
+            $(this).removeClass('btn-default').addClass('btn-success');
+            $('i', this).removeClass('icon-eye-close').addClass('icon-eye-open');
         } else {
             $this.next().val(0);
             $this.parent().first().next().addClass('translucide');
-            $(this).find("i").removeClass("icon-eye-open").addClass("icon-eye-close translucide")
+            $(this).removeClass('btn-success').addClass('btn-default');
+            $('i', this).removeClass('icon-eye-open').addClass('icon-eye-close');
         }
     });
 
@@ -465,7 +468,7 @@ $(function() {
 
             var callback = function() {
                 if (sort_elmt.find('textarea.tiny').length > 0)
-                    sort_elmt.find('textarea.tiny').tinymce('disableOnly');
+                    sort_elmt.find('textarea.tiny').tinymce('disable');
 
                 sort_elmt.slideUp('fast', function() {
                     if ($(this).siblings('.sort-elmt').length < 2) {
@@ -499,12 +502,11 @@ $(function() {
     $('.collapse').live('click', function(e) {
         e.preventDefault();
         $(this).parent().nextAll('fieldset').each(function() {
-            if ($('div', this).first().is(":visible")) {
+            if ($('div', this).first().is(':visible')) {
                 $('legend', this).first().click();
             }
         });
     });
-
 
     $('.previsu').live('click', function(e) {
         e.preventDefault();
@@ -516,7 +518,7 @@ $(function() {
             $('<img>', {
                 'src': link
             }).load(function() {
-                myModal.message("Prévisualisation", $(this), "Fermer", false, true)
+                myModal.message('Prévisualisation', $(this), 'Fermer', false, true)
             });
         } else {
 
@@ -528,21 +530,21 @@ $(function() {
     $('legend').live('click', function(e) {
         e.preventDefault();
 
-        var indexLegend = $(this).index("legend");
+        var indexLegend = $(this).index('legend');
         if (!openingLegend[indexLegend]) {
             openingLegend[indexLegend] = true;
             $(this).next().slideToggle(500, function() {
-                $(".gmap-component", this).each(function() {
-                    google.maps.event.trigger($(this).gmap3("get"), 'resize');
-                    if ($('input.gmap_lat', $(this).parents(".line:first")).val() != "" && $('input.gmap_lng', $(this).parents(".line:first")).val() != "") {
-                        var lat = $('input.gmap_lat', $(this).parents(".line:first")).val();
-                        var lng = $('input.gmap_lng', $(this).parents(".line:first")).val();
-                        $(this).gmap3("get").setCenter(new google.maps.LatLng(lat, lng))
+                $('.gmap-component', this).each(function() {
+                    google.maps.event.trigger($(this).gmap3('get'), 'resize');
+                    if ($('input.gmap_lat', $(this).parents('.line:first')).val() != '' && $('input.gmap_lng', $(this).parents('.line:first')).val() != '') {
+                        var lat = $('input.gmap_lat', $(this).parents('.line:first')).val();
+                        var lng = $('input.gmap_lng', $(this).parents('.line:first')).val();
+                        $(this).gmap3('get').setCenter(new google.maps.LatLng(lat, lng))
                     }
                 })
                 openingLegend[indexLegend] = false;
-                if ($(this).parent(".sort-elmt").parents("fieldset:first").find(".expand-collapse").length) {
-                    disabledExpandCollaspse($(this).parent(".sort-elmt").parents("fieldset:first"));
+                if ($(this).parent('.sort-elmt').parents('fieldset:first').find('.expand-collapse').length) {
+                    disabledExpandCollaspse($(this).parent('.sort-elmt').parents('fieldset:first'));
                 }
             });
         }
@@ -582,7 +584,7 @@ $(function() {
             var lat = ctr.lat();
             var lng = ctr.lng();
 
-            if (map3.data("marker")) {
+            if (map3.data('marker')) {
                 removeMarker(map3)
             } else {
                 addMarker(map3, lat, lng)
@@ -603,8 +605,8 @@ $(function() {
                 },
                 events: {
                     zoom_changed: function(map) {
-                        if ($this.data("marker")) {
-                            $('input.gmap_zoom', $this.parents(".line:first")).val(map.getZoom());
+                        if ($this.data('marker')) {
+                            $('input.gmap_zoom', $this.parents('.line:first')).val(map.getZoom());
                         }
                     }
                 },
@@ -612,16 +614,16 @@ $(function() {
                     // Create the DIV to hold the control and call the HomeControl() constructor
                     // passing in this DIV.
                     var markerControlDiv = document.createElement('div');
-                    $this.data("btn-marker", markerControlDiv)
+                    $this.data('btn-marker', markerControlDiv)
                     var homeControl = new MarkerControl(markerControlDiv, map, $this);
 
                     markerControlDiv.index = 1;
                     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerControlDiv);
 
-                    if ($('input.gmap_lat', $this.parents(".line:first")).val() != "" && $('input.gmap_lng', $this.parents(".line:first")).val() != "") {
-                        var lat = $('input.gmap_lat', $this.parents(".line:first")).val();
-                        var lng = $('input.gmap_lng', $this.parents(".line:first")).val();
-                        var zoom = $('input.gmap_zoom', $this.parents(".line:first")).val();
+                    if ($('input.gmap_lat', $this.parents('.line:first')).val() != '' && $('input.gmap_lng', $this.parents('.line:first')).val() != '') {
+                        var lat = $('input.gmap_lat', $this.parents('.line:first')).val();
+                        var lng = $('input.gmap_lng', $this.parents('.line:first')).val();
+                        var zoom = $('input.gmap_zoom', $this.parents('.line:first')).val();
                         map.setZoom(parseInt(zoom))
                         map.setCenter(new google.maps.LatLng(lat, lng))
                         addMarker($this, lat, lng)
@@ -629,17 +631,10 @@ $(function() {
                 }
             },
         });
-        var map = $(this).gmap3("get")
+        var map = $(this).gmap3('get')
 
 
     });
-    /**
-     * FIN de champ de type map
-     */
-
-
-
-
 
     $('.form-date').datepicker($.datepicker.regional['fr']);
 
@@ -682,27 +677,30 @@ $(function() {
                         $(this).siblings('.crop').hide();
                     }
 
-                    $(this).autocomplete("close");
+                    $(this).autocomplete('close');
 
+                    if (isImage) {
+                        openCropDialog.call($(this).siblings('.crop'));
+                    }
                 }
             }).focus(function() {
-                if (this.value == "") {
+                if (this.value == '') {
                     clearTimeout(timer);
                     timer = setTimeout(function() {
-                        if (tthis.val() == "") {
+                        if (tthis.val() == '') {
                             tthis.autocomplete('search', '');
                         }
                     }, 220);
                 }
             });
 
-            tthis.data("autocomplete")._renderItem = function(ul, item) {
+            tthis.data('autocomplete')._renderItem = function(ul, item) {
                 var ext = item.value.split('.').pop();
                 var prev = $.inArray(ext, extensionsImage) != -1
                         ? '<img class="img-polaroid" src="' + item.vignette + '" style="max-height:80px;width:auto;height:auto;max-width: 80px;" />'
                         : '<img style="width:auto" class="" src="img/back/filetype/' + ext + '.png" height="25" />';
                 var inputs = [];
-                $(".form-file").not(tthis).filter(function() {
+                $('.form-file').not(tthis).filter(function() {
                     return $(this).val() == item.value;
                 }).each(function() {
                     inputs.push($(this).val());
@@ -710,16 +708,16 @@ $(function() {
 
 
                 /* Alert si image trop petite */
-                var alert = "";
-                if ($.inArray(ext, extensionsImage) != -1 && tthis.attr("data-min-width") && tthis.attr("data-min-width") > 0) {
-                    var size = item.size.split("x");
-                    if (parseInt(size[0]) < tthis.attr("data-min-width")) {
+                var alert = '';
+                if ($.inArray(ext, extensionsImage) != -1 && tthis.attr('data-min-width') && tthis.attr('data-min-width') > 0) {
+                    var size = item.size.split('x');
+                    if (parseInt(size[0]) < tthis.attr('data-min-width')) {
                         alert = '<dt style="color: red">Attention</dt><dd><span style="color: red">La largeur de l\'image est trop petite<span></dd>';
                     }
                 }
-                tthis.attr("data-min-width");
-                return $("<li></li>")
-                        .data("item.autocomplete", item)
+                tthis.attr('data-min-width');
+                return $('<li></li>')
+                        .data('item.autocomplete', item)
                         .append('<a><span class="row">'
                         + (prev != '' ? '<span class="span1" style="margin-left:0px;">' + prev + '<span style="display:inline-block;width:120px"><i class="icon-info-sign"></i> ' + (inputs.length == 0 ? 'Non utilisé' : 'Utilisé') + '</span></span>' : '')
                         + '<span class="span" style="margin-left:0px;width:315px">'
@@ -729,16 +727,16 @@ $(function() {
                         .appendTo(ul);
             };
 
-            tthis.data("autocomplete")._renderMenu = function(ul, items) {
+            tthis.data('autocomplete')._renderMenu = function(ul, items) {
                 var self = this;
                 $.each(items, function(index, item) {
                     self._renderItem(ul, item);
                 });
             };
 
-            tthis.data("autocomplete").__response = function(content) {
+            tthis.data('autocomplete').__response = function(content) {
                 var contentlength = content.length;
-                if (typeof uploader != "undefined") {
+                if (typeof uploader != 'undefined') {
                     contentlength += uploader.files.length;
                 }
 
@@ -748,7 +746,7 @@ $(function() {
                         ) {
                     content = this._normalize(content);
                     this._suggest(content);
-                    this._trigger("open");
+                    this._trigger('open');
                 } else {
                     this.close();
                 }
@@ -756,7 +754,7 @@ $(function() {
                 this.pending--;
 
                 if (!this.pending) {
-                    this.element.removeClass("ui-autocomplete-loading");
+                    this.element.removeClass('ui-autocomplete-loading');
                 }
             };
 
@@ -768,7 +766,7 @@ $(function() {
     if ($('.langue').length > 1) {
         $('.openlang, .openlang-trad').click(function(e) {
             e.preventDefault();
-            var $currentLang = $(this).parent().find(".openlang")
+            var $currentLang = $(this).parent().find('.openlang')
 
             var i = $('.openlang').index($currentLang);
 
@@ -783,7 +781,7 @@ $(function() {
 
     //////////////////// PLUPLOAD ////////////////////
     basehref = $('base').attr('href');
-    $.cookie("id_temp", 0, {
+    $.cookie('id_temp', 0, {
         path: '/'
     });
 
@@ -797,20 +795,20 @@ $(function() {
         silverlight_xap_url: basehref + 'js/admin/plupload/plupload.silverlight.xap',
         filters: [
             {
-                title: "Image files",
-                extensions: "jpg,jpeg,gif,png"
+                title: 'Image files',
+                extensions: 'jpg,jpeg,gif,png'
             },
             {
-                title: "Zip files",
-                extensions: "zip,rar,bz2"
+                title: 'Zip files',
+                extensions: 'zip,rar,bz2'
             },
             {
-                title: "Adobe",
-                extensions: "pdf,eps,psd,ai,indd"
+                title: 'Adobe',
+                extensions: 'pdf,eps,psd,ai,indd'
             },
             {
-                title: "Fichiers vidéos",
-                extensions: "mp4"
+                title: 'Fichiers vidéos',
+                extensions: 'mp4'
             }
         ],
         drop_element: 'colright',
@@ -819,7 +817,7 @@ $(function() {
     });
 
     uploader.bind('Init', function(up, params) {
-        $('#currentruntime').text("Current runtime: " + params.runtime);
+        $('#currentruntime').text('Current runtime: ' + params.runtime);
     });
 
     var uploaderInited = false;
@@ -855,7 +853,7 @@ $(function() {
                 });
 
                 $('.bar').css({
-                    width: "0%"
+                    width: '0%'
                 });
 
                 up.refresh();
@@ -863,9 +861,9 @@ $(function() {
             });
 
             uploader.bind('UploadProgress', function(up, file) {
-                $('.progress', file.tr).removeClass("hide")
+                $('.progress', file.tr).removeClass('hide')
                 $('.bar', file.tr).css({
-                    width: file.percent + "%"
+                    width: file.percent + '%'
                 });
             });
 
@@ -876,14 +874,14 @@ $(function() {
 
             uploader.bind('FileUploaded', function(up, file, info) {
 
-                $(file.tr, '.progressbar').progressbar("destroy");
+                $(file.tr, '.progressbar').progressbar('destroy');
 
                 var response = $.parseJSON(info.response);
 
-                if (response.status != "error") {
+                if (response.status != 'error') {
                     if ('id_temp' in response) {
                         $('input[name=id_temp]:first').val(response.id_temp);
-                        $.cookie("id_temp", response.id_temp, {
+                        $.cookie('id_temp', response.id_temp, {
                             path: '/'
                         });
                     }
@@ -907,7 +905,7 @@ $(function() {
                     ligne += '<a title="Visualiser" target="_blank"  class="btn btn-info previsu" href="' + response.path + '"><i class="icon-camera"></i></a>';
                     ligne += '</div></td>';
 
-                    file.tr.attr("id", "fileid_" + response.id);
+                    file.tr.attr('id', 'fileid_' + response.id);
                     file.tr.html(ligne);
                 }
                 else {
@@ -939,7 +937,7 @@ $(function() {
         $('.uploader_popup').click(function(e) {
             e.preventDefault();
             myModal.message(heading, $uploaderPopUp, closeButtonTxt);
-            $("#uploader_popup").parents("modal");
+            $('#uploader_popup').parents('modal');
             if (oTable == null) {
                 reloadDatatable();
             }
@@ -974,13 +972,13 @@ $(function() {
         var formu = $(this);
 
         $('.form-controle:not([name="titre_rew"])', formu).livequery(function() {
-            var id = $(this).attr("id").split("_");
+            var id = $(this).attr('id').split('_');
             var name = id[0];
             var contentRule = [];
             var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
-            if ($(this).hasClass("form-oblig"))
+            if ($(this).hasClass('form-oblig')) {
                 contentRule.push('<span style="color:red">Obligatoire</span>');
-            else {
+            } else {
                 contentRule.push('<span style="color:#1292CC">Facultatif</span>');
             }
 
@@ -1006,12 +1004,12 @@ $(function() {
             });
         });
 
-        $(".mceEditor").live("mouseover", function() {
-            var id = $(this).attr("id").split("_");
+        $('.mceEditor').live('mouseover', function() {
+            var id = $(this).attr('id').split('_');
             var name = id[0];
             var contentRule = [];
             var content = '<img style="float:left;" src="app/back/img/help.gif" alt="Aide" /><div style="margin-left:35px;margin-top:7px;">';
-            if ($(this).siblings('textarea').hasClass("form-oblig"))
+            if ($(this).siblings('textarea').hasClass('form-oblig'))
                 contentRule.push('<span style="color:red">Obligatoire</span>');
             else {
                 contentRule.push('<span style="color:#1292CC">Facultatif</span>');
@@ -1040,8 +1038,8 @@ $(function() {
             $this.qtip('show');
         });
 
-        $(".mceEditor").live("mouseout", function() {
-            var id = $(this).attr("id").split("_"),
+        $('.mceEditor').live('mouseout', function() {
+            var id = $(this).attr('id').split('_'),
                     name = id[0],
                     $this = $(this);
 
@@ -1050,9 +1048,9 @@ $(function() {
 
     });
 
-    $('textarea').autogrow({
-        minHeight: 150
-    });
+//    $('textarea').autogrow({
+//        minHeight: 150
+//    });
 });
 
 var oTable = null;
@@ -1060,8 +1058,8 @@ var oTable = null;
 function disabledExpandCollaspse($fieldset) {
     var expand = false;
     var collapse = false;
-    $fieldset.find(".sort-box > fieldset").each(function() {
-        if ($(" > div:first", this).is(":visible")) {
+    $fieldset.find('.sort-box > fieldset').each(function() {
+        if ($(' > div:first', this).is(':visible')) {
             collapse = true;
         } else {
             expand = true;
@@ -1069,15 +1067,15 @@ function disabledExpandCollaspse($fieldset) {
     });
 
     if (expand) {
-        $fieldset.find(" > .sort-box > .expand-collapse .expand").removeClass("disabled");
+        $fieldset.find(' > .sort-box > .expand-collapse .expand').removeClass('disabled');
     } else {
-        $fieldset.find(" > .sort-box > .expand-collapse .expand").addClass("disabled");
+        $fieldset.find(' > .sort-box > .expand-collapse .expand').addClass('disabled');
     }
 
     if (collapse) {
-        $fieldset.find(" > .sort-box > .expand-collapse .collapse").removeClass("disabled");
+        $fieldset.find(' > .sort-box > .expand-collapse .collapse').removeClass('disabled');
     } else {
-        $fieldset.find(" > .sort-box > .expand-collapse .collapse").addClass("disabled");
+        $fieldset.find(' > .sort-box > .expand-collapse .collapse').addClass('disabled');
     }
 }
 
@@ -1086,11 +1084,11 @@ function reloadDatatable() {
         oTable.fnDestroy();
     }
 
-    $("#tableau").css({
-        width: "100%"
+    $('#tableau').css({
+        width: '100%'
     });
 
-    oTable = $("#tableau").dataTable({
+    oTable = $('#tableau').dataTable({
         bJQueryUI: true,
         aoColumns: [
             {
@@ -1103,25 +1101,25 @@ function reloadDatatable() {
             }
         ],
         oLanguage: {
-            sProcessing: "Chargement...",
-            sLengthMenu: "Montrer _MENU_ fichiers par page",
-            sZeroRecords: "Aucun fichier trouvé",
-            sEmptyTable: "Pas de fichier",
-            sInfo: "fichiers _START_ à  _END_ sur _TOTAL_ fichiers",
-            sInfoEmpty: "Aucun fichier",
-            sInfoFiltered: "(filtre sur _MAX_ fichiers)",
-            sInfoPostFix: "",
-            sSearch: "",
-            sUrl: "",
+            sProcessing: 'Chargement...',
+            sLengthMenu: 'Montrer _MENU_ fichiers par page',
+            sZeroRecords: 'Aucun fichier trouvé',
+            sEmptyTable: 'Pas de fichier',
+            sInfo: 'fichiers _START_ à  _END_ sur _TOTAL_ fichiers',
+            sInfoEmpty: 'Aucun fichier',
+            sInfoFiltered: '(filtre sur _MAX_ fichiers)',
+            sInfoPostFix: '',
+            sSearch: '',
+            sUrl: '',
             oPaginate: {
-                sFirst: "",
-                sPrevious: "",
-                sNext: "",
-                sLast: ""
+                sFirst: '',
+                sPrevious: '',
+                sNext: '',
+                sLast: ''
             }
         }
     });
 
-    $('.dataTables_filter input').attr("placeholder", "Recherche...");
+    $('.dataTables_filter input').attr('placeholder', 'Recherche...');
 }
 

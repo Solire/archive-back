@@ -1,56 +1,64 @@
 <?php
         if (count($this->pages) > 0) {
             foreach ($this->pages as $page) {
+                $gabarit = $this->gabarits[$page->getMeta('id_gabarit')];
+
                 $htmlUrl = '';
                 if (isset($this->urlRedir)) {
                     $htmlUrl .= ' data-url="' . $this->urlRedir . $page->getMeta('id') . '"';
                 }
+
                 if (isset($this->urlAjax)) {
-                    $htmlUrl = ' data-ajax="' . $this->urlAjax . '"';
+                    $urlAjax = $this->urlAjax;
+                } else {
+                    $urlAjax = 'back/page/children.html';
                 }
-                if ((isset($this->noChild) && $this->noChild === true) || $page->getMeta('nbre_enfants') == 0) {
+
+                if ((isset($this->noChild) && $this->noChild === true)
+                    || $page->getMeta('nbre_enfants') == 0
+                ) {
                     $class = ' class="noChild"';
                 } else {
                     $class = '';
                 }
 ?>
-                                <fieldset data-titre="<?php echo $page->getMeta('titre'); ?>" style="<?php echo isset($this->margin) ? 'margin-left:30px;' : '' ; ?>" class="<?php if ($this->utilisateur->get("niveau") == "solire" || $this->gabarits[$page->getMeta("id_gabarit")]["sortable"]) { ?>sort-elmt<?php } ?>" id="gab_page_<?php echo $page->getMeta('id'); ?>">
-                                    <legend<?php echo $htmlUrl; ?> data-ajax="back/page/children.html" title="<?php echo $page->getMeta('rewriting') ?>"<?php echo $class; ?>>
+                            <fieldset data-titre="<?php echo $page->getMeta('titre'); ?>" style="<?php echo isset($this->margin) ? 'margin-left:30px;' : '' ; ?>" class="<?php if ($this->utilisateur->get('niveau') == 'solire' || $gabarit['sortable']) { ?>sort-elmt<?php } ?>" id="gab_page_<?php echo $page->getMeta('id'); ?>">
+                                <legend<?php echo $htmlUrl; ?> data-ajax="<?php echo $urlAjax; ?>" title="<?php echo $page->getMeta('rewriting') ?>"<?php echo $class; ?>>
 <?php
 
                 if ($page->getMeta('nbre_enfants') > 0 && (isset($this->noChild) && $this->noChild === false || !isset($this->noChild))) {
 ?>
-                                        <a href="#" class="btn btn-default btn-small"><i class="icon-chevron-down"></i></a>
+                                    <a href="#" class="btn btn-default btn-small"><i class="icon-chevron-down"></i></a>
 <?php
                 }
 ?>
-                                        <?php echo $page->getMeta('titre'); ?>
-                                        <br />
+                                    <?php echo $page->getMeta('titre'); ?>
+                                    <br />
 <?php
-                if ($page->getMeta("date_modif") != "0000-00-00 00:00:00"
-                    && $page->getMeta("rewriting") != ""
+                if ($page->getMeta('date_modif') != '0000-00-00 00:00:00'
+                    && $page->getMeta('rewriting') != ''
                 ) {
 ?>
-                                        <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta("date_modif") != "0000-00-00 00:00:00" ? Slrfw\Tools::RelativeTime(strtotime($page->getMeta("date_modif"))) : ''; ?></span>
+                                    <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta('date_modif') != '0000-00-00 00:00:00' ? Slrfw\Tools::RelativeTime(strtotime($page->getMeta('date_modif'))) : ''; ?></span>
 <?php
                 }
 ?>
-                                        <span class="page-info" style="color: inherit">
+                                    <span class="page-info" style="color: inherit">
 <?php
-                if ($page->getMeta("id_gabarit") != 1
-                    && $page->getMeta("id_gabarit") != 2
+                if ($page->getMeta('id_gabarit') != 1
+                    && $page->getMeta('id_gabarit') != 2
                     && (isset($this->noType) && $this->noType === false || !isset($this->noType))
                 ) {
 
-                    if ($page->getMeta("date_modif") != "0000-00-00 00:00:00"
-                        && $page->getMeta("rewriting") != ""
+                    if ($page->getMeta('date_modif') != '0000-00-00 00:00:00'
+                        && $page->getMeta('rewriting') != ''
                     ) {
 ?>
-                                            |
+                                        |
 <?php
                     }
 ?>
-                                            <i>Type : <?php echo $this->gabarits[$page->getMeta("id_gabarit")]["label"] ?></i>
+                                        <i>Type : <?php echo $gabarit['label'] ?></i>
 <?php
                 }
                 $nbChild = $page->getMeta('nbre_enfants');
@@ -60,90 +68,98 @@
                         $displayChild = $page->getMeta('nbre_enfants');
                     }
 ?>
-                                            |
-                                            <i><span class="page-nbre-enfants"><?php echo $displayChild; ?> </span><?php echo $this->childName; ?></i>
+                                        | <i><span class="page-nbre-enfants"><?php echo $displayChild; ?> </span><?php echo $this->childName; ?></i>
 <?php
                 }
 ?>
-                                        </span>
-                                    </legend>
+                                    </span>
+                                </legend>
 
-                                    <div class="sort-box" style="display:none;"></div>
-                                        <div style="position: relative" class="line cat-modif">
-                                            <div style="float:left; margin-left:8px;">
-                                                <div class="btn-toolbar">
-                                                    <div class="btn-group">
+                                <div class="sort-box" style="display:none;"></div>
+
+                                <div style="position: relative" class="line cat-modif">
+                                    <div style="float:left; margin-left:8px;">
+                                        <div class="btn-toolbar">
+                                            <div class="btn-group">
 <?php
-                if ($page->getMeta("id_gabarit") == 1
-                    || $page->getMeta("id_gabarit") == 2
+                if ($page->getMeta('id_gabarit') == 1
+                    || $page->getMeta('id_gabarit') == 2
                 ) {
 ?>
-                                                        <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" class="btn btn-small btn-info" title="Modifier '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-pencil"></i></a>
+                                                <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" class="btn btn-small btn-info" title="Modifier '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-pencil"></i></a>
 <?php
-                }
-                else {
+                } else {
 ?>
 <?php
-                    if ($this->utilisateur->get("niveau") == "solire"
-                        || $this->gabarits[$page->getMeta("id_gabarit")]["sortable"]
+                    if ($this->utilisateur->get('niveau') == 'solire'
+                        || $page->sortable
                     ) {
 ?>
                                                 <a href="#" class="btn btn-info btn-small sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-retweet"></i></a>
 <?php
                     }
-                    if ($this->utilisateur->get("niveau") == "solire"
-                        || $this->gabarits[$page->getMeta("id_gabarit")]["editable"]
+                    if ($this->utilisateur->get('niveau') == 'solire'
+                        || $gabarit['editable']
                     ) {
 ?>
                                                 <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" class="btn btn-small btn-info" title="Modifier '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-pencil"></i></a>
 <?php
                     }
-                    if ((
-                            $this->utilisateur->get("niveau") == "solire"
-                            || $this->gabarits[$page->getMeta("id_gabarit")]["make_hidden"]
+
+                    if ($page->getMeta('rewriting') != ''
+                        && ($this->utilisateur->get("niveau") == "solire"
+                            || $gabarit['make_hidden'] > 0
                             || $page->getMeta('visible') == 0
                         )
-                        && $page->getMeta('rewriting') != ""
                     ) {
+                        if ((
+                                ($page->makeHidden && $page->getMeta('visible') == 1)
+                                || ($page->makeVisible && $page->getMeta('visible') == 0)
+                            )
+                            && $page->getMeta('rewriting') != ''
+                        ) {
 ?>
-                                                <a class="btn btn-small btn-info visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
-                                                    <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta("id_version"); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo $page->getMeta("id_version"); ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
-                                                    <i class="<?php echo ($page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close translucide') ?>"></i>
+                                                <a class="btn btn-small <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?> visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta('visible') > 0 ? 'invisible' : 'visible' ) ?> sur le site">
+                                                    <input type="checkbox" value="<?php echo $page->getMeta('id'); ?>|<?php echo $page->getMeta('id_version'); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta('id'); ?>-<?php echo $page->getMeta('id_version'); ?>" <?php echo ($page->getMeta('visible') > 0 ? ' checked="checked"' : '') ?> />
+                                                    <i class="<?php echo ($page->getMeta('visible') > 0 ? 'icon-eye-open' : 'icon-eye-close') ?>"></i>
                                                 </a>
 
 <?php
+                        } else {
+?>
+                                                <span class="btn btn-small disabled <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?>" title="Vous n'avez pas les droits pour exécuter cette action" style="cursor:not-allowed;">
+                                                    <i class="<?php echo ($page->getMeta('visible') > 0 ? 'icon-eye-open' : 'icon-eye-close') ?>"></i>
+                                                </span>
+
+<?php
+                        }
                     }
-                    if ($page->getMeta("rewriting") == "") {
+
+                    if ($page->getMeta('rewriting') == '') {
 ?>
                                                 <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" class="btn btn-small btn-danger" title="Non traduit"><i class="icon-globe"></i></a>
 <?php
                     }
-?>
 
-<?php
-                    if (($this->utilisateur->get("niveau") == "solire"
-                        || $this->gabarits[$page->getMeta("id_gabarit")]["deletable"])
+                    if (($this->utilisateur->get('niveau') == 'solire' || $page->deletable)
                         && $page->getMeta('nbre_enfants') == 0
                     ) {
 ?>
                                                 <a href="#" style="display:<?php echo $page->getMeta('nbre_enfants') > 0 ? 'none' : 'inline-block'; ?>;" class="btn btn-small btn-warning supprimer" title="Supprimer '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-trash"></i></a>
 <?php
                     }
-
                 }
 ?>
+                                            </div>
                                         </div>
-                                        </div>
-                                        </div>
-                                        </div>
-                                </fieldset>
+                                    </div>
+                                </div>
+                            </fieldset>
 <?php
             }
         } else {
 ?>
-
-                                <p>Aucune page</p>
-
+                            <p>Aucune page</p>
 <?php
         }
 ?>

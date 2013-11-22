@@ -89,6 +89,9 @@
                                 </div>
                             </li>
 
+<?php
+    if (count($this->mainVersions) > 1) {
+?>
                             <li class="divider-vertical hidden-phone hidden-tablet"></li>
 
                             <li class="dropdown">
@@ -96,7 +99,7 @@
 
                                 <ul class="dropdown-menu">
 <?php
-    foreach ($this->mainVersions as $version) {
+        foreach ($this->mainVersions as $version) {
 ?>
                                         <li>
                                             <a style="cursor:pointer;" onclick="$.cookie('back_id_version', <?php echo $version['id'] ?>, {path: '/'}); document.location.href = document.location.href; return false;">
@@ -104,17 +107,20 @@
                                             </a>
                                         </li>
 <?php
-    }
+        }
 ?>
                                 </ul>
                             </li>
+<?php
+    }
+?>
 
                             <li class="divider-vertical divider-simple hidden-phone hidden-tablet"></li>
 
-                            <li class="dropdown<?php echo $this->controller == "back/user" ? ' gradient-blue text-light-white' : ''; ?>">
+                            <li class="dropdown<?php echo $this->controller == 'back/user' && $this->action == 'start' ? ' gradient-blue text-light-white' : ''; ?>">
                                 <a data-toggle="dropdown" class="dropdown-toggle" style="padding-bottom: 0;line-height: 28px;"  href="#"><img src="app/back/img/gray_dark/user_12x16.png"> <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li class="<?php echo $this->controller == "back/user" && $this->action == "start" ? 'active' : ''; ?>"><a href="back/user/start.html"><b>Mon profil (<?php echo $this->utilisateur->get("nom"); ?> <?php echo $this->utilisateur->get("prenom"); ?>)</b></a></li>
+                                    <li class="<?php echo $this->controller == 'back/user' && $this->action == 'start' ? 'active' : ''; ?>"><a href="back/user/start.html"><b>Mon profil (<?php echo $this->utilisateur->get("nom"); ?> <?php echo $this->utilisateur->get("prenom"); ?>)</b></a></li>
                                     <li class="divider"></li>
                                     <li><a href="back/sign/signout.html"><b>Déconnexion</b></a></li>
                                 </ul>

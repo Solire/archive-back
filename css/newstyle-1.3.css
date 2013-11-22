@@ -811,6 +811,16 @@ form  .line {
     clear: both;
 }
 
+form .line.tier {
+    width: 30%;
+    text-align: center;
+    display: inline-block;
+}
+
+form .line.tier label{
+    width: 100px;
+}
+
 form  .line .content {
     padding-top:12px;
     float:left;
@@ -1247,8 +1257,8 @@ form input, form textarea {
 form textarea {
     /*    width: 400px;*/
     /*    max-width: 400px;*/
-    /*    height: 150px;*/
-    line-height: 150%;
+    height : 325px;
+    line-height : 150%;
 }
 
 form .gmap:hover, form .gmap:focus, form input:hover, form textarea:hover, form input:focus, form textarea:focus, form .defaultSkin table.mceLayout:focus {
@@ -2260,6 +2270,7 @@ ul.ui-autocomplete li a {
 
 .navbar .nav > li > a, .new_items > li > a {
     font-size: 13px;
+    font-weight: bold;
 }
 
 .new_items > li > a {
@@ -2348,8 +2359,16 @@ form .line.form-line .line {
     margin: 0;
 }
 
+option {
+    cursor: pointer;
+    font-weight: bold;
+}
+option:disabled {
+    cursor: not-allowed;
+}
+
 .option1, .option1:disabled {
-    background-color:#ccc;
+    background-color:#fff;
     color : #000;
     /*background-color:#3485C9;*/
     padding-top:5px;

@@ -1,0 +1,28 @@
+                        <table class="w580" border="0" cellpadding="0" cellspacing="0" width="580">
+                            <tbody>
+                            <tr>
+                                <td colspan="2" class="w580" width="580">
+                                    <p class="article-title" align="left">Voici vos paramètres de connexion à votre outil de gestion de contenu</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w580" width="580">
+                                    <p class="article-title-2" align="left">Identifiant</p>
+                                    <div class="article-content" align="left"><strong><?php echo $this->clientData["email"]; ?></strong></div>
+                                </td>
+                                <td class="w580" width="580">
+                                    <p class="article-title-2" align="left">Mot de passe</p>
+                                    <div class="article-content" align="left"><strong><?php echo nl2br($this->clientData["pass"]); ?></strong></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="w580" width="580">
+                                    <p class="article-title-2" align="left">Connectez-vous dès maintenant en cliquant sur le lien suivant : </p>
+                                    <div class="article-content" align="left">
+                                        <a href="<?php echo $this->urlAcces; ?>"><?php echo $this->urlAcces; ?></a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr><td class="w580" height="10" width="580"></td></tr>
+                        </tbody></table>

@@ -14,44 +14,44 @@ $(function(){
     .dialog({
         open: function(){
             $('.ui-widget-overlay').hide().fadeIn();
-            if(!$('.ui-dialog-buttonset button').hasClass("btn")) {
-                $('.ui-dialog-buttonset button:eq(0)').attr("class", "").addClass("btn btn-warning btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
-                $('.ui-dialog-buttonset button:eq(1)').attr("class", "").addClass("btn btn-default btn-small").unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner("<a></a>");
+            if(!$('.ui-dialog-buttonset button').hasClass('btn')) {
+                $('.ui-dialog-buttonset button:eq(0)').attr('class', '').addClass('btn btn-warning btn-small').unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner('<a></a>');
+                $('.ui-dialog-buttonset button:eq(1)').attr('class', '').addClass('btn btn-default btn-small').unbind('mouseout keyup mouseup hover mouseenter mouseover focusin focusout mousedown focus').wrapInner('<a></a>');
             }
         },
         beforeClose: function(){
             $('.ui-widget-overlay').remove();
-            $("<div />", {
+            $('<div />', {
                 'class':'ui-widget-overlay'
             }).css({
                 height: $(document).height(),
                 width: $(document).width(),
                 zIndex: 1001
-            }).appendTo("body").fadeOut(function(){
+            }).appendTo('body').fadeOut(function(){
                 $(this).remove();
             });
         },
 
         modal: true,
-        width : "446px",
+        width : '446px',
         autoOpen : false,
         resizable: false,
-        title : "Confirmation de suppression de page",
+        title : 'Confirmation de suppression de page',
         show: {
-            effect:   "fade",
+            effect:   'fade',
             duration: 1000
         },
         hide: {
-            effect:   "fade",
+            effect:   'fade',
             duration: 500
         },
 
         buttons: {
-            "Ok" : function(){
-                $(this).dialog("close");
+            'Ok' : function(){
+                $(this).dialog('close');
             },
-            "Annuler" : function(){
-                $(this).dialog("close");
+            'Annuler' : function(){
+                $(this).dialog('close');
             }
         }
     });
@@ -59,7 +59,7 @@ $(function(){
     var confirmOpen = function(sort_elmt) {
         var sort_box = sort_elmt.parent();
         var id_gab_page = parseInt(sort_elmt.attr('id').split('_').pop());
-        var titleElemDel = sort_elmt.attr("data-titre")
+        var titleElemDel = sort_elmt.attr('data-titre')
         var heading = 'Confirmation de suppression de "' + titleElemDel + '"';
         var question = 'Etes-vous sûr de vouloir supprimer "' + titleElemDel + '" ? ';
         var cancelButtonTxt = 'Annuler';
@@ -97,7 +97,9 @@ $(function(){
         confirmOpen($(this).parents('.sort-elmt').first());
     });
 
-    //// RENDRE VISIBLE UNE PAGE.
+    /**
+     * Rendre visible une page
+     */
     $('.rendrevisible').live('click', function(){
         var $this = $(this);
         var id_gab_page = parseInt($this.parents('.sort-elmt').first().attr('id').split('_').pop());
@@ -112,17 +114,17 @@ $(function(){
             function(data){
                 if(data.status != 'success') {
                     $this.attr('checked', !checked);
-                    $.sticky("Une erreur est survenue", {
-                        type:"error"
+                    $.sticky('Une erreur est survenue', {
+                        type:'error'
                     });
                 } else {
                     if(checked) {
-                        $.sticky("La page a été rendue visible", {
-                            type:"success"
+                        $.sticky('La page a été rendue visible', {
+                            type:'success'
                         });
                     } else {
-                        $.sticky("La page a été rendue invisible", {
-                            type:"success"
+                        $.sticky('La page a été rendue invisible', {
+                            type:'success'
                         });
                     }
                 }
@@ -131,12 +133,17 @@ $(function(){
         );
     });
 
-    //// GESTION DU TRI DES PAGES.
+    /**
+     * Gestion du tri des pages
+     */
     var initTri = function () {
         $('.sort-box').each(function(){
-            var i = 1;
-            $(this).children().each(function(){
-                positions[parseInt($(this).attr('id').split('_').pop())] = i++;
+            $(this).children('fieldset').each(function(i){
+                var domId = $(this).attr('id'),
+                    tabId = domId.split('_'),
+                    id = tabId.pop(),
+                    id = parseInt(id);
+                positions[id] = i + 1;
             });
 
             $(this).sortable({
@@ -144,10 +151,14 @@ $(function(){
                 items: '> .sort-elmt',
                 handle: '.sort-move',
                 update: function(){
-                    var i = 1;
-                    $(this).children().each(function(){
-                        positions[parseInt($(this).attr('id').split('_').pop())] = i++;
+                    $(this).children().each(function(i){
+                        var domId = $(this).attr('id'),
+                            tabId = domId.split('_'),
+                            id = tabId.pop(),
+                            id = parseInt(id);
+                        positions[id] = i + 1;
                     });
+
                     orderProcess();
                 }
             });
@@ -158,13 +169,13 @@ $(function(){
         $.post('back/page/order.html', {
             'positions' : positions
         }, function(data){
-            if(data == "Succès") {
-                $.sticky("Succès du déplacement", {
-                    type:"success"
+            if(data.status == 'success') {
+                $.sticky('Succès du déplacement', {
+                    type:'success'
                 });
             } else {
-                $.sticky("Une erreur est survenue.", {
-                    type:"error"
+                $.sticky('Une erreur est survenue.', {
+                    type:'error'
                 });
             }
 
@@ -184,23 +195,25 @@ $(function(){
         $(this).parents('form').submit();
     });
 
-    //// OUVERTURE / FERMETURE DES PAGES PARENTES.
+    /**
+     * Ouverture / fermeture des pages parentes
+     */
     $('legend').live('click', function(){
         var $legend = $(this),
-            url = "back/page/children.html";
-        if ($legend.hasClass("noChild")) {
-            if ($legend.data("url") !== undefined) {
-                document.location.href = $legend.data("url");
+            url = 'back/page/children.html';
+        if ($legend.hasClass('noChild')) {
+            if ($legend.data('url') !== undefined) {
+                document.location.href = $legend.data('url');
             }
             return false;
         }
-        if ($legend.data("ajax") !== undefined) {
-            url = $legend.data("ajax");
+        if ($legend.data('ajax') !== undefined) {
+            url = $legend.data('ajax');
         }
 
         if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
 
-            $legend.find('i.icon-chevron-down').addClass("icon-chevron-up").removeClass("icon-chevron-down")
+            $legend.find('i.icon-chevron-down').addClass('icon-chevron-up').removeClass('icon-chevron-down')
             if (!$(this).next('div').hasClass('children-loaded')) {
                 var id = $(this).parent().attr('id').split('_').pop();
 
@@ -214,7 +227,6 @@ $(function(){
                         id_parent : id
                     },
                     success: function(data){
-//                        console.log(id)
                         $divToLoad.html(data)
                         $divToLoad.addClass('children-loaded');
                         if (data != '') {
@@ -231,7 +243,7 @@ $(function(){
             }
         }
         else {
-            $legend.find('i.icon-chevron-down, i.icon-chevron-up').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
+            $legend.find('i.icon-chevron-down, i.icon-chevron-up').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down')
             $(this).next('div').slideToggle(500);
             $(this).siblings('.cat-modif').slideToggle(500);
         }
@@ -241,18 +253,14 @@ $(function(){
         return false;
     });
 
-
-
-
-
     /**
      * Enregistre l'état de la liste des pages (Rubriques dépliées)
      * Celui-ci est stocké en cookie
      */
     function saveState() {
         var saveStateListPage = []
-        $("legend i.icon-chevron-up").each(function(){
-            saveStateListPage.push($(this).parents("fieldset:first").attr("id"))
+        $('legend i.icon-chevron-up').each(function(){
+            saveStateListPage.push($(this).parents('fieldset:first').attr('id'))
         })
 
         $.cookie('state_list', saveStateListPage, {
@@ -271,19 +279,21 @@ $(function(){
         var saveStateListPage;
 
         if ($.cookie('state_list')) {
-            saveStateListPage = $.cookie('state_list').split(",");
+            saveStateListPage = $.cookie('state_list').split(',');
         }
         else {
             saveStateListPage = [];
         }
 
         $.each(saveStateListPage, function(id, item) {
-
             var id = item.split('_').pop();
-            if ($("#" + item).find("legend:first").data("ajax") !== undefined) {
-                var url = $("#" + item).find("legend:first").data("ajax");
+           if (typeof $('#' + item).html() === 'undefined') {
+               return;
+           }
+           if ($('#' + item).find('legend:first').data('ajax') !== undefined) {
+                var url = $('#' + item).find('legend:first').data('ajax');
             } else {
-                var url = "back/page/children.html";
+                var url = 'back/page/children.html';
             }
             $.ajax({
                 mode: 'queue',
@@ -295,9 +305,9 @@ $(function(){
                 },
                 success: function(data){
                     currentState++;
-                    var $legend = $("#" + item).find("legend:first")
-                    var $divToLoad = $("#" + item).find(".sort-box:first")
-                    $legend.find('i.icon-chevron-down').toggleClass("icon-chevron-up").toggleClass("icon-chevron-down")
+                    var $legend = $('#' + item).find('legend:first')
+                    var $divToLoad = $('#' + item).find('.sort-box:first')
+                    $legend.find('i.icon-chevron-down').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down')
                     $divToLoad.html(data)
                     $divToLoad.addClass('children-loaded');
                     if (data != '') {
@@ -307,10 +317,10 @@ $(function(){
                                 && anchorFound !== false) {
                                 var heightFixed = 0
                                 //Si la navbar est en fixed (taille écran > 980px)
-                                if($(".navbar-fixed-top").css("position") == "fixed") {
-                                    heightFixed = $(".navbar-fixed-top").height() + $("#breadcrumbs").height()
+                                if($('.navbar-fixed-top').css('position') == 'fixed') {
+                                    heightFixed = $('.navbar-fixed-top').height() + $('#breadcrumbs').height()
                                 }
-                                $.scrollTo($("#gab_page_" + getURLParameter("id_gab_page")), 1000, {
+                                $.scrollTo($('#gab_page_' + getURLParameter('id_gab_page')), 1000, {
                                     queue:true,
                                     offset:-heightFixed
                                 });
@@ -318,9 +328,11 @@ $(function(){
                         });
                         $divToLoad.siblings('.cat-modif').slideToggle(500);
                     }
-                    if (anchorFound === false && $("#gab_page_" + getURLParameter("id_gab_page")).length > 0) {
 
-                        anchorFound = "#gab_page_" + getURLParameter("id_gab_page")
+                    if (anchorFound === false
+                        && $('#gab_page_' + getURLParameter('id_gab_page')).length > 0
+                    ) {
+                        anchorFound = '#gab_page_' + getURLParameter('id_gab_page')
                     }
 
                 }
@@ -337,7 +349,7 @@ $(function(){
     reloadState();
 
 
-    $(".sort-move").live("click", function(e) {
+    $('.sort-move').live('click', function(e) {
         e.preventDefault()
     })
 

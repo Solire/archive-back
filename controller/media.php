@@ -510,8 +510,8 @@ class Media extends Main {
 
                     if ($tinyMCE) {
                         $json[] = array(
-                            $file['rewriting'] . ($size ? ' (' . $size . ')' : ''),
-                            $realpath,
+                            'title' => $file['rewriting'] . ($size ? ' (' . $size . ')' : ''),
+                            'value' => $realpath,
                         );
                     } else {
                         $json[] = array(
@@ -527,12 +527,10 @@ class Media extends Main {
             }
         }
 
-        if ($tinyMCE) {
-            header('content-type: application/x-javascript; charset=UTF-8');
-            exit('var tinyMCEImageList = ' . json_encode($json) . ';');
-        }
-
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 }
 

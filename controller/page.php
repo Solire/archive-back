@@ -27,6 +27,12 @@ class Page extends Main
     protected $_page = null;
 
     /**
+     *
+     * @var \Slrfw\Model\gabaritPage[]
+     */
+    protected $_pages = null;
+
+    /**
      * Toujours executé avant l'action.
      *
      * @return void
@@ -34,6 +40,146 @@ class Page extends Main
     public function start()
     {
         parent::start();
+    }
+
+    /**
+     * Modifie les droits sur les pages
+     *
+     * @param array $pages
+     * @param array $gabarits
+     *
+     * @return void
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
+     * @hook back/ pagedelete Pour autoriser / interdire la suppression d'une page
+     * @hook back/ pageorder Pour autoriser / interdire la modification de l'ordre
+     * de pages
+     */
+    public function checkPrivileges($pages, $gabarits)
+    {
+        $ids = array();
+        foreach ($pages as $page) {
+            $gabarit = $gabarits[$page->getMeta('id_gabarit')];
+
+            $page->makeVisible = true;
+            $page->makeHidden  = $gabarit['make_hidden'];
+            $page->deletable   = $gabarit['deletable'];
+            $page->sortable    = $gabarit['sortable'];
+
+            $ids[] = $page->getMeta('id');
+            $p[$page->getMeta('id')] = $page;
+        }
+
+
+        /**
+         * On vérifie la possibilité de rendre invisble pour
+         * chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
+        $hook->visible        = 0;
+
+        $hook->exec('pagevisible');
+
+        if ($hook->permission !== null) {
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->makeHidden  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->makeHidden  = $permission;
+                }
+            }
+        }
+
+        /**
+         * On vérifie la possibilité de rendre visible pour
+         * chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
+        $hook->visible        = 1;
+
+        $hook->exec('pagevisible');
+
+        if ($hook->permission !== null) {
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->makeVisible  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->makeVisible  = $permission;
+                }
+            }
+        }
+
+
+        /**
+         * On vérifie la possibilité d'ordonner chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
+
+        $hook->exec('pageorder');
+
+        if ($hook->permission !== null) {
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->sortable  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->sortable  = $permission;
+                }
+            }
+        }
+
+
+        /**
+         * On vérifie la possibilité de supprimer chaque page
+         */
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $ids;
+        $hook->id_version     = BACK_ID_VERSION;
+
+        $hook->exec('pagedelete');
+
+        if ($hook->permission !== null) {
+            if ($hook->permission === false) {
+                foreach ($p as $id => $page) {
+                    $page->deletable  = false;
+                }
+            } elseif (is_array($hook->permission)) {
+                foreach ($hook->permission as $id => $permissions) {
+                    $p[$id]->deletable  = $permission;
+                }
+            }
+        }
     }
 
     /**
@@ -88,6 +234,10 @@ class Page extends Main
          */
         if (isset($currentConfigPageModule['label'])) {
             $this->_view->label = $currentConfigPageModule['label'];
+        }
+
+        if (isset($currentConfigPageModule['urlAjax'])) {
+            $this->_view->urlAjax = $currentConfigPageModule['urlAjax'];
         }
 
         if (isset($currentConfigPageModule['childName'])) {
@@ -172,9 +322,9 @@ class Page extends Main
         );
         $this->getButton($currentConfigPageModule);
 
-        $this->_view->gabarits = $this->_db->query($query)->fetchAll(
-            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
-        );
+        $this->checkPrivileges($this->_pages, $this->_gabarits);
+
+        $this->_view->gabarits = $this->_gabarits;
         $this->_view->pages = $this->_pages;
 
         $this->_view->breadCrumbs[] = array(
@@ -184,6 +334,7 @@ class Page extends Main
     }
 
     /**
+     * Affichage des enfants d'une page
      *
      * @return void
      */
@@ -250,9 +401,7 @@ class Page extends Main
             $gabaritsList = 0;
         }
 
-
         $this->_view->main(false);
-
 
         $hook = new \Slrfw\Hook();
         $hook->setSubdirName('back');
@@ -268,7 +417,7 @@ class Page extends Main
         /** Chargement par défaut **/
         if (!isset($hook->list) || empty($hook->list)) {
             $this->_pages = $this->_gabaritManager->getList(
-                BACK_ID_VERSION, $this->_api['id'], $_REQUEST['id_parent'],
+                BACK_ID_VERSION, $this->_api['id'], $_GET['id_parent'],
                 $gabaritsList
             );
         } else {
@@ -279,25 +428,29 @@ class Page extends Main
             exit();
         }
 
-        $this->_view->pages = $this->_pages;
-
         $query  = 'SELECT `gab_gabarit`.id, `gab_gabarit`.*'
                 . ' FROM `gab_gabarit`'
                 . ' WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id'];
         $this->_gabarits = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC
         );
+
+        $this->checkPrivileges($this->_pages, $this->_gabarits);
+
+        $this->_view->pages = $this->_pages;
+
         $this->_view->gabarits = $this->_gabarits;
     }
 
     /**
+     * Affichage du formulaire de création / d'édition d'une page
      *
      * @return void
      */
     public function displayAction()
     {
-        $this->_javascript->addLibrary('back/js/tiny_mce/tiny_mce.js');
-        $this->_javascript->addLibrary('back/js/tiny_mce/jquery.solire.tiny_mce.js');
+        $this->_javascript->addLibrary('back/js/tinymce-4.0.5/tinymce.min.js', false);
+        $this->_javascript->addLibrary('back/js/tinymce-4.0.5/jquery.solire.tinymce.js');
 
         $this->_javascript->addLibrary('back/js/autocomplete.js');
         $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
@@ -305,7 +458,6 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/jquery/jquery.tipsy.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.qtip.min.js');
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
-        $this->_javascript->addLibrary('back/js/join-simple.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
         $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
@@ -348,7 +500,39 @@ class Page extends Main
             foreach ($this->_versions as $id_version => $version) {
                 $page = $this->_gabaritManager->getPage($id_version,
                     BACK_ID_API, $id_gab_page);
+
+                if (!$page || $page->getGabarit()->getEditable() == 0) {
+                    $this->pageNotFound();
+                }
+
                 $this->_pages[$id_version] = $page;
+
+                $hook = new \Slrfw\Hook();
+                $hook->setSubdirName('back');
+
+                $hook->permission     = null;
+                $hook->utilisateur    = $this->_utilisateur;
+                $hook->visible        = $page->getMeta('visible') > 0 ? 0 : 1;
+                $hook->ids            = $id_gab_page;
+                $hook->id_version     = $id_version;
+
+                $hook->exec('pagevisible');
+
+                $page->makeVisible = true;
+
+                if ($page->getGabarit()->getMake_hidden()) {
+                    $page->makeHidden  = true;
+                } else {
+                    $page->makeHidden  = false;
+                }
+
+                if ($hook->permission === false) {
+                    if ($hook->visible > 0) {
+                        $page->makeVisible = false;
+                    } else {
+                        $page->makeHidden  = false;
+                    }
+                }
 
                 $path   = $page->getMeta('rewriting')
                         . $page->getGabarit()->getExtension();
@@ -442,35 +626,50 @@ class Page extends Main
      * Page appelé pour la sauvegarde d'une page
      *
      * @return void
+     * @hook back/ pagesaved Après la création / modification d'une page. Si les
+     * données envoyés sont les mêmes que celles enregistrées en BDD, cette
+     * évènement n'est pas déclenché
      */
     public function saveAction()
     {
         $this->_view->main(false);
         $this->_view->enable(false);
 
-        if (isset($_GET["edit-front"]) && $_GET["edit-front"] == 1) {
+        if (isset($_GET['edit-front']) && $_GET['edit-front'] == 1) {
+            /**
+             * Sauvegarde partielle sur le middleoffice
+             */
 
-            $dataRaw = json_decode($_POST["content"], true);
+            $dataRaw = json_decode($_POST['content'], true);
             $data = array(
-                "id_version"    =>  $dataRaw["id_version"]["value"],
-                "id_gab_page"    =>  $dataRaw["id_gab_page"]["value"],
-                "id_api"    =>  $dataRaw["id_api"]["value"],
+                'id_version'    =>  $dataRaw['id_version']['value'],
+                'id_gab_page'    =>  $dataRaw['id_gab_page']['value'],
+                'id_api'    =>  $dataRaw['id_api']['value'],
             );
-            $page = $this->_gabaritManager->getPage($dataRaw["id_version"]["value"], $dataRaw["id_api"]["value"], $dataRaw['id_gab_page']["value"], 0);
+            $page = $this->_gabaritManager->getPage(
+                $dataRaw['id_version']['value'],
+                $dataRaw['id_api']['value'],
+                $dataRaw['id_gab_page']['value'],
+                0
+            );
             $pageSave = false;
 
+            if (!$page || $page->getGabarit()->getEditable() == 0) {
+                $this->pageNotFound();
+            }
+
             foreach ($dataRaw as $k => $d) {
-                $val = isset($d["value"]) ? $d["value"] : false;
+                $val = isset($d['value']) ? $d['value'] : false;
                 if ($val === false) {
-                    if (isset($d["attributes"]["src"])) {
-                        $filePathPart = explode("/", $d["attributes"]["src"]);
+                    if (isset($d['attributes']['src'])) {
+                        $filePathPart = explode('/', $d['attributes']['src']);
                         $val = $filePathPart[1];
                     }
                 }
 
                 if ($val !== false) {
 
-                    if (strpos($k, "-") !== false) {
+                    if (strpos($k, '-') !== false) {
                         $fieldPart = explode('-', $k);
                         if (!isset($data[$fieldPart[0]])) {
                             $data[$fieldPart[0]] = array();
@@ -488,7 +687,7 @@ class Page extends Main
 
                         $data[$fieldPart[0]][] = $val;
                     } else {
-                        if (substr($k, 0, 5) == "champ") {
+                        if (substr($k, 0, 5) == 'champ') {
                             $pageSave = true;
                             $data[$k] = array(
                                 $val
@@ -498,81 +697,169 @@ class Page extends Main
                 }
             }
 
+            $modif = false;
+
             if ($pageSave) {
-                $this->_gabaritManager->savePage($page, $data, true);
+                $modifTmp = $this->_gabaritManager->savePage($page, $data, true);
+
+                if (!$modif && $modifTmp) {
+                    $modif = $modifTmp;
+                }
             }
 
             $blocs = $page->getBlocs();
             foreach ($blocs as $bloc) {
-                $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']["value"], $dataRaw["id_version"]["value"], $data, true);
+                $modifTmp = $this->_gabaritManager->saveBloc($bloc, $dataRaw['id_gab_page']['value'], $dataRaw['id_version']['value'], $data, true);
+
+                if (!$modif && $modifTmp) {
+                    $modif = $modifTmp;
+                }
             }
-            exit("1");
-        }
 
+            if ($modif) {
+                $this->_page = $this->_gabaritManager->getPage(
+                    $dataRaw['id_version']['value'],
+                    $dataRaw['id_api']['value'],
+                    $dataRaw['id_gab_page']['value'],
+                    0
+                );
+            }
 
-
-        $this->_page = $this->_gabaritManager->save($_POST);
-
-        $typeSave = $_POST['id_gab_page'] == 0 ? 'Création' : 'Modification';
-
-        //Envoi de mail à solire
-        if($this->_appConfig->get('general', 'mail-notification')) {
-            $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
-                        . 'page/display.html?id_gab_page='
-                        . $this->_page->getMeta('id') . '">'
-                        . $this->_page->getMeta('titre') . '</a>';
-
-            $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                        . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
-                        . 'Bcc: contact@solire.fr ' . "\r\n"
-                        . 'X-Mailer: PHP/' . phpversion();
-
-            \Slrfw\Tools::mail_utf8('Modif site <modif@solire.fr>',
-                $typeSave . ' de contenu sur ' . $this->_mainConfig->get('project', 'name'),
-                $contenu, $headers, 'text/html');
-        }
-
-
-        $json = array(
-            'status'        => 'success',
-            'search'        => '?id_gab_page=' . $this->_page->getMeta("id") . '&popup=more',
-            'id_gab_page'   => $this->_page->getMeta("id"),
-        );
-
-        if (isset($_POST['id_temp']) && $_POST['id_temp']) {
-            $upload_path = $this->_mainConfig->get('upload', 'path');
-
-            $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
-            $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta("id");
-
-            $succes = rename($tempDir, $targetDir);
-
-            $query  = 'UPDATE `media_fichier` SET'
-                    . ' `id_gab_page` = ' . $this->_page->getMeta('id') . ','
-                    . ' `id_temp` = 0'
-                    . ' WHERE `id_temp` = ' . $_POST['id_temp'];
-            $this->_db->exec($query);
-        }
-
-
-        if($json["status"] == "error") {
-            $this->_log->logThis(   "$typeSave de page échouée",
-                                    $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
+            $json = array(
+                'status' => 'success',
+            );
         } else {
-            $this->_log->logThis(   "$typeSave de page réussie",
-                                    $this->_utilisateur->get("id"),
-                                    "<b>Id</b> : " . $this->_page->getMeta("id") . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST["id_version"]]['suf']) . '.png" alt="'
-                                    . $this->_versions[$_POST["id_version"]]['nom'] . '" /></a>');
+            $modif = false;
+
+            if ($_POST['id_gab_page'] > 0) {
+                $updating = true;
+                $typeSave = 'Modification';
+            } else {
+                $updating = false;
+                $typeSave = 'Création';
+            }
+
+            $res = $this->_gabaritManager->save($_POST);
+
+            if ($res === null) {
+                $this->pageNotFound();
+            }
+
+            if ($res === false) {
+                /**
+                 * Dans le cas d'une mise-à-jour où les données étaient les
+                 * mêmes que celles préenregistrées en BDD.
+                 */
+
+                $modif = false;
+
+                $json = array(
+                    'status'        => 'success',
+                    'search'        => '?id_gab_page=' . $_POST['id_gab_page']
+                                     . '&popup=more',
+                    'id_gab_page'   => $_POST['id_gab_page'],
+                );
+            } else {
+                /**
+                 * Création de page ou modification effective
+                 */
+
+                $modif = true;
+
+                $this->_page = $res;
+
+                if($this->_appConfig->get('general', 'mail-notification')) {
+                    /**
+                     * Envoi de mail à solire
+                     */
+
+                    $subject    = $typeSave . ' de contenu sur '
+                                . $this->_mainConfig->get('project', 'name');
+
+                    $contenu    = '<a href="' . \Slrfw\Registry::get('basehref')
+                                . 'page/display.html?id_gab_page='
+                                . $this->_page->getMeta('id') . '">'
+                                . $this->_page->getMeta('titre') . '</a>';
+
+                    $headers    = 'From: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                                . 'Reply-To: ' . \Slrfw\Registry::get('mail-contact') . "\r\n"
+                                . 'Bcc: contact@solire.fr ' . "\r\n"
+                                . 'X-Mailer: PHP/' . phpversion();
+
+                    \Slrfw\Tools::mail_utf8(
+                        'Modif site <modif@solire.fr>',
+                        $subject,
+                        $contenu,
+                        $headers,
+                        'text/html'
+                    );
+                }
+
+                $json = array(
+                    'status'        => 'success',
+                    'search'        => '?id_gab_page=' . $this->_page->getMeta('id')
+                                     . '&popup=more',
+                    'id_gab_page'   => $this->_page->getMeta('id'),
+                );
+
+                if (isset($_POST['id_temp']) && $_POST['id_temp']) {
+                    /**
+                     * Déplacement des fichiers utilisés dans la page.
+                     */
+
+                    $upload_path = $this->_mainConfig->get('upload', 'path');
+
+                    $tempDir    = './' . $upload_path . DIRECTORY_SEPARATOR . 'temp-' . $_POST['id_temp'];
+                    $targetDir  = './' . $upload_path . DIRECTORY_SEPARATOR . $this->_page->getMeta('id');
+
+                    $succes = rename($tempDir, $targetDir);
+
+                    $query  = 'UPDATE `media_fichier` SET'
+                            . ' `id_gab_page` = ' . $this->_page->getMeta('id') . ','
+                            . ' `id_temp` = 0'
+                            . ' WHERE `id_temp` = ' . $_POST['id_temp'];
+                    $this->_db->exec($query);
+                }
+
+
+                if($json['status'] == 'error') {
+                    $this->_log->logThis(   $typeSave . 'de page échouée',
+                                            $this->_utilisateur->get('id'),
+                                            '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                            . $this->_versions[$_POST['id_version']]['nom'] . '" /></a><br /><span style="color:red;">Error</span>');
+                } else {
+                    $this->_log->logThis(   $typeSave . 'de page réussie',
+                                            $this->_utilisateur->get('id'),
+                                            '<b>Id</b> : ' . $this->_page->getMeta('id') . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$_POST['id_version']]['suf']) . '.png" alt="'
+                                            . $this->_versions[$_POST['id_version']]['nom'] . '" /></a>');
+                }
+            }
+        }
+
+        if ($modif) {
+            /**
+             * Si une création ou une modification a été effectuée,
+             * on fait un hook
+             */
+
+            $hook = new \Slrfw\Hook();
+            $hook->setSubdirName('back');
+
+            $hook->page        = $this->_page;
+            $hook->utilisateur = $this->_utilisateur;
+
+            $hook->exec('pagesaved');
         }
 
         echo(json_encode($json));
     }
 
     /**
+     * Autocomplete des pages
      *
      * @return void
+     * @deprecated ??? utiliser autocompleteJoinAction à la place
+     * @see Page::autocompleteJoinAction()
      */
     public function autocompleteAction()
     {
@@ -588,13 +875,17 @@ class Page extends Main
         $pages = $this->_gabaritManager->getSearch(BACK_ID_VERSION, $_GET['term'], $_REQUEST['id_gabarit']);
         foreach ($pages as $page) {
             if (!in_array($page->getMeta('id'), $dejaLiees))
-                $json[] = array("value" => $page->getMeta('id'), "label" => $page->getMeta('titre'), "visible" => $page->getMeta('titre'));
+                $json[] = array('value' => $page->getMeta('id'), 'label' => $page->getMeta('titre'), 'visible' => $page->getMeta('titre'));
         }
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -604,48 +895,54 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST["term"];
-        $idField = $_REQUEST["id_field"];
-        $idGabPage = $_REQUEST["id_gab_page"];
-        $typeGabPage = $_REQUEST["type_gab_page"];
-        $queryFilter = str_replace("[ID]", $idGabPage, $_REQUEST["query_filter"]);
-        $table = $_REQUEST["table"];
-        $labelField = "";
-        $lang = $_REQUEST["id_version"];
-        $gabPageJoin = "";
+        $term = $_REQUEST['term'];
+        $idField = $_REQUEST['id_field'];
+        $idGabPage = $_REQUEST['id_gab_page'];
+        $typeGabPage = $_REQUEST['type_gab_page'];
+        $queryFilter = str_replace('[ID]', $idGabPage, $_REQUEST['query_filter']);
+        $table = $_REQUEST['table'];
+        $labelField = '';
+        $lang = $_REQUEST['id_version'];
+        $gabPageJoin = '';
 
 
-        $filterVersion = "`$table`.id_version = $lang";
-        if (isset($_REQUEST["no_version"])
-                && $_REQUEST["no_version"] == 1
-                || ($_REQUEST["table"] == "gab_page")
-                || !$typeGabPage) {
+        $filterVersion = '`' . $table . '`.id_version = ' . $lang;
+        if (isset($_REQUEST['no_version'])
+            && $_REQUEST['no_version'] == 1
+            || ($_REQUEST['table'] == 'gab_page')
+            || !$typeGabPage
+        ) {
             $filterVersion = 1;
         } else {
-            $gabPageJoin = "INNER JOIN gab_page ON visible = 1 AND suppr = 0 AND gab_page.id = `$table`.$idField " . ($filterVersion != 1 ? "AND gab_page.id_version = $lang" : "");
+            $gabPageJoin = 'INNER JOIN gab_page ON visible = 1'
+                    . ' AND suppr = 0'
+                    . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` '
+                    . ($filterVersion != 1 ? 'AND gab_page.id_version = ' . $lang : '');
         }
 
-
-
-        if (substr($_REQUEST["label_field"], 0, 9) == "gab_page.") {
-            $labelField = $_REQUEST["label_field"];
+        if (substr($_REQUEST['label_field'], 0, 9) == 'gab_page.') {
+            $labelField = $_REQUEST['label_field'];
         } else {
-            $labelField = "`$table`.`" . $_REQUEST["label_field"] . "`";
+            $labelField = '`' . $table . '`.' . $_REQUEST['label_field'];
         }
 
-        $sql = "SELECT `$table`.$idField id, $labelField label"
-                . " FROM `$table`"
-                . " $gabPageJoin"
-                . " WHERE $filterVersion "
-                . ($queryFilter != "" ? "AND (" . $queryFilter . ")" : "")
-                . " AND $labelField  LIKE '%$term%'";
-
+        $quotedTerm = $this->_db->quote('%' . $term . '%');
+        $sql    = 'SELECT `' . $table . '`.`' . $idField . '` id, ' . $labelField . ' label'
+                . ' FROM `' . $table . '`'
+                . ' ' . $gabPageJoin
+                . ' WHERE ' . $filterVersion . ' '
+                . ($queryFilter != '' ? 'AND (' . $queryFilter . ')' : '')
+                . ' AND ' . $labelField . '  LIKE ' . $quotedTerm;
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -655,21 +952,26 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST["term"];
-        $table = "old_link";
-        $labelField = "`$table`.`link`";
+        $term = $_REQUEST['term'];
+        $table = 'old_link';
+        $labelField = '`' . $table . '`.`link`';
 
+        $quotedTerm = $this->_db->quote('%' . $term . '%');
 
-        $sql = "SELECT $labelField label"
-                . " FROM `$table`"
-                . " WHERE $labelField  LIKE '%$term%'";
+        $sql    = 'SELECT `' . $labelField . '` label'
+                . ' FROM `' . $table . '`'
+                . ' WHERE `' . $labelField . '` LIKE ' . $quotedTerm;
 
         $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     *
      *
      * @return void
      */
@@ -681,7 +983,7 @@ class Page extends Main
         $pages = array();
 
 
-        $qSearch = isset($_GET["term"]) ? $_GET["term"] : "";
+        $qSearch = isset($_GET['term']) ? $_GET['term'] : '';
 
         /*
          * Traitement de la chaine de recherche
@@ -689,147 +991,243 @@ class Page extends Main
 
         $searchTab = array();
 
-        //Variable qui contient la chaine de recherche
+        /**
+         * Variable qui contient la chaine de recherche
+         */
         $this->filter = new \stdClass();
         $stringSearch = strip_tags(trim($qSearch));
         $this->filter->stringSearch = $stringSearch;
 
-        //Si un seul mot
-        if (strpos($stringSearch, " ") === false) {
+        /**
+         * Si un seul mot
+         */
+        if (strpos($stringSearch, ' ') === false) {
             $searchTab[0] = $stringSearch;
         } else {
-            //Si plusieurs  mots on recupere un tableau de mots
-            $searchTab = preg_split("#[ ]+#", $stringSearch);
+            /**
+             * Si plusieurs  mots on recupere un tableau de mots
+             */
+            $searchTab = preg_split('#[ ]+#', $stringSearch);
         }
 
-        //Tableau de mot(s)
+        /**
+         * Tableau de mot(s)
+         */
         $this->filter->words = $searchTab;
 
-        //On teste si un mot est supérieurs à 3 caractères
-        $this->filter->errors["len_words"] = true;
+        /**
+         * On teste si un mot est supérieurs à 3 caractères
+         */
+        $this->filter->errors['len_words'] = true;
         for ($i = 0, $I = count($this->filter->words); $i < $I; $i++) {
-            if (trim($this->filter->words[$i]) != "" && strlen(trim($this->filter->words[$i])) >= 2) {
-                $this->filter->errors["len_words"] = false;
+            if (trim($this->filter->words[$i]) != '' && strlen(trim($this->filter->words[$i])) >= 2) {
+                $this->filter->errors['len_words'] = false;
             }
         }
 
-        if ($this->filter->errors["len_words"]) {
+        if ($this->filter->errors['len_words']) {
             echo json_encode(null);
             return;
         }
 
-        //Pour chaque mot ou essaie de mettre au singulier ou pluriel
-        // + Traitement de la chaine de recherche (elimine mot trop court
-        $mode[] = "s";
-        $mode[] = "p";
+        /**
+         * Pour chaque mot ou essaie de mettre au singulier ou pluriel
+         * + Traitement de la chaine de recherche (elimine mot trop court
+         */
+        $mode[] = 's';
+        $mode[] = 'p';
         $i = 0;
         foreach ($this->filter->words as $t1) {
             foreach ($mode as $m) {
                 if (strlen($t1) >= 2) {
-                    $this->filter->wordsAdvanced[$i++] = (($m == "s") ? $this->singulier($t1) : $this->pluriel($t1));
+                    $this->filter->wordsAdvanced[$i++] = (($m == 's') ? $this->singulier($t1) : $this->pluriel($t1));
                 }
             }
         }
 
-        //Tri des mots par strlen
+        /**
+         * Tri des mots par strlen
+         */
         if (is_array($this->filter->wordsAdvanced))
-            usort($this->filter->wordsAdvanced, array($this, "length_cmp"));
+            usort($this->filter->wordsAdvanced, array($this, 'length_cmp'));
 
         if ($qSearch != null) {
-            $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote("%" . $this->filter->stringSearch . "%");
+            $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote('%' . $this->filter->stringSearch . '%');
 
             if (isset($this->filter->wordsAdvanced) && is_array($this->filter->wordsAdvanced) && count($this->filter->wordsAdvanced) > 0)
                 foreach ($this->filter->wordsAdvanced as $word) {
-                    $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote("%" . $word . "%");
+                    $filterWords[] = 'CONCAT(" ", gab_page.titre, " ") LIKE ' . $this->_db->quote('%' . $word . '%');
                 }
 
             foreach ($filterWords as $filterWord) {
-                $orderBy[] = "IF($filterWord , 0, 1)";
+                $orderBy[] = 'IF(' . $filterWord . ' , 0, 1)';
             }
         }
 
-        $query  = "SELECT `gab_page`.`id` id, gab_page.titre label, gab_page.titre visible, gab_gabarit.label gabarit_label,  CONCAT('page/display.html?id_gab_page=', `gab_page`.`id`) url"
-                . " FROM `gab_page`"
-                . " LEFT JOIN `gab_gabarit`"
-                . "     ON `gab_page`.id_gabarit = `gab_gabarit`.id"
-                . "     AND `gab_gabarit`.editable = 1"
-                . " WHERE `gab_page`.`id_version` = " . BACK_ID_VERSION
-                . " AND `gab_gabarit`.`id_api` = " . $this->_api["id"]
-                . " AND `gab_page`.`suppr` = 0 "
-                . (isset($filterWords) ? " AND (" . implode(" OR ", $filterWords) . ")" : '')
-                . " ORDER BY " . implode(",", $orderBy) . " LIMIT 10";
+        $query  = 'SELECT `gab_page`.`id` id, gab_page.titre label,'
+                . ' gab_page.titre visible, gab_gabarit.label gabarit_label,'
+                . ' CONCAT("page/display.html?id_gab_page=", `gab_page`.`id`) url'
+                . ' FROM `gab_page`'
+                . ' LEFT JOIN `gab_gabarit`'
+                . ' ON `gab_page`.id_gabarit = `gab_gabarit`.id'
+                . ' AND `gab_gabarit`.editable = 1'
+                . ' WHERE `gab_page`.`id_version` = ' . BACK_ID_VERSION
+                . ' AND `gab_gabarit`.`id_api` = ' . $this->_api['id']
+                . ' AND `gab_page`.`suppr` = 0 '
+                . (isset($filterWords) ? ' AND (' . implode(' OR ', $filterWords) . ')' : '')
+                . ' ORDER BY ' . implode(',', $orderBy) . ' LIMIT 10';
 
         $pagesFound = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($pagesFound as $page) {
             $pages[] = array(
-                "label" => \Slrfw\Tools::highlightedSearch($page["label"], $this->filter->wordsAdvanced, true),
-                "id" => $page["id"],
-                "gabarit_label" => $page["gabarit_label"],
-                "url" => $page["url"],
+                'label' => \Slrfw\Tools::highlightedSearch($page['label'], $this->filter->wordsAdvanced, true),
+                'id' => $page['id'],
+                'gabarit_label' => $page['gabarit_label'],
+                'url' => $page['url'],
             );
         }
 
-        exit(json_encode($pages));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($pages);
     }
 
     /**
+     * Rendre une page visible / invisible
      *
      * @return void
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function visibleAction()
     {
+        $this->_view->main(false);
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
-
         $idVersion = BACK_ID_VERSION;
 
         if (isset($_POST['id_version']) && $_POST['id_version'] > 0) {
             $idVersion = intval($_POST['id_version']);
         }
 
-        if (is_numeric($_POST['id_gab_page']) && is_numeric($_POST['visible'])) {
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->visible        = $_POST['visible'];
+        $hook->ids            = $_POST['id_gab_page'];
+        $hook->id_version     = BACK_ID_VERSION;
+
+        $hook->exec('pagevisible');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
+        if ($permission
+            && is_numeric($_POST['id_gab_page'])
+            && is_numeric($_POST['visible'])
+        ) {
             if ($this->_gabaritManager->setVisible($idVersion, BACK_ID_API, $_POST['id_gab_page'], $_POST['visible'])) {
-                $type = $_POST['visible'] == 1 ? "Page rendu visible" : "Page rendu invisible";
-                $this->_log->logThis("$type avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $type = $_POST['visible'] == 1 ? 'Page rendu visible' : 'Page rendu invisible';
+                $this->_log->logThis($type . ' avec succès', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" />');
-                $json['status'] = "success";
+                $json['status'] = 'success';
             } else {
-                $this->_log->logThis("$type échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
+                $this->_log->logThis($type . ' échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><img src="app/back/img/flags/png/' . strtolower($this->_versions[$idVersion]['suf']) . '.png" alt="'
                         . $this->_versions[$idVersion]['nom'] . '" /><br /><span style="color:red;">Error</span>');
             }
         }
 
-
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     * Suppression d'une page (suppression logique en base)
      *
      * @return void
+     * @hook back/ pagedelete Pour autoriser / interdire la suppression d'une page
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function deleteAction()
     {
+        $this->_view->main(false);
         $this->_view->enable(false);
 
-        $json = array('status' => "error");
+        $json = array('status' => 'error');
 
-        if (is_numeric($_POST['id_gab_page'])) {
-            if ($this->_gabaritManager->delete($_POST['id_gab_page'])) {
-                $this->_log->logThis("Suppression de page réussie", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page']);
-                $json['status'] = "success";
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = $_POST['id_gab_page'];
+        $hook->id_version     = BACK_ID_VERSION;
+
+        $hook->exec('pagedelete');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
+        if ($permission
+            && is_numeric($_POST['id_gab_page'])
+        ) {
+            $delete = $this->_gabaritManager->delete($_POST['id_gab_page']);
+
+            if ($delete) {
+                $this->_log->logThis(
+                    'Suppression de page réussie',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $_POST['id_gab_page']
+                );
+
+                $json['status'] = 'success';
             } else {
-                $this->_log->logThis("Suppression de page échouée", $this->_utilisateur->get("id"), "<b>Id</b> : " . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>');
+                $this->_log->logThis(
+                    'Suppression de page échouée',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $_POST['id_gab_page'] . '<br /><span style="color:red;">Error</span>'
+                );
             }
         }
 
-        exit(json_encode($json));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
     /**
+     * Modification de l'ordre de pages
      *
      * @return void
+     * @hook back/ pageorder Pour autoriser / interdire la modification de l'ordre
+     * de pages
+     *
+     * @todo Vérifier les droits selon le gabarit de page
      */
     public function orderAction()
     {
@@ -838,27 +1236,68 @@ class Page extends Main
         $this->_view->main(false);
         $this->_view->enable(false);
 
-        $prepStmt = $this->_db->prepare("UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id");
-        foreach ($_POST['positions'] as $id => $ordre) {
-            $prepStmt->bindValue(":ordre", $ordre, \PDO::PARAM_INT);
-            $prepStmt->bindValue(":id", $id, \PDO::PARAM_INT);
-            $tmp = $prepStmt->execute();
+        $json = array('status' => 'error');
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->ids            = array_keys($_POST['positions']);
+        $hook->id_version     = BACK_ID_VERSION;
+
+        $hook->exec('pageorder');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
+        }
+
+        if ($permission) {
+            $query  = 'UPDATE `gab_page` SET `ordre` = :ordre WHERE `id` = :id';
+            $prepStmt = $this->_db->prepare($query);
+            foreach ($_POST['positions'] as $id => $ordre) {
+                $prepStmt->bindValue(':ordre', $ordre, \PDO::PARAM_INT);
+                $prepStmt->bindValue(':id', $id, \PDO::PARAM_INT);
+                $tmp = $prepStmt->execute();
+                if ($ok) {
+                    $ok = $tmp;
+                }
+            }
+
             if ($ok) {
-                $ok = $tmp;
-                $this->_log->logThis("Changement d'ordre réalisé avec succès", $this->_utilisateur->get("id"), "<b>Id</b> : " . $id . '<br />'
-                        . "<b>Ordre</b> : " . $ordre . '<br />');
+                $this->_log->logThis(
+                    'Changement d\'ordre réalisé avec succès',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $id . '<br />' . '<b>Ordre</b> : ' . $ordre . '<br />');
+
+                $json['status'] = 'success';
             } else {
-                $this->_log->logThis("Changement d'ordre échoué", $this->_utilisateur->get("id"), "<b>Id</b> : " . $id
-                        . "<b>Ordre</b> : " . $ordre . '<br />'
-                        . '<br /><span style="color:red;">Error</span>');
+                $this->_log->logThis(
+                    'Changement d\'ordre échoué',
+                    $this->_utilisateur->get('id'),
+                    '<b>Id</b> : ' . $id . '<b>Ordre</b> : ' . $ordre . '<br /><br /><span style="color:red;">Error</span>');
             }
         }
 
-        echo $ok ? 'Succès' : 'Echec';
-
-        return false;
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Content-type: application/json');
+        echo json_encode($json);
     }
 
+    /**
+     *
+     *
+     * @param type $currentConfigPageModule
+     *
+     * @return void
+     */
     protected function getButton($currentConfigPageModule)
     {
         /**
@@ -949,20 +1388,41 @@ class Page extends Main
         }
     }
 
+    /**
+     *
+     *
+     * @param string $mot
+     *
+     * @return string
+     */
     protected function singulier($mot)
     {
-        return (substr($mot, -1) == "s") ? substr($mot, 0, -1) : $mot;
+        return (substr($mot, -1) == 's') ? substr($mot, 0, -1) : $mot;
     }
 
+    /**
+     *
+     *
+     * @param string $mot
+     *
+     * @return string
+     */
     protected function pluriel($mot)
     {
-        return (substr($mot, -1) == "s") ? $mot : ($mot . 's');
+        return (substr($mot, -1) == 's') ? $mot : ($mot . 's');
     }
 
+    /**
+     *
+     *
+     * @param string $a
+     * @param string $b
+     *
+     * @return int
+     */
     protected function length_cmp($a, $b)
     {
         return strlen($b) - strlen($a);
     }
-
 }
 
