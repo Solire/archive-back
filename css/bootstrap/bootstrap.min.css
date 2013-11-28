@@ -10,17 +10,35 @@
 
  
 .btn {
-     font-weight: bold;
-     background-color: #0A7ECA; 
-     background-image: -moz-linear-gradient(center top , #4AB0DD, #0A7ECA); 
-     background-repeat: repeat-x; 
-     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); 
-     color: #FFFFFF; 
-     text-shadow: 0 0px 1px rgba(0, 0, 0, 0.7); 
+	font-weight: bold;
+	background-color: #0A7ECA; 
+	background-image: -moz-linear-gradient(center top , #4AB0DD, #0A7ECA); 
+	background-repeat: repeat-x; 
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); 
+	color: #FFFFFF; 
+	text-shadow: 0 0px 1px rgba(0, 0, 0, 0.7); 
 }
 
 .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { 
     background-color: #0A7ECA; color: #FFFFFF; 
+}
+
+.btn.previsu, .btn.crop{
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#4AB0DD), to(#0A7ECA));
+	background: -webkit-linear-gradient(#4AB0DD, #0A7ECA);
+	background: -moz-linear-gradient(#4AB0DD, #0A7ECA);
+	background: -ms-linear-gradient(#4AB0DD, #0A7ECA);
+	background: -o-linear-gradient(#4AB0DD, #0A7ECA);
+	background: linear-gradient(#4AB0DD, #0A7ECA);
+}
+
+.btn.previsu:hover, .btn.crop:hover{
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#0A7ECA), to(#0A7ECA));
+	background: -webkit-linear-gradient(#0A7ECA, #0A7ECA);
+	background: -moz-linear-gradient(#0A7ECA, #0A7ECA);
+	background: -ms-linear-gradient(#0A7ECA, #0A7ECA);
+	background: -o-linear-gradient(#0A7ECA, #0A7ECA);
+	background: linear-gradient(#0A7ECA, #0A7ECA);
 }
 
  
