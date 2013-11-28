@@ -22,16 +22,29 @@
                                     </a>
 <?php
             if ($page->getMeta("rewriting") != "") {
-                if ($page->getGabarit()->getMake_hidden()
-                    || $this->utilisateur->get("niveau") == "solire"
-                    || !$page->getMeta("visible")
+                if ($page->getMeta('rewriting') != ''
+                    && ($this->utilisateur->get("niveau") == "solire"
+                        || $page->getGabarit()->getMake_hidden() == 1
+                        || $page->getMeta('visible') == 0
+                    )
                 ) {
+                    if (($page->makeHidden && $page->getMeta('visible') == 1)
+                        || ($page->makeVisible && $page->getMeta('visible') == 0)
+                    ) {
 ?>
-                                    <a class="btn btn-small <?php echo $page->getMeta("visible") > 0 ? 'btn-success' : 'btn-default'; ?> visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta("visible") > 0 ? 'invisible' : 'visible' ) ?> sur le site">
-                                        <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta("id_version"); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta("id"); ?>-<?php echo $page->getMeta("id_version"); ?>" <?php echo ($page->getMeta("visible") > 0 ? ' checked="checked"' : '') ?> />
-                                        <i class="<?php echo $page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close'; ?>"></i>
+                                    <a class="btn btn-small <?php echo $page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default'; ?> visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta('visible') > 0 ? 'invisible' : 'visible' ) ?> sur le site">
+                                        <input type="checkbox" value="<?php echo $page->getMeta("id"); ?>|<?php echo $page->getMeta('id_version'); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta('id'); ?>-<?php echo $page->getMeta('id_version'); ?>" <?php echo ($page->getMeta('visible') > 0 ? ' checked="checked"' : '') ?> />
+                                        <i class="<?php echo $page->getMeta('visible') > 0 ? 'icon-eye-open' : 'icon-eye-close'; ?>"></i>
                                     </a>
 <?php
+                    } else {
+?>
+                                    <span class="btn btn-small disabled <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?>" title="Vous n'avez pas les droits pour exécuter cette action" style="cursor:not-allowed;">
+                                        <i class="<?php echo ($page->getMeta('visible') > 0 ? 'icon-eye-open' : 'icon-eye-close') ?>"></i>
+                                    </span>
+
+<?php
+                    }
                 }
             }else {
                 if (count($this->versions) > 1) {
@@ -108,12 +121,14 @@
         $page = $this->pages[BACK_ID_VERSION];
 
         if ($page->getMeta("rewriting") != '') {
-            if ($page->getGabarit()->getMake_hidden()
-                || $this->utilisateur->get('niveau') == 'solire'
-                || !$page->getMeta('visible')
+            if ($this->utilisateur->get("niveau") == "solire"
+                || ($page->makeHidden && $page->getMeta('visible') == 1)
+                || ($page->makeVisible && $page->getMeta('visible') == 0)
             ) {
 ?>
-                                    <dt>Gérer la visibité :</dt><br /><dd>
+                                    <dt>Gérer la visibité :</dt>
+                                    <br />
+                                    <dd>
                                         <div class="btn-group">
                                             <a title="<?php echo $version['nom']; ?>" class="btn btn-default btn-small">
                                                 <img src="app/back/img/flags/png/<?php echo strtolower($this->mainVersions[$page->getMeta("id_version")]["suf"]); ?>.png" alt="<?php echo $this->mainVersions[$page->getMeta("id_version")]["nom"]; ?>" />
@@ -123,12 +138,13 @@
                                                 <i class="<?php echo $page->getMeta("visible") > 0 ? 'icon-eye-open' : 'icon-eye-close'; ?>"></i>
                                             </a>
                                         </div>
+                                    </dd>
+                                    <br />
+                                    <br />
 <?php
             }
         }
 ?>
-                                    <br />
-                                    <br />
                                     <dt>Editer une autre page :</dt>
                                     <br />
                                     <dd>

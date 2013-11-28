@@ -41,7 +41,8 @@ class Board extends \Slrfw\Datatable\Datatable {
      */
     protected $_utilisateur;
 
-    public function start() {
+    public function start()
+    {
 
         foreach ($this->_versions as $version) {
             if (BACK_ID_VERSION == $version["id"]) {
@@ -52,14 +53,16 @@ class Board extends \Slrfw\Datatable\Datatable {
         parent::start();
     }
 
-    protected function beforeRunAction() {
+    protected function beforeRunAction()
+    {
         parent::beforeRunAction();
         if (count($this->_versions) == 1) {
             unset($this->config["columns"][count($this->config["columns"]) - 2]);
         }
     }
 
-    public function datatableAction() {
+    public function datatableAction()
+    {
         $fieldGabaritTypeKey = \Slrfw\Tools::multidimensional_search($this->config["columns"], array("name" => "id_gabarit", "filter_field" => "select"));
         foreach ($this->_gabarits as $gabarit) {
             $idsGabarit[] = $gabarit["id"];
@@ -75,7 +78,8 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @param utilisateur $utilisateur Utilisateur courant
      * @return void
      */
-    public function setUtilisateur($utilisateur) {
+    public function setUtilisateur($utilisateur)
+    {
         $this->_utilisateur = $utilisateur;
     }
 
@@ -85,11 +89,10 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @param array $versions versions disponibles
      * @return void
      */
-    public function setVersions($versions) {
+    public function setVersions($versions)
+    {
         $this->_versions = $versions;
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * Défini les gabarits
@@ -97,19 +100,21 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @param array $gabarits tableau des gabarits
      * @return void
      */
-    public function setGabarits($gabarits) {
+    public function setGabarits($gabarits)
+    {
         $this->_gabarits = $gabarits;
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * Construit la colonne d'action
      *
      * @param array $data Ligne courante de donnée
      * @return string Html des actions
+     * @hook back/ pagevisible Pour autoriser / interdire la modification de la
+     * visibilité d'une page
      */
-    public function buildAction(&$data) {
+    public function buildAction(&$data)
+    {
         $actionHtml = '<div class="btn-group">';
 
         if (($this->_utilisateur != null
@@ -121,28 +126,52 @@ class Board extends \Slrfw\Datatable\Datatable {
                                 <i class="icon-pencil"></i>
                             </a>';
         }
-        if (($this->_utilisateur->get("niveau") == "solire"
-            || $this->_gabarits[$data["id_gabarit"]]["make_hidden"]
-            || $data["visible"] == 0)
-            && $data["rewriting"] != ""
-        ) {
-            $actionHtml .= '<a class="btn btn-small ' . ($data["visible"] > 0 ? 'btn-success' : 'btn-default' ) . ' visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">
-                                <input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>
-                                <i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close') . '"></i>
-                            </a>';
+
+        $hook = new \Slrfw\Hook();
+        $hook->setSubdirName('back');
+
+        $hook->permission     = null;
+        $hook->utilisateur    = $this->_utilisateur;
+        $hook->visible        = $data["visible"] == 0 ? 1 : 0;
+        $hook->ids            = $data['id'];
+
+        $hook->exec('pagevisible');
+
+        /**
+         * On récupère la permission du hook,
+         * on interdit uniquement si la variable a été modifié à false.
+         */
+        if ($hook->permission === false) {
+            $permission = false;
+        } else {
+            $permission = true;
         }
 
-        if($data["suppr"] == 1) {
-            $actionHtml = '<a href="#" class="btn btn-small btn-warning supprimer" title="Supprimer">
-                                <i class="icon-eye-open"></i>
-                           </a>';
+        if ($data["rewriting"] != ""
+            && ($this->_utilisateur->get("niveau") == "solire"
+                || $this->_gabarits[$data["id_gabarit"]]["make_hidden"]
+                || $data["visible"] == 0
+            )
+        ) {
+            if ($permission) {
+                $actionHtml .= '<a class="btn btn-small ' . ($data["visible"] > 0 ? 'btn-success' : 'btn-default' ) . ' visible-lang"  title="Rendre \'' . $data["titre"] . '\' ' . ($data["visible"] > 0 ? 'invisible' : 'visible' ) . ' sur le site">'
+                             . '<input type="checkbox" value="' . $data["id"] . '|' . $data["id_version"] . '" style="display:none;" class="visible-lang-' . $data["id"] . '-' . $data["id_version"] . '" ' . ($data["visible"] > 0 ? ' checked="checked"' : '') . '/>'
+                             . '<i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close') . '"></i>'
+                             . '</a>';
+            } else {
+                $actionHtml .= '<span class="btn btn-small disabled ' . ($data["visible"] > 0 ? 'btn-success' : 'btn-default') . '" title="Vous n\'avez pas les droits pour exécuter cette action" style="cursor:not-allowed;">'
+                             . '<i class="' . ($data["visible"] > 0 ? 'icon-eye-open' : 'icon-eye-close') . '"></i>'
+                             . '</span>';
+            }
+        }
+
+        if ($data["suppr"] == 1) {
+            $actionHtml = '<a href="#" class="btn btn-small btn-warning supprimer" title="Supprimer"><i class="icon-eye-open"></i></a>';
         }
 
         $actionHtml .= '</div>';
         return $actionHtml;
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * Construit la colonne de traduction
@@ -150,7 +179,8 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @param array $data Ligne courante de donnée
      * @return string Html de traduction
      */
-    public function buildTraduit(&$data) {
+    public function buildTraduit(&$data)
+    {
         if($data["suppr"] == 1) {
             return "";
         }
@@ -177,9 +207,6 @@ class Board extends \Slrfw\Datatable\Datatable {
         return $actionHtml;
     }
 
-
-    // --------------------------------------------------------------------
-
     /**
      * Permet de gérer les pages supprimer (Visuel + action)
      *
@@ -188,7 +215,8 @@ class Board extends \Slrfw\Datatable\Datatable {
      * @param array $row Ligne courante de donnée affiché (NUM)
      * @return void
      */
-    public function disallowDeleted($aRow, $rowAssoc, &$row) {
+    public function disallowDeleted($aRow, $rowAssoc, &$row)
+    {
         $row["DT_RowClass"] = "";
         if ($aRow["suppr"] == 1) {
             $keyAction = array_search("visible_1", array_keys($rowAssoc));
