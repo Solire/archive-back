@@ -80,6 +80,10 @@ class Media extends Main {
             $serverpath = $this->_upload_path . DS . $file['id_gab_page']
                         . DS . $file['rewriting'];
 
+            if (!file_exists($serverpath)) {
+                continue;
+            }
+
             $file['class'] = 'hoverprevisu vignette';
 
             if (array_key_exists($ext, \Slrfw\Model\fileManager::$_extensions['image'])) {
