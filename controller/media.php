@@ -72,7 +72,8 @@ class Media extends Main {
             $this->_files = $this->_fileManager->getList($this->_page->getMeta('id'), 0, $search, $orderby, $sens);
         }
 
-        foreach ($this->_files as &$file) {
+        $this->_view->files = array();
+        foreach ($this->_files as $file) {
             $ext = strtolower(array_pop(explode('.', $file['rewriting'])));
             $prefixPath = $this->_api['id'] == 1 ? '' : '..' . DS;
             $file['path'] = $file['id_gab_page'] . DS . $file['rewriting'];
@@ -100,9 +101,9 @@ class Media extends Main {
                 $file['path_mini']  = 'app/back/img/filetype/' . $ext . '.png';
             }
             $file['poids'] = \Slrfw\Tools::format_taille($file['taille']);
-        }
 
-        $this->_view->files = $this->_files;
+            $this->_view->files[] = $file;
+        }
     }
 
     /**
