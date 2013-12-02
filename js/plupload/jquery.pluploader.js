@@ -253,8 +253,6 @@
                     }
                 }
 
-                console.log(parentDom);
-
                 if (parentDom != null) {
                     parentDomId = parentDom.attr('id');
                     if (parentDomId == null || parentDomId == ''
@@ -330,8 +328,6 @@
          */
         function _createUploader(base, paramsPlupload, params)
         {
-            console.log(paramsPlupload)
-
             var uploader = new plupload.Uploader(paramsPlupload);
 
             uploader.bind('Init', function(up, params2){
