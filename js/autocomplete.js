@@ -1,97 +1,111 @@
 var timer = null;
 
 $(function(){
-    $(".autocomplete-join").livequery(function(){
-        var $input = $(this);
-        $(this).autocomplete({
-            source: function( request, response ) {
-                var table = $input.parent().find("input.join-table").val();
-                var idField = $input.parent().find("input.join-id_field").val();
-                var labelField = $input.parent().find("input.join-label_field").val();
-                var queryFilter = $input.parent().find("input.join-query_filter").val();
-                var typeGabPage = $input.parent().find("input.join-type_gab_page").val();
-                var idGabPage = $("input[name='id_gab_page']").val();
-                var idVersion = $input.parents("form:first").find("input[name='id_version']").val();
+    var autocompleteParams = function(join, id_champ, sortBox, id_version, id_gab_page){
+            return {
+                source      : function(request, response) {
+                    var ids = [];
+                    $('[name="champ' + id_champ + '[]"]', sortBox).not(join).each(function(){
+                        var v = $(this).val();
+                        if (v !== '' && !isNaN(parseInt(v))) {
+                            ids.push(v);
+                        }
+                    });
 
-                $.getJSON(
-                    "back/page/autocompletejoin.html",
-                    {
-                        table : table,
-                        id_field : idField,
-                        id_version : idVersion,
-                        label_field : labelField,
-                        query_filter : queryFilter,
-                        type_gab_page : typeGabPage,
-                        id_gab_page : idGabPage,
-                        term : request.term
-                    }, function( data, status, xhr ) {
-                        response( data );
-                    })
-            },
-            minLength: 0,
-            select: function(e, ui) {
-                $(this).parent().find(".join").val(ui.item.id)
-            }
+                    $.getJSON(
+                        'back/page/autocompletejoin.html',
+                        {
+                            term         : request.term,
+                            ids          : ids,
+                            id_champ     : id_champ,
+                            id_version   : id_version,
+                            id_gab_page  : id_gab_page
+                        },
+                        function(data, status, xhr) {
+                            response(data);
+                        }
+                    );
+                },
+                minLength   : 0,
+                select      : function(e, ui) {
+                    $(this).next('.join').val(ui.item.id);
+                }
+            };
+        },
+        initAutocomplete = function() {
+            var form = $(this).parents('form'),
+                id_version = $('[name=id_version]', form).val(),
+                id_gab_page = $('[name=id_gab_page]', form).val(),
+                sortBox = $(this).parents('.sort-box'),
+                join = $(this).next('.join'),
+                id_champ = join.attr('name').match(/champ(\d+)\[\]/).pop();
 
-        }).focus( function() {
+            $(this).autocomplete(
+                autocompleteParams(join, id_champ, sortBox, id_version, id_gab_page)
+            ).prop(
+                'opentimer',
+                0
+            ).focus(function(){
+                var self = this,
+                    timer = $(this).prop('opentimer');
 
-            if (this.value == "")
-            {
-                clearTimeout(timer);
-                timer = setTimeout(function(){
-                    if ($input.val() == "")
-                    {
-                        $input.autocomplete('search', '');
-                    }
-                },220);
+                if (this.value == '') {
+                    clearTimeout(timer);
+                    timer = setTimeout(
+                        function(){
+                            if ($(self).val() == '') {
+                                $(self).autocomplete('search', '');
+                            }
+                        },
+                        220
+                    );
+                    $(this).prop('opentimer', timer);
+                }
+            }).keyup(function(){
+                $(this).next('.join').val('');
+            });
+        };
 
-            }
-        }).keyup(function(){
-            $(this).parent().find(".join").val('')
-        });
+    $('.autocomplete-join', this).each(initAutocomplete);
+
+    addBlocCallback.push(function(sortBox, clone){
+        $('.autocomplete-join', clone).each(initAutocomplete);
     });
 
-    $(".autocomplete-link").livequery(function(){
+    $('.autocomplete-link').livequery(function(){
         var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
-
-            $.getJSON(
-                "sitemap.xml?json=1&visible=0",
-                {
-                term : request.term
-                }, function( data, status, xhr ) {
-                response( data );
-                })
+                $.getJSON(
+                    'sitemap.xml?json=1&visible=0',
+                    {
+                    term : request.term
+                    }, function( data, status, xhr ) {
+                    response( data );
+                    })
             },
             minLength: 0,
             select: function(e, ui) {
                 $input.val(ui.item.path)
                 return false;
             }
-            }).focus( function() {
-
-            if (this.value == "")
-            {
-            clearTimeout(timer);
-            timer = setTimeout(function(){
-                if ($input.val() == "")
-                {
-                $input.autocomplete('search', '');
-                }
-                },220);
-
+        }).focus(function() {
+            if (this.value == "") {
+                clearTimeout(timer);
+                timer = setTimeout(
+                    function(){
+                        if ($input.val() == '') {
+                            $input.autocomplete('search', '');
+                        }
+                    },
+                    220
+                );
             }
-            }).data( "autocomplete" )._renderItem = function( ul, item ) {
+        }).data( "autocomplete" )._renderItem = function( ul, item ) {
             return $( "<li></li>" )
             .data( "item.autocomplete", item )
-//            .append( "<a>" + item.title + "<br>" + item.path + "</a>" )
             .append( "<a><span" + (item.visible == "1" ? '' : ' style="opacity: 0.6;"' ) + ">" + item.title + "</span></a>" )
             .appendTo( ul );
         };
     });
-
-
-
-
 });

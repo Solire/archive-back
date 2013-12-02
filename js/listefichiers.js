@@ -1,17 +1,18 @@
 var tree, uploader, oTable = null, nomdesobjets='fichier';
 var basehref = ''
 var extensionsImage = ['jpg', 'jpeg', 'gif', 'png'];
-var image, contenu, resid = null, restype, currentData;
-var oTable = null;
-
-var orderby = {
-    champ:"date_crea",
-    sens:"desc"
-};
-var orderstates = ["", "asc", "desc", ""];
-var orderclasses = ["ui-icon-carat-2-n-s", "ui-icon-carat-1-n", "ui-icon-carat-1-s", "ui-icon-carat-2-n-s"]
-
-
+var image,
+    contenu,
+    resid = null,
+    restype,
+    currentData,
+    oTable = null
+    orderby = {
+        champ:"date_crea",
+        sens:"desc"
+    },
+    orderstates = ["", "asc", "desc", ""],
+    orderclasses = ["ui-icon-carat-2-n-s", "ui-icon-carat-1-n", "ui-icon-carat-1-s", "ui-icon-carat-2-n-s"];
 
 /**
  * Suppression des fichiers
@@ -40,7 +41,7 @@ $(".delete-file").live("click", function (e) {
 
     }
 
-    myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);    
+    myModal.confirm(heading, question, cancelButtonTxt, okButtonTxt, callback);
 })
 
 
@@ -51,7 +52,7 @@ function reloadDatatable(idGabPage) {
         $("#colright").hide()
     }
     var oTable = eval("oTable_" + $("table.display").attr("id").substr(8));
-    
+
     var oSettings = oTable.fnSettings();
     if(oSettings.sAjaxSource.indexOf("&filter[]") != -1)
         oSettings.sAjaxSource = oSettings.sAjaxSource.substr(0, oSettings.sAjaxSource.indexOf("&filter[]"))
@@ -60,10 +61,7 @@ function reloadDatatable(idGabPage) {
 }
 
 
-$(function () {
-
-
-
+$(function() {
     /**
      * Titre trop long (scroll)
      */
@@ -172,97 +170,88 @@ $(function () {
 
 
     //////////////////// PLUPLOAD ////////////////////
-    uploader = new plupload.Uploader({
-        runtimes : 'gears,html5,silverlight,flash,html4',
-        browse_button : 'pickfiles',
+    $('#pickfiles').pluploader({
+        basehref : basehref,
+        drop_element : '#colright',
+        runtimes: 'gears,html5,silverlight,flash,html4',
         max_file_size : '1000mb',
         chunk_size : '2mb',
-        url : basehref + 'back/media/upload.html',
-        flash_swf_url : basehref + 'back/plupload/plupload.flash.swf',
-        silverlight_xap_url : basehref + 'back/plupload/plupload.silverlight.xap',
+        url                 : basehref + 'back/media/upload.html',
+        flash_swf_url       : 'app/back/js/plupload/plupload.flash.swf',
+        silverlight_xap_url : 'app/back/js/plupload/plupload.silverlight.xap',
         filters : [
-        {
-            title : "Image files",
-            extensions : "jpg,jpeg,gif,png"
-        },
+            {
+                title : "Image files",
+                extensions : "jpg,jpeg,gif,png"
+            },
 
-        {
-            title : "Zip files",
-            extensions : "zip,rar,bz2"
-        },
+            {
+                title : "Zip files",
+                extensions : "zip,rar,bz2"
+            },
 
-        {
-            title : "Adobe",
-            extensions : "pdf,eps,psd,ai,indd"
-        },
-        {
-            title : "Fichiers vidéos",
-            extensions : "mp4"
-        }
+            {
+                title : "Adobe",
+                extensions : "pdf,eps,psd,ai,indd"
+            },
+            {
+                title : "Fichiers vidéos",
+                extensions : "mp4"
+            }
         ],
-        drop_element : 'colright',
         unique_names : false,
-        multiple_queues : true
-    });
+        multiple_queues : true,
+        FilesAdded : function(base, up, files) {
+            if (restype == 'page') {
+                $.each(files, function(i, file) {
+                    var tr, td;
+                    if (!file.error) {
+                        tr = $('<tr>').addClass("filenotused");
+                        $('<td>', {
+                            colspan : 4
+                        }).html(file.name + '<div class="progressbar"></div>').appendTo(tr);
+                        file.tr = tr;
+                    }
+                });
 
-    uploader.bind('Init', function(up, params) {
-        $('#currentruntime').text("Current runtime: " + params.runtime);
-    });
+                $.each(files, function(i, file) {
+                    if (i==0)
+                        file.tr.prependTo($('#foldercontent'));
+                    else
+                        file.tr.insertAfter(files[i-1].tr);
+                });
 
-    uploader.init();
+                $('.progressbar').progressbar({
+                    value: 0
+                });
 
-    uploader.bind('FilesAdded', function(up, files) {
-        if (restype == "page") {
-            $.each(files, function(i, file) {
-                var tr, td;
-                if(!file.error) {
-                    tr = $('<tr>').addClass("filenotused");
-                    $('<td>', {
-                        colspan : 4
-                    }).html(file.name + '<div class="progressbar"></div>').appendTo(tr);
-                    file.tr = tr;
-                }
-            });
-
-            $.each(files, function(i, file) {
-                if (i==0)
-                    file.tr.prependTo($('#foldercontent'));
-                else
-                    file.tr.insertAfter(files[i-1].tr);
-            });
-
-            $('.progressbar').progressbar({
-                value: 0
-            });
-
+                up.refresh();
+                up.start();
+            }
+            else {
+                up.splice(0, uploader.files.length);
+            }
+        },
+        UploadProgress : function(base, up, file) {
+            $(file.tr, '.progressbar').progressbar("value", file.percent);
+        },
+        Error : function(up, err) {
+            err.file.error = true;
             up.refresh();
-            up.start();
-        }
-        else
-            uploader.splice(0, uploader.files.length);
-    });
+        },
+        FileUploaded : function(base, up, file, info) {
+            $(file.tr, '.progressbar').progressbar("destroy");
 
-    uploader.bind('UploadProgress', function(up, file) {
-        $(file.tr, '.progressbar').progressbar("value", file.percent);
-    });
+            var response = $.parseJSON(info.response);
 
-    uploader.bind('Error', function(up, err) {
-        err.file.error = true;
-        up.refresh(); // Reposition Flash/Silverlight
-    });
-
-    uploader.bind('FileUploaded', function(up, file, info) {
-        $(file.tr, '.progressbar').progressbar("destroy");
-
-        var response = $.parseJSON(info.response);
-
-        if(response.status != "error") {
-            oTable.fnReloadAjax();
+            if(response.status != "error") {
+                oTable.fnReloadAjax();
+            }
         }
     });
 
-    image = $(null)
-    
+    image = $(null);
+
     $('.previsu').live('click', function(e) {
         e.preventDefault();
         image = $(this);
@@ -276,15 +265,12 @@ $(function () {
                 myModal.message("Prévisualisation", $(this), "Fermer", false, true)
             });
         } else {
-            
+
         }
     });
-
-    
 
     $('#search').keyup(function(){
         $('#node_' + resid + ' > a').click()
     });
-
-
 });
+

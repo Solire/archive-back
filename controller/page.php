@@ -453,11 +453,17 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/tinymce-4.0.5/jquery.solire.tinymce.js');
 
         $this->_javascript->addLibrary('back/js/autocomplete.js');
-        $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
+        $this->_javascript->addLibrary('back/js/plupload/plupload.full.js');
+        $this->_javascript->addLibrary('back/js/plupload/jquery.pluploader.min.js');
         $this->_javascript->addLibrary('back/js/formgabarit.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.tipsy.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.qtip.min.js');
+
+        $this->_javascript->addLibrary('back/js/gmap.js');
+        $this->_javascript->addLibrary('back/js/crop.js');
+        $this->_javascript->addLibrary('back/js/datafile.js');
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
+
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
         $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
@@ -894,51 +900,71 @@ class Page extends Main
         $this->_view->enable(false);
         $this->_view->main(false);
 
-        $json = array();
-        $term = $_REQUEST['term'];
-        $idField = $_REQUEST['id_field'];
-        $idGabPage = $_REQUEST['id_gab_page'];
-        $typeGabPage = $_REQUEST['type_gab_page'];
-        $queryFilter = str_replace('[ID]', $idGabPage, $_REQUEST['query_filter']);
-        $table = $_REQUEST['table'];
-        $labelField = '';
-        $lang = $_REQUEST['id_version'];
-        $gabPageJoin = '';
+        $idChamp    = $_GET['id_champ'];
+        $idVersion  = $_GET['id_version'];
+        $idGabPage  = $_GET['id_gab_page'];
+        $term       = $_GET['term'];
+        $response   = array();
+
+        $query  = 'SELECT code_champ_param, value'
+                . ' FROM gab_champ_param_value'
+                . ' WHERE id_champ = ' . $idChamp;
+        $params = $this->_db->query($query)->fetchAll(
+            \PDO::FETCH_UNIQUE | \PDO::FETCH_COLUMN);
+
+        $idField        = $params['TABLE.FIELD.ID'];
+        $typeGabPage    = $params['TYPE.GAB.PAGE'];
+        $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
+        $table          = $params['TABLE.NAME'];
+        $labelField     = $params['TABLE.FIELD.LABEL'];
+        $gabPageJoin    = '';
 
 
-        $filterVersion = '`' . $table . '`.id_version = ' . $lang;
-        if (isset($_REQUEST['no_version'])
-            && $_REQUEST['no_version'] == 1
-            || ($_REQUEST['table'] == 'gab_page')
+        $filterVersion = '`' . $table . '`.id_version = ' . $idVersion;
+        if ($table == 'gab_page'
             || !$typeGabPage
         ) {
             $filterVersion = 1;
         } else {
-            $gabPageJoin = 'INNER JOIN gab_page ON visible = 1'
-                    . ' AND suppr = 0'
-                    . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` '
-                    . ($filterVersion != 1 ? 'AND gab_page.id_version = ' . $lang : '');
+            $gabPageJoin    = 'INNER JOIN gab_page ON visible = 1'
+                            . ' AND suppr = 0'
+                            . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` ';
+
+            if ($filterVersion != 1) {
+                $gabPageJoin   .=  'AND gab_page.id_version = ' . $idVersion;
+            }
         }
 
-        if (substr($_REQUEST['label_field'], 0, 9) == 'gab_page.') {
-            $labelField = $_REQUEST['label_field'];
-        } else {
-            $labelField = '`' . $table . '`.' . $_REQUEST['label_field'];
+        if (substr($labelField, 0, 9) != 'gab_page.') {
+            $labelField = '`' . $table . '`.`' . $labelField . '`';
         }
 
         $quotedTerm = $this->_db->quote('%' . $term . '%');
-        $sql    = 'SELECT `' . $table . '`.`' . $idField . '` id, ' . $labelField . ' label'
-                . ' FROM `' . $table . '`'
-                . ' ' . $gabPageJoin
+        $query  = 'SELECT `' . $table . '`.`' . $idField . '` id,'
+                . ' ' . $labelField . ' `label`'
+                . ' FROM `' . $table . '`' . ' ' . $gabPageJoin
                 . ' WHERE ' . $filterVersion . ' '
-                . ($queryFilter != '' ? 'AND (' . $queryFilter . ')' : '')
                 . ' AND ' . $labelField . '  LIKE ' . $quotedTerm;
-        $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if ($queryFilter != '') {
+            $query .= ' AND (' . $queryFilter . ')';
+        }
+
+        if (isset($_GET['ids'])
+            && is_array($_GET['ids'])
+            && count($_GET['ids']) > 0
+        ) {
+            $ids = $_GET['ids'];
+            $query .= ' AND `' . $table . '`.`' . $idField . '`'
+                    . ' NOT IN (' . implode(',', $ids) . ')';
+        }
+
+        $response = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
         header('Cache-Control: no-cache, must-revalidate');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Content-type: application/json');
-        echo json_encode($json);
+        echo json_encode($response);
     }
 
     /**
@@ -952,7 +978,7 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST['term'];
+        $term = $_GET['term'];
         $table = 'old_link';
         $labelField = '`' . $table . '`.`link`';
 

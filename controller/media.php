@@ -37,7 +37,8 @@ class Media extends Main {
         $this->_javascript->addLibrary('back/js/jquery/jquery.hotkeys.js');
         $this->_javascript->addLibrary('back/js/jstree/jquery.jstree.js');
         //$this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
-        $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
+        $this->_javascript->addLibrary('back/js/plupload/plupload.full.js');
+        $this->_javascript->addLibrary('back/js/plupload/jquery.pluploader.min.js');
         $this->_javascript->addLibrary('back/js/listefichiers.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.scroller-1.0.min.js');
 
