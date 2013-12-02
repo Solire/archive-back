@@ -926,7 +926,7 @@ class Page extends Main
         ) {
             $filterVersion = 1;
         } else {
-            $gabPageJoin    = 'INNER JOIN gab_page ON visible = 1'
+            $gabPageJoin    = ' INNER JOIN gab_page ON visible = 1'
                             . ' AND suppr = 0'
                             . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` ';
 
@@ -941,9 +941,26 @@ class Page extends Main
 
         $quotedTerm = $this->_db->quote('%' . $term . '%');
         $query  = 'SELECT `' . $table . '`.`' . $idField . '` id,'
-                . ' ' . $labelField . ' `label`'
-                . ' FROM `' . $table . '`' . ' ' . $gabPageJoin
-                . ' WHERE ' . $filterVersion . ' '
+                . ' ' . $labelField . ' `label`';
+
+        /**
+         * Si gab_page
+         */
+        if ($gabPageJoin != '' || $table == 'gab_page') {
+            $query .= ',gab_gabarit.label gabarit_label';
+        }
+
+        $query .= ' FROM `' . $table . '`'
+                . $gabPageJoin;
+
+        /**
+         * Si gab_page
+         */
+        if ($gabPageJoin != '' || $table == 'gab_page') {
+            $query .= ' INNER JOIN gab_gabarit ON gab_gabarit.id = gab_page.id_gabarit';
+        }
+
+        $query .= ' WHERE ' . $filterVersion . ' '
                 . ' AND ' . $labelField . '  LIKE ' . $quotedTerm;
 
         if ($queryFilter != '') {
@@ -959,12 +976,21 @@ class Page extends Main
                     . ' NOT IN (' . implode(',', $ids) . ')';
         }
 
-        $response = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $pagesFound = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $pages = array();
+        foreach ($pagesFound as $page) {
+            $pages[] = array(
+                'label' => $page['label'],
+                'id' => $page['id'],
+                'gabarit_label' => $page['gabarit_label'],
+            );
+        }
 
         header('Cache-Control: no-cache, must-revalidate');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Content-type: application/json');
-        echo json_encode($response);
+        echo json_encode($pages);
     }
 
     /**

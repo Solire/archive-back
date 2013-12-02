@@ -70,8 +70,6 @@ var myModal = {
         }
 
     }
-
-
 }
 
 function rescale(){

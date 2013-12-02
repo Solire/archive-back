@@ -6,8 +6,6 @@ var extensionsImage = ['jpg', 'jpeg', 'gif', 'png'],
     sortBtnClone,
     addBlocCallback = [],
     addBlocCalling = function(sortBox, clone) {
-        console.log(addBlocCallback)
-
         $.each(addBlocCallback, function(ii, elmt){
             elmt(sortBox, clone);
         });

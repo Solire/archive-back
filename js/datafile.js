@@ -54,6 +54,7 @@ $(function(){
         url                 : basehref + 'back/media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
         flash_swf_url       : basehref + 'app/back/js/plupload/plupload.flash.swf',
         silverlight_xap_url : basehref + 'app/back/js/plupload/plupload.silverlight.xap',
+        drop_element        : '#uploader_popup',
         filters             : [
             {
                 title: 'Image files',

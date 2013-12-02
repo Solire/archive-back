@@ -1,9 +1,11 @@
+var openCropDialog;
 $(function(){
     /**
      * Redimensionnement et recadrage des images
+     *
+     * Create variables (in this scope) to hold the API and image size
      */
-    // Create variables (in this scope) to hold the API and image size
-    var jcrop_api, boundx, boundy, $inputFile, $inputAlt;
+    var jcrop_api, boundx, boundy, $inputFile, $inputAlt, crop = false;
 
     function updatePreview(c)
     {
@@ -19,7 +21,8 @@ $(function(){
                 marginTop: '-' + Math.round(ry * c.y) + 'px'
             });
 
-            $('.form-crop-submit').removeClass('disabled')
+            crop = true;
+//            $('.form-crop-submit').removeClass('disabled')
 
             updateCoords(c);
         }
@@ -81,8 +84,12 @@ $(function(){
     });
 
     $('.form-crop-submit').bind('click', function() {
-        if ($(this).hasClass('disabled'))
+        $inputAlt.val($('#image-alt').val());
+
+        if (!crop) {
+            $('#modalCrop').modal('hide');
             return false;
+        }
         var action = 'back/' + $('.form-crop').attr('action');
         var data = $('.form-crop').serialize();
         $.post(action, data, function(response) {
@@ -90,7 +97,7 @@ $(function(){
             $inputFile.val(response.filename);
             $inputFile.siblings('.previsu').attr('href', response.path);
         }, 'json');
-        $inputAlt.val($('#image-alt').val());
+
     });
 
     $('.crop').live('click', function(e) {
@@ -98,7 +105,7 @@ $(function(){
         openCropDialog.call(this);
     });
 
-    var openCropDialog = function(){
+    openCropDialog = function(){
         var aspectRatio = 0,
             visuelId,
             fieldset;
@@ -129,7 +136,8 @@ $(function(){
             src: src
         }).load(function() {
             $('div.loading-overlay').remove();
-            $('.form-crop-submit').addClass('disabled')
+            crop = false;
+//            $('.form-crop-submit').addClass('disabled');
 
             var minWidth = $inputFile.attr('data-min-width');
             var minHeight = $inputFile.attr('data-min-height');

@@ -42,7 +42,14 @@ $(function(){
 
             $(this).autocomplete(
                 autocompleteParams(join, id_champ, sortBox, id_version, id_gab_page)
-            ).prop(
+            ).data("autocomplete")._renderItem = function(ul, item) {
+                return $("<li></li>")
+                    .data("item.autocomplete", item)
+                    .append('<a><span>' + item.label + '</span><br /><span style="font-style:italic">&nbsp; > ' + item.gabarit_label + '</span></a>')
+                    .appendTo(ul);
+            };
+
+            $(this).prop(
                 'opentimer',
                 0
             ).focus(function(){
