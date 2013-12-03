@@ -280,10 +280,9 @@ $(function() {
 
     $('.previsu').live('click', function(e) {
         e.preventDefault();
-        image = $(this);
 
         var link = $(this).attr('href');
-        var ext = link.split('.').pop().toLowerCase();
+        var ext  = link.split('.').pop().toLowerCase();
         if ($.inArray(ext, extensionsImage) != -1) {
             $('<img>', {
                 'src': link
@@ -347,12 +346,19 @@ $(function() {
                 },
                 minLength: 0,
                 select: function(e, ui) {
+                    var previsu = $(this).parent().siblings('.previsu');
+
                     e.preventDefault();
 
-                    if ($(this).siblings('.previsu').length > 0)
-                        $(this).siblings('.previsu').attr('href', ui.item.path);
+                    if (previsu.length > 0) {
+                        previsu.attr('href', ui.item.path);
+                        previsu.show();
+                        $('.champ-image-size', previsu).text(ui.item.size);
+                        $('.champ-image-value', previsu).text(ui.item.value);
+                        $('.champ-image-vignette', previsu).attr('src', ui.item.vignette);
+                    }
+
                     $(this).val(ui.item.value);
-                    $(this).siblings('.previsu').show();
                     var ext = ui.item.path.split('.').pop();
                     var isImage = $.inArray(ext, extensionsImage) != -1;
                     if (isImage) {

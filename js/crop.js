@@ -116,7 +116,7 @@ $(function(){
         $('.wShow').html('');
         $('.hShow').html('');
 
-        var src = $(this).siblings('.previsu').attr('href');
+        var src = $(this).parent().siblings('.previsu').attr('href');
 
         $inputFile = $(this).siblings('.form-file');
 
