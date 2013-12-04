@@ -17,9 +17,7 @@ tinymce.init({
     height              :'290px',
     entity_encoding     : 'raw',
     plugins             : [
-        'advlist autolink lists link image charmap print preview anchor',
-        'searchreplace visualblocks fullscreen',
-        'insertdatetime media contextmenu paste'
+        'autolink link'
     ],
     menubar             : false,
     statusbar           : false,
