@@ -507,10 +507,6 @@ class Page extends Main
                 $page = $this->_gabaritManager->getPage($id_version,
                     BACK_ID_API, $id_gab_page);
 
-                if (!$page || $page->getGabarit()->getEditable() == 0) {
-                    $this->pageNotFound();
-                }
-
                 $this->_pages[$id_version] = $page;
 
                 $hook = new \Slrfw\Hook();
