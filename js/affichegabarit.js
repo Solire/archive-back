@@ -24,7 +24,8 @@ tinymce.init({
     toolbar             : 'insertfile undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image',
     document_base_url   : '../../../../',
     image_list          : 'back/media/autocomplete.html?tinyMCE',
-    link_list           : 'sitemap.xml?visible=0&json=1&onlylink=1&tinymce=1'
+    link_list           : 'sitemap.xml?visible=0&json=1&onlylink=1&tinymce=1',
+    content_css         : 'app/back/css/style-tinymce.css'
 });
 
 $(function() {

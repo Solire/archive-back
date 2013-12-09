@@ -592,7 +592,7 @@ class Page extends Main
              * Si le gabarit courant appartien à un des groupes personnalisés
              */
             if ($currentConfigPageModule['gabarits'] == '*'
-                || in_array($this->_page->getGabarit()->getId(), $currentConfigPageModule['gabarits'])
+                || in_array($this->_pages[1]->getGabarit()->getId(), $currentConfigPageModule['gabarits'])
             ) {
                 $indexPageList = $index;
                 $found = true;
