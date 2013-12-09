@@ -251,10 +251,20 @@ class Main extends \Slrfw\Controller
         $appList = \Slrfw\FrontController::getAppDirs();
         unset($config);
         foreach ($appList as $app) {
+           /**
+            * On recupere la configuration du module pages (Menu + liste)
+            *  En cherchant si une configuration a été définie pour l'api courante
+            * Sinon on récupère le fichier de configuration générale
+            */
             $path = new \Slrfw\Path(
-                $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+                $app['dir'] . DS . 'back/config/page-' . BACK_ID_API . '.cfg.php', \Slrfw\Path::SILENT
             );
-
+            if($path->get() == false) {
+                $path = new \Slrfw\Path(
+                    $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+                );
+            }
+            
             if ($path->get() == false) {
                 continue;
             }
