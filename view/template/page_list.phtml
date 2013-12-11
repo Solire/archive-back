@@ -62,7 +62,7 @@
 <?php
                 }
                 $nbChild = $page->getMeta('nbre_enfants');
-                if (!empty($nbChild)) {
+                if (!empty($nbChild) || !empty($page->getMeta('aff_enfants'))) {
                     $displayChild = $page->getMeta('aff_enfants');
                     if (empty($displayChild)) {
                         $displayChild = $page->getMeta('nbre_enfants');

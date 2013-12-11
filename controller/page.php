@@ -224,9 +224,9 @@ class Page extends Main
             && $currentConfigPageModule['noChild'] === true
         ) {
             $this->_view->noChild = true;
-            if (isset($currentConfigPageModule['urlRedir'])) {
-                $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
-            }
+        }
+        if (isset($currentConfigPageModule['urlRedir'])) {
+            $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
         }
 
         /**
