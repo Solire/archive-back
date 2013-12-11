@@ -105,6 +105,14 @@ $(function(){
         openCropDialog.call(this);
     });
 
+    $('.solire-js-empty').live('click', function(e) {
+        e.preventDefault();
+        $(this).siblings('input[type=text]').val('');
+        $(this).hide();
+        $(this).siblings('.crop').hide();
+        $(this).parent().siblings('.previsu').hide();
+    });
+
     openCropDialog = function(){
         var aspectRatio = 0,
             visuelId,

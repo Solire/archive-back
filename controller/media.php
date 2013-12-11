@@ -272,6 +272,11 @@ class Media extends Main {
                 $id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir,
                 $apercuDir);
 
+            if ($json['status'] == 'error') {
+                echo json_encode($json);
+                exit();
+            }
+
             $json['size'] = \Slrfw\Tools::format_taille($json['size']);
             if (isset($json['minipath'])) {
                 $json['minipath'] = $json['minipath'];
@@ -304,10 +309,14 @@ class Media extends Main {
 
             $json = $this->_fileManager->uploadGabPage($this->_upload_path, 0,
                 $id_temp, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
+
+
 //            $json['minipath']   = $json['minipath'];
-            $json['path']       = $json['path'];
-            $json['size']       = \Slrfw\Tools::format_taille($json['size']);
-            $json['id_temp']    = $id_temp;
+            if ($json['status'] == 'success') {
+                $json['path']       = $json['path'];
+                $json['size']       = \Slrfw\Tools::format_taille($json['size']);
+                $json['id_temp']    = $id_temp;
+            }
         }
 
         if ($json['status'] == 'error') {

@@ -354,8 +354,10 @@ $(function() {
                     var isImage = $.inArray(ext, extensionsImage) != -1;
                     if (isImage) {
                         $(this).siblings('.crop').show();
+                        $(this).siblings('.solire-js-empty').show();
                     } else {
                         $(this).siblings('.crop').hide();
+                        $(this).siblings('.solire-js-empty').hide();
                     }
 
                     if (previsu.length > 0) {

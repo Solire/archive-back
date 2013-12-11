@@ -91,8 +91,10 @@
                 } else {
 ?>
 <?php
-                    if ($this->utilisateur->get('niveau') == 'solire'
-                        || $page->sortable
+                    if (count($this->pages) > 1
+                        && ($this->utilisateur->get('niveau') == 'solire'
+                            || $page->sortable
+                        )
                     ) {
 ?>
                                                 <a href="#" class="btn btn-info btn-small sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-retweet"></i></a>
