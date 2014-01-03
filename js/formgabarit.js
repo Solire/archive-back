@@ -52,7 +52,7 @@ function verifieForm(elmt){
                 testdonnee = val.length > 2;
             else{
                 if(typeDonnee == 'notnul')
-                    testdonnee = (val != '' && val != '0');
+                    testdonnee = (val != '' && val != null && val != '0');
             }
         }
 
