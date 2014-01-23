@@ -744,7 +744,7 @@ class Page extends Main
             $res = $this->_gabaritManager->save($_POST);
 
             if ($res === null) {
-                $this->pageNotFound();
+                throw new Exception('Problème à l\'enregistrement');
             }
 
             if ($res === false) {
