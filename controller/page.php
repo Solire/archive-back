@@ -911,6 +911,7 @@ class Page extends Main
         $idField        = $params['TABLE.FIELD.ID'];
         $typeGabPage    = $params['TYPE.GAB.PAGE'];
         $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
+        $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
         $table          = $params['TABLE.NAME'];
         $labelField     = $params['TABLE.FIELD.LABEL'];
         $gabPageJoin    = '';
