@@ -174,6 +174,7 @@ $(function() {
         basehref : basehref,
         drop_element : '#colright',
         runtimes: 'gears,html5,silverlight,flash,html4',
+        multi_selection     : true,
         max_file_size : '1000mb',
         chunk_size : '2mb',
         url                 : basehref + 'back/media/upload.html',

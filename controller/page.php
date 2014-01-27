@@ -744,7 +744,7 @@ class Page extends Main
             $res = $this->_gabaritManager->save($_POST);
 
             if ($res === null) {
-                $this->pageNotFound();
+                throw new Exception('Problème à l\'enregistrement');
             }
 
             if ($res === false) {
@@ -1353,9 +1353,32 @@ class Page extends Main
          * Liste des début de label à regrouper pour les boutons de création
          */
         $groupIdentifications = array('Rubrique ', 'Sous rubrique ', 'Page ');
+        
+        $groups = $currentConfigPageModule['boutons']['groups'];
+        
+        $this->_view->gabaritsBtn = array();
+        
+        /**
+         * Si on a un regroupement des boutons personnalisés dans le
+         * fichier de config et que l'on veut garder l'ordre défini
+         */
+        if (isset($currentConfigPageModule['boutons']) 
+                && isset($currentConfigPageModule['boutons']['groups'])
+                && isset($currentConfigPageModule['sort'])
+                && $currentConfigPageModule['sort']
+        ) {
+            foreach ($groups as $customGroup) {
+                $gabaritsGroup = array(
+                    'label' => $customGroup['label'],
+                );
+                $key = md5($gabaritsGroup['label']);
+                $this->_view->gabaritsBtn[$key] = $gabaritsGroup;
+            }
+        }
+
         foreach ($this->_gabarits as $gabarit) {
             $found = false;
-
+            
             $gabaritsGroup = array(
                 'label' => $gabarit['label'],
             );

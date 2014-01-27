@@ -30,6 +30,8 @@ $config = array(
         'display' => true,
         /** Si vrais, empêche le chargement des gabarits enfants **/
         'noChild' => false,
+        /** Si vrais, conserve le trie des groupes définis dans ce fichier **/
+        'sort' => false,
         /** Blocage de l'affichage du type de gabarit **/
         'noType' => false,
         'childName' => 'page(s)',
