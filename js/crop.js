@@ -96,6 +96,21 @@ $(function(){
             $('#modalCrop').modal('hide');
             $inputFile.val(response.filename);
             $inputFile.siblings('.previsu').attr('href', response.path);
+            
+            var previsu = $inputFile.parent().siblings('.previsu');
+
+            if (previsu.length > 0) {
+                previsu.attr('href', response.path);
+                previsu.show();
+                $('.champ-image-value', previsu).text(response.value);
+
+                $('.champ-image-size', previsu).text(response.size).show();
+                $('.champ-image-size', previsu).prev().show();
+
+                $('.champ-image-vignette', previsu).attr('src', response.vignette).show();
+               
+            }
+            
         }, 'json');
 
     });

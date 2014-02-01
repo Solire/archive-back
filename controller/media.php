@@ -446,6 +446,28 @@ class Media extends Main {
         $json['path']           = $targetDir . DS . $target;
         $json['filename']       = $target;
         $json['filename_front'] = $targetDir . '/' . $target;
+        
+        if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
+            $path       = $json['path'];
+            $vignette   = $targetDir . DS
+                        . $this->_upload_vignette . DS
+                        . $json['filename'];
+            $serverpath = $this->_upload_path . DS
+                        . $targetDir . DS
+                        . $json['filename'];
+
+            if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
+                $sizes = getimagesize($serverpath);
+                $size = $sizes[0] . ' x ' . $sizes[1];
+                $json['vignette'] = $vignette;
+                $json['label'] = $json['filename'];
+                $json['size'] = $size;
+                $json['value'] = $json['filename'];
+                $json['utilise'] = 1;
+            }        
+            
+            
+        }
 
         exit(json_encode($json));
     }
