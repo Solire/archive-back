@@ -543,7 +543,12 @@ class Page extends Main
                 }
 
                 if ($id_version == BACK_ID_VERSION) {
-                    $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                    /** Cas de la page d'accueil **/
+                    if($page->getMeta('id') == 1) {
+                        $this->_view->pagePath = "?mode_previsualisation=1";
+                    } else {
+                        $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                    }
                 }
 
                 $query  = 'SELECT `old`'
