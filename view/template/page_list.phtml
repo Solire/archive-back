@@ -108,18 +108,18 @@
 <?php
                     }
 
-                    if ($page->getMeta('rewriting') != ''
-                        && ($this->utilisateur->get("niveau") == "solire"
-                            || $gabarit['make_hidden'] > 0
-                            || $page->getMeta('visible') == 0
-                        )
-                    ) {
-                        if ((
-                                ($page->makeHidden && $page->getMeta('visible') == 1)
-                                || ($page->makeVisible && $page->getMeta('visible') == 0)
-                            )
-                            && $page->getMeta('rewriting') != ''
+                    if ($page->getMeta('rewriting') != '') {
+                        /**
+                         * Si la page est traduite
+                         */
+
+                        if (($page->makeHidden && $page->getMeta('visible') == 1)
+                            || ($page->makeVisible && $page->getMeta('visible') == 0)
+                            || $this->utilisateur->get('niveau') == 'solire'
                         ) {
+                            /**
+                             * Si l'utilisateur a le droit de modifier la visibilité
+                             */
 ?>
                                                 <a class="btn btn-small <?php echo ($page->getMeta('visible') > 0 ? 'btn-success' : 'btn-default') ?> visible-lang"  title="Rendre '<?php echo $page->getMeta('titre'); ?>' <?php echo ($page->getMeta('visible') > 0 ? 'invisible' : 'visible' ) ?> sur le site">
                                                     <input type="checkbox" value="<?php echo $page->getMeta('id'); ?>|<?php echo $page->getMeta('id_version'); ?>" style="display:none;" class="visible-lang-<?php echo $page->getMeta('id'); ?>-<?php echo $page->getMeta('id_version'); ?>" <?php echo ($page->getMeta('visible') > 0 ? ' checked="checked"' : '') ?> />
