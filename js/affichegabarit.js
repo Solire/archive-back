@@ -399,7 +399,7 @@ $(function() {
                 var ext = item.value.split('.').pop();
                 var prev = $.inArray(ext, extensionsImage) != -1
                         ? '<img class="img-polaroid" src="' + item.vignette + '" style="max-height:80px;width:auto;height:auto;max-width: 80px;" />'
-                        : '<img style="width:auto" class="" src="img/back/filetype/' + ext + '.png" height="25" />';
+                        : '<img style="width:auto" class="" src="app/back/img/filetype/' + ext + '.png" height="25" />';
                 var inputs = [];
                 $('.form-file').not(tthis).filter(function() {
                     return $(this).val() == item.value;
