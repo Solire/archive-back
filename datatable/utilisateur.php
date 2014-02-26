@@ -25,6 +25,39 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
 
     protected function beforeRunAction()
     {
+        /** 
+         * Dans le cas d'un utilisateur de noveau solire, on affiche un select 
+         * pour choisir le niveau de l'utilisateur à créer 
+         */
+        
+        if ($this->_utilisateur->getUser('niveau') == 'solire') {
+            $niveaux = $this->_db->getEnumValues('utilisateur', 'niveau');
+            foreach ($niveaux as $niveau) {
+                $options[] = array(
+                    'value' => $niveau,
+                    'text' => $niveau,
+                );
+            }
+            
+            $niveauKey = \Slrfw\Tools::multidimensional_search(
+                    $this->config["columns"], 
+                    array("name" => "niveau")
+            );
+            
+            $this->config["columns"][$niveauKey]["creable_field"] = array(
+                "type" => "select",
+                "options" => $options,
+                'validate' => array(
+                    'rules' => array(
+                        "required" => true,
+                    ),
+                    'messages' => array(
+                        "required" => "Ce champ est obligatoire.",
+                    ),
+                ),
+            );
+        }
+        
         $showButton = '<a'
                     . ' href="' . $this->url . '&amp;dt_action=sendMail&amp;index=[#id#]"'
                     . ' title="Envoyer identifiant par email"'
@@ -71,15 +104,16 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
 
     public function afterAddAction($insertId)
     {
-        $niveau = 'redacteur';
-        if ($this->_utilisateur->getUser('niveau') == 'solire') {
-            $niveau = 'admin';
+        
+        if ($this->_utilisateur->getUser('niveau') != 'solire') {
+            $niveau = 'redacteur';
+            $query  = 'UPDATE utilisateur SET'
+                    . ' niveau = ' . $this->_db->quote($niveau)
+                    . ' WHERE id = ' . $insertId;
+            $this->_db->exec($query);
         }
 
-        $query  = 'UPDATE utilisateur SET'
-                . ' niveau = ' . $this->_db->quote($niveau)
-                . ' WHERE id = ' . $insertId;
-        $this->_db->exec($query);
+        
     }
 }
 

@@ -225,6 +225,15 @@ $config = array(
             ),
         ),
         array(
+            'name' => 'niveau',
+            'show' => false,
+            'filter_field' => 'text',
+            'title' => 'Niveau',
+            'creable_field' => array(
+                "value" => "redacteur",
+            ),
+        ),
+        array(
             'name' => 'email',
             "content"   =>  '<a href="mailto:[#THIS#]">[#THIS#]</a>',
             'show' => true,
