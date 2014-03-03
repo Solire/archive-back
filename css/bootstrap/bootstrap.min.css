@@ -23,6 +23,10 @@
     background-color: #0A7ECA; color: #FFFFFF;
 }
 
+.btn:hover{
+    background-position:0px -25px;
+}
+
 .btn.previsu, .btn.crop{
 	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#4AB0DD), to(#0A7ECA));
 	background: -webkit-linear-gradient(#4AB0DD, #0A7ECA);
