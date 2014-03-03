@@ -660,7 +660,8 @@ form {
     width:100%;
 }
 
-form legend, legend {
+form legend, legend,
+form legend > a, legend > a {
     font-family:georgia;
     color:#a1a1a1;
     cursor:pointer;
@@ -668,6 +669,16 @@ form legend, legend {
     padding:10px;
     width: auto;
     line-height: inherit;
+}
+
+form legend > a, legend > a{
+    font-size: inherit;
+    display: inline-block;
+    padding: 0;
+}
+
+form legend > a:hover, legend > a:hover{
+    text-decoration: none;
 }
 
 form legend:hover, legend:hover {

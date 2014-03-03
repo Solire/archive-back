@@ -146,6 +146,9 @@ class Main extends \Slrfw\Controller
         $this->_css->addLibrary('back/css/bootstrap/bootstrap.min.css');
         $this->_css->addLibrary('back/css/bootstrap/bootstrap-responsive.min.css');
 
+        /** font-awesome */
+        $this->_css->addLibrary('back/css/font-awesome/css/font-awesome.min.css');
+
         $this->_css->addLibrary('back/css/newstyle-1.3.css');
         $this->_css->addLibrary('back/css/sticky.css');
 
@@ -264,7 +267,7 @@ class Main extends \Slrfw\Controller
                     $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
                 );
             }
-            
+
             if ($path->get() == false) {
                 continue;
             }
