@@ -198,9 +198,10 @@ $(function(){
     /**
      * Ouverture / fermeture des pages parentes
      */
-    $('legend').live('click', function(){
+    $('legend.solire-js-toggle').live('click', function(){
         var $legend = $(this),
             url = 'back/page/children.html';
+
         if ($legend.hasClass('noChild')) {
             if ($legend.data('url') !== undefined) {
                 document.location.href = $legend.data('url');
@@ -211,13 +212,13 @@ $(function(){
             url = $legend.data('ajax');
         }
 
-        if ($(this).next('div').is(':hidden') && $(this).next('div').html()=='') {
+        if ($legend.next('div').is(':hidden') && $legend.next('div').html()=='') {
 
-            $legend.find('i.icon-chevron-down').addClass('icon-chevron-up').removeClass('icon-chevron-down')
-            if (!$(this).next('div').hasClass('children-loaded')) {
-                var id = $(this).parent().attr('id').split('_').pop();
+            $legend.find('i.fa-folder').addClass('fa-folder-open');
+            if (!$legend.next('div').hasClass('children-loaded')) {
+                var id = $legend.parent().attr('id').split('_').pop();
 
-                var $divToLoad = $(this).next('div')
+                var $divToLoad = $legend.next('div')
                 $.ajax({
                     mode: 'queue',
                     port: 'ajaxWhois',
@@ -243,9 +244,9 @@ $(function(){
             }
         }
         else {
-            $legend.find('i.icon-chevron-down, i.icon-chevron-up').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down')
-            $(this).next('div').slideToggle(500);
-            $(this).siblings('.cat-modif').slideToggle(500);
+            $legend.find('i.fa-folder').toggleClass('fa-folder-open');
+            $legend.next('div').slideToggle(500);
+            $legend.siblings('.cat-modif').slideToggle(500);
         }
 
         saveState()
