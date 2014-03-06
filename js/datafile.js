@@ -182,12 +182,13 @@ $(function(){
 
             if (oTable == null) {
                 reloadDatatable();
+                $('#pickfiles').pluploader(pluploaderParams);
+                $('#pickfiles').live('click', function(e) {
+                    e.preventDefault();
+                });
             }
 
-            $('#pickfiles').pluploader(pluploaderParams);
-            $('#pickfiles').live('click', function(e) {
-                e.preventDefault();
-            });
+            
         });
     });
 });
