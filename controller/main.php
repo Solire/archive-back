@@ -41,7 +41,14 @@ class Main extends \Slrfw\Controller
      * @var \Slrfw\Model\gabaritManager
      */
     protected $_gabaritManager = null;
-
+    
+    /**
+     * Manager fichiers
+     *
+     * @var \Slrfw\Model\fileManager
+     */
+    protected $_fileManager = null;
+    
     /**
      * Always execute before other method in controller
      *
