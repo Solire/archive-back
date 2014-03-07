@@ -1,10 +1,10 @@
 <style>
-    #tableau_wrapper select {
+    #tableau<?php echo $this->idFilesList; ?>_wrapper select {
         margin-bottom: 0;
         width: auto;
     }
 
-    #tableau td {
+    #tableau<?php echo $this->idFilesList; ?> td {
             overflow: hidden; /* this is what fixes the expansion */
             white-space: normal;
             word-wrap: break-word;
@@ -13,27 +13,27 @@
 
         }
 
-        #tableau_length select {
+        #tableau<?php echo $this->idFilesList; ?>_length select {
             width: auto;
             margin-bottom: 0px;
         }
 
 
-        #tableau_wrapper input {
+        #tableau<?php echo $this->idFilesList; ?>_wrapper input {
             height: auto;
             margin-bottom: 0px;
         }
 
-        #tableau_wrapper .fg-toolbar.ui-corner-tl {
+        #tableau<?php echo $this->idFilesList; ?>_wrapper .fg-toolbar.ui-corner-tl {
             border-radius: 6px 6px 0px 0px;
         }
 
-        #tableau_wrapper .fg-toolbar.ui-corner-bl {
+        #tableau<?php echo $this->idFilesList; ?>_wrapper .fg-toolbar.ui-corner-bl {
             border-radius: 0px 0px 6px 6px;
         }
 
 
-        #tableau_wrapper .ui-widget-header {
+        #tableau<?php echo $this->idFilesList; ?>_wrapper .ui-widget-header {
             margin: 0;
             box-shadow: none;
             border: none;
@@ -43,85 +43,85 @@
         }
 
         thead input { width: 100% }
-        #tableau tfoot input.search_init, #tableau tfoot input.text_filter { font-size : 11px; }
+        #tableau<?php echo $this->idFilesList; ?> tfoot input.search_init, #tableau<?php echo $this->idFilesList; ?> tfoot input.text_filter { font-size : 11px; }
 
         select.select_filter {max-width: 100px;font-size : 11px;}
 
 
 
-        #tableau table { width: 100%;}
+        #tableau<?php echo $this->idFilesList; ?> table { width: 100%;}
 
-        #tableau table a { text-decoration: underline; }
-        #tableau table tr  >  td { border: 0px;text-align: left;vertical-align: top;  }
-        #tableau table tr  >  td:first-child {  padding-left: 50px;width: 100px;font-weight: bold;  }
-        #tableau table  >  tbody {
+        #tableau<?php echo $this->idFilesList; ?> table a { text-decoration: underline; }
+        #tableau<?php echo $this->idFilesList; ?> table tr  >  td { border: 0px;text-align: left;vertical-align: top;  }
+        #tableau<?php echo $this->idFilesList; ?> table tr  >  td:first-child {  padding-left: 50px;width: 100px;font-weight: bold;  }
+        #tableau<?php echo $this->idFilesList; ?> table  >  tbody {
             border-top: 0px dotted #333333;
         }
-        #tableau table  >  tbody tr:hover {
+        #tableau<?php echo $this->idFilesList; ?> table  >  tbody tr:hover {
             background-color: #4A9DD7;
             color: #FFF;
         }
-        #tableau tbody tr.even, #tableau tbody tr.odd,
-        #tableau tbody tr.even td a, #tableau tbody tr.odd td a{
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.even, #tableau<?php echo $this->idFilesList; ?> tbody tr.odd,
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.even td a, #tableau<?php echo $this->idFilesList; ?> tbody tr.odd td a{
             color: #000;
 
         }
-        #tableau tbody tr.even:hover, #tableau > tbody tr.even td.highlighted {
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.even:hover, #tableau<?php echo $this->idFilesList; ?> > tbody tr.even td.highlighted {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tbody tr.even:hover > td >  a, #tableau > tbody tr.even td.highlighted > a {
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.even:hover > td >  a, #tableau<?php echo $this->idFilesList; ?> > tbody tr.even td.highlighted > a {
             color: #FFF;
         }
 
 
-        #tableau tbody tr.odd:hover, #tableau > tbody tr.odd td.highlighted {
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.odd:hover, #tableau<?php echo $this->idFilesList; ?> > tbody tr.odd td.highlighted {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tbody tr.odd:hover > td > a, #tableau > tbody tr.odd td.highlighted > a {
+        #tableau<?php echo $this->idFilesList; ?> tbody tr.odd:hover > td > a, #tableau<?php echo $this->idFilesList; ?> > tbody tr.odd td.highlighted > a {
             color: #FFF;
         }
 
 
-        #tableau tr.even:hover {
+        #tableau<?php echo $this->idFilesList; ?> tr.even:hover {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.even:hover > td.sorting_1 {
+        #tableau<?php echo $this->idFilesList; ?> tr.even:hover > td.sorting_1 {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.even:hover > td.sorting_2 {
+        #tableau<?php echo $this->idFilesList; ?> tr.even:hover > td.sorting_2 {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.even:hover > td.sorting_3 {
+        #tableau<?php echo $this->idFilesList; ?> tr.even:hover > td.sorting_3 {
             background-color: #E2FF89;
             color: #FFF;
         }
 
-        #tableau tr.odd:hover {
+        #tableau<?php echo $this->idFilesList; ?> tr.odd:hover {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.odd:hover > td.sorting_1 {
+        #tableau<?php echo $this->idFilesList; ?> tr.odd:hover > td.sorting_1 {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.odd:hover > td.sorting_2 {
+        #tableau<?php echo $this->idFilesList; ?> tr.odd:hover > td.sorting_2 {
             background-color: #117ECA;
             color: #FFF;
         }
 
-        #tableau tr.odd:hover > td.sorting_3 {
+        #tableau<?php echo $this->idFilesList; ?> tr.odd:hover > td.sorting_3 {
             background-color: #117ECA;
             color: #FFF;
         }
@@ -129,10 +129,10 @@
 
 </style>
         <div>
-            <a href="#" class="btn btn-small btn-success" id="pickfiles"><i class="icon-folder-open"></i> Ajouter un fichier</a>
+            <a href="#" class="btn btn-small btn-success" id="pickfiles<?php echo $this->idFilesList; ?>"><i class="icon-folder-open"></i> Ajouter un fichier</a>
         </div>
 
-        <table id="tableau" class="display" style="width:100%;">
+        <table id="tableau<?php echo $this->idFilesList; ?>" class="display" style="width:100%;">
             <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -142,7 +142,7 @@
                 </tr>
             </thead>
 
-            <tbody id="foldercontent">
+            <tbody id="foldercontent<?php echo $this->idFilesList; ?>">
 
 <?php foreach ($this->files as $file) { ?>
 
