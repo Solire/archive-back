@@ -224,9 +224,9 @@ class Page extends Main
             && $currentConfigPageModule['noChild'] === true
         ) {
             $this->_view->noChild = true;
-            if (isset($currentConfigPageModule['urlRedir'])) {
-                $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
-            }
+        }
+        if (isset($currentConfigPageModule['urlRedir'])) {
+            $this->_view->urlRedir = $currentConfigPageModule['urlRedir'];
         }
 
         /**
@@ -453,11 +453,17 @@ class Page extends Main
         $this->_javascript->addLibrary('back/js/tinymce-4.0.5/jquery.solire.tinymce.js');
 
         $this->_javascript->addLibrary('back/js/autocomplete.js');
-        $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
+        $this->_javascript->addLibrary('back/js/plupload/plupload.full.js');
+        $this->_javascript->addLibrary('back/js/plupload/jquery.pluploader.min.js');
         $this->_javascript->addLibrary('back/js/formgabarit.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.tipsy.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.qtip.min.js');
+
+        $this->_javascript->addLibrary('back/js/gmap.js');
+        $this->_javascript->addLibrary('back/js/crop.js');
+        $this->_javascript->addLibrary('back/js/datafile.js');
         $this->_javascript->addLibrary('back/js/affichegabarit.js');
+
         $this->_javascript->addLibrary('back/js/jquery/jquery.autogrow.js');
         $this->_javascript->addLibrary('back/js/datatable/jquery/jquery.dataTables.js');
         $this->_javascript->addLibrary('back/js/jquery/jcrop/jquery.Jcrop.min.js');
@@ -501,10 +507,6 @@ class Page extends Main
                 $page = $this->_gabaritManager->getPage($id_version,
                     BACK_ID_API, $id_gab_page);
 
-                if (!$page || $page->getGabarit()->getEditable() == 0) {
-                    $this->pageNotFound();
-                }
-
                 $this->_pages[$id_version] = $page;
 
                 $hook = new \Slrfw\Hook();
@@ -541,7 +543,12 @@ class Page extends Main
                 }
 
                 if ($id_version == BACK_ID_VERSION) {
-                    $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                    /** Cas de la page d'accueil **/
+                    if($page->getMeta('id') == 1) {
+                        $this->_view->pagePath = "?mode_previsualisation=1";
+                    } else {
+                        $this->_view->pagePath = $path . "?mode_previsualisation=1";
+                    }
                 }
 
                 $query  = 'SELECT `old`'
@@ -590,7 +597,7 @@ class Page extends Main
              * Si le gabarit courant appartien à un des groupes personnalisés
              */
             if ($currentConfigPageModule['gabarits'] == '*'
-                || in_array($this->_page->getGabarit()->getId(), $currentConfigPageModule['gabarits'])
+                || in_array($this->_pages[1]->getGabarit()->getId(), $currentConfigPageModule['gabarits'])
             ) {
                 $indexPageList = $index;
                 $found = true;
@@ -742,7 +749,7 @@ class Page extends Main
             $res = $this->_gabaritManager->save($_POST);
 
             if ($res === null) {
-                $this->pageNotFound();
+                throw new Exception('Problème à l\'enregistrement');
             }
 
             if ($res === false) {
@@ -894,51 +901,98 @@ class Page extends Main
         $this->_view->enable(false);
         $this->_view->main(false);
 
-        $json = array();
-        $term = $_REQUEST['term'];
-        $idField = $_REQUEST['id_field'];
-        $idGabPage = $_REQUEST['id_gab_page'];
-        $typeGabPage = $_REQUEST['type_gab_page'];
-        $queryFilter = str_replace('[ID]', $idGabPage, $_REQUEST['query_filter']);
-        $table = $_REQUEST['table'];
-        $labelField = '';
-        $lang = $_REQUEST['id_version'];
-        $gabPageJoin = '';
+        $idChamp    = $_GET['id_champ'];
+        $idVersion  = $_GET['id_version'];
+        $idGabPage  = $_GET['id_gab_page'];
+        $term       = $_GET['term'];
+        $response   = array();
+
+        $query  = 'SELECT code_champ_param, value'
+                . ' FROM gab_champ_param_value'
+                . ' WHERE id_champ = ' . $idChamp;
+        $params = $this->_db->query($query)->fetchAll(
+            \PDO::FETCH_UNIQUE | \PDO::FETCH_COLUMN);
+
+        $idField        = $params['TABLE.FIELD.ID'];
+        $typeGabPage    = $params['TYPE.GAB.PAGE'];
+        $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
+        $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
+        $table          = $params['TABLE.NAME'];
+        $labelField     = $params['TABLE.FIELD.LABEL'];
+        $gabPageJoin    = '';
 
 
-        $filterVersion = '`' . $table . '`.id_version = ' . $lang;
-        if (isset($_REQUEST['no_version'])
-            && $_REQUEST['no_version'] == 1
-            || ($_REQUEST['table'] == 'gab_page')
+        $filterVersion = '`' . $table . '`.id_version = ' . $idVersion;
+        if ($table == 'gab_page'
             || !$typeGabPage
         ) {
             $filterVersion = 1;
         } else {
-            $gabPageJoin = 'INNER JOIN gab_page ON visible = 1'
-                    . ' AND suppr = 0'
-                    . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` '
-                    . ($filterVersion != 1 ? 'AND gab_page.id_version = ' . $lang : '');
+            $gabPageJoin    = ' INNER JOIN gab_page ON visible = 1'
+                            . ' AND suppr = 0'
+                            . ' AND gab_page.id = `' . $table . '`.`' . $idField . '` ';
+
+            if ($filterVersion != 1) {
+                $gabPageJoin   .=  'AND gab_page.id_version = ' . $idVersion;
+            }
         }
 
-        if (substr($_REQUEST['label_field'], 0, 9) == 'gab_page.') {
-            $labelField = $_REQUEST['label_field'];
-        } else {
-            $labelField = '`' . $table . '`.' . $_REQUEST['label_field'];
+        if (substr($labelField, 0, 9) != 'gab_page.') {
+            $labelField = '`' . $table . '`.`' . $labelField . '`';
         }
 
         $quotedTerm = $this->_db->quote('%' . $term . '%');
-        $sql    = 'SELECT `' . $table . '`.`' . $idField . '` id, ' . $labelField . ' label'
-                . ' FROM `' . $table . '`'
-                . ' ' . $gabPageJoin
-                . ' WHERE ' . $filterVersion . ' '
-                . ($queryFilter != '' ? 'AND (' . $queryFilter . ')' : '')
+        $query  = 'SELECT `' . $table . '`.`' . $idField . '` id,'
+                . ' ' . $labelField . ' `label`';
+
+        /**
+         * Si gab_page
+         */
+        if ($gabPageJoin != '' || $table == 'gab_page') {
+            $query .= ',gab_gabarit.label gabarit_label';
+        }
+
+        $query .= ' FROM `' . $table . '`'
+                . $gabPageJoin;
+
+        /**
+         * Si gab_page
+         */
+        if ($gabPageJoin != '' || $table == 'gab_page') {
+            $query .= ' INNER JOIN gab_gabarit ON gab_gabarit.id = gab_page.id_gabarit';
+        }
+
+        $query .= ' WHERE ' . $filterVersion . ' '
                 . ' AND ' . $labelField . '  LIKE ' . $quotedTerm;
-        $json = $this->_db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+
+        if ($queryFilter != '') {
+            $query .= ' AND (' . $queryFilter . ')';
+        }
+
+        if (isset($_GET['ids'])
+            && is_array($_GET['ids'])
+            && count($_GET['ids']) > 0
+        ) {
+            $ids = $_GET['ids'];
+            $query .= ' AND `' . $table . '`.`' . $idField . '`'
+                    . ' NOT IN (' . implode(',', $ids) . ')';
+        }
+
+        $pagesFound = $this->_db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $pages = array();
+        foreach ($pagesFound as $page) {
+            $pages[] = array(
+                'label' => $page['label'],
+                'id' => $page['id'],
+                'gabarit_label' => $page['gabarit_label'],
+            );
+        }
 
         header('Cache-Control: no-cache, must-revalidate');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Content-type: application/json');
-        echo json_encode($json);
+        echo json_encode($pages);
     }
 
     /**
@@ -952,7 +1006,7 @@ class Page extends Main
         $this->_view->main(false);
 
         $json = array();
-        $term = $_REQUEST['term'];
+        $term = $_GET['term'];
         $table = 'old_link';
         $labelField = '`' . $table . '`.`link`';
 
@@ -1304,6 +1358,34 @@ class Page extends Main
          * Liste des début de label à regrouper pour les boutons de création
          */
         $groupIdentifications = array('Rubrique ', 'Sous rubrique ', 'Page ');
+
+        $groups = array();
+        if (isset($currentConfigPageModule['boutons'])
+            && isset($currentConfigPageModule['boutons']['groups'])
+        ) {
+            $groups = $currentConfigPageModule['boutons']['groups'];
+        }
+
+        $this->_view->gabaritsBtn = array();
+
+        /**
+         * Si on a un regroupement des boutons personnalisés dans le
+         * fichier de config et que l'on veut garder l'ordre défini
+         */
+        if (isset($currentConfigPageModule['boutons'])
+                && isset($currentConfigPageModule['boutons']['groups'])
+                && isset($currentConfigPageModule['sort'])
+                && $currentConfigPageModule['sort']
+        ) {
+            foreach ($groups as $customGroup) {
+                $gabaritsGroup = array(
+                    'label' => $customGroup['label'],
+                );
+                $key = md5($gabaritsGroup['label']);
+                $this->_view->gabaritsBtn[$key] = $gabaritsGroup;
+            }
+        }
+
         foreach ($this->_gabarits as $gabarit) {
             $found = false;
 

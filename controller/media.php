@@ -10,6 +10,8 @@ class Media extends Main {
      * @var page
      */
     private $_page = null;
+    
+    protected $mediaTableName = 'media_fichier';
 
     /**
      *
@@ -37,7 +39,8 @@ class Media extends Main {
         $this->_javascript->addLibrary('back/js/jquery/jquery.hotkeys.js');
         $this->_javascript->addLibrary('back/js/jstree/jquery.jstree.js');
         //$this->_javascript->addLibrary('back/js/jquery/jquery.dataTables.min.js');
-        $this->_javascript->addLibrary('back/js/plupload/plupload.full.min.js');
+        $this->_javascript->addLibrary('back/js/plupload/plupload.full.js');
+        $this->_javascript->addLibrary('back/js/plupload/jquery.pluploader.min.js');
         $this->_javascript->addLibrary('back/js/listefichiers.js');
         $this->_javascript->addLibrary('back/js/jquery/jquery.scroller-1.0.min.js');
 
@@ -59,6 +62,17 @@ class Media extends Main {
     {
         $this->_view->main(FALSE);
         $this->_files = array();
+        
+        /** Permet plusieurs liste de fichier dans la meme page **/
+        $this->_view->idFilesList = null;
+        if(isset($_REQUEST['id'])) {
+            $this->_view->idFilesList = '_' . $_REQUEST['id'];
+        }
+        
+        $this->_view->prefixFileUrl = null;
+        if(isset($_REQUEST['prefix_url'])) {
+            $this->_view->prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
+        }
 
         $id_gab_page = isset($_REQUEST['id_gab_page']) && $_REQUEST['id_gab_page'] ? $_REQUEST['id_gab_page'] : 0;
 
@@ -76,7 +90,7 @@ class Media extends Main {
         foreach ($this->_files as $file) {
             $ext = strtolower(array_pop(explode('.', $file['rewriting'])));
             $prefixPath = $this->_api['id'] == 1 ? '' : '..' . DS;
-            $file['path'] = $file['id_gab_page'] . DS . $file['rewriting'];
+            $file['path'] = $this->_view->prefixFileUrl . $file['id_gab_page'] . DS . $file['rewriting'];
 
             $serverpath = $this->_upload_path . DS . $file['id_gab_page']
                         . DS . $file['rewriting'];
@@ -88,7 +102,8 @@ class Media extends Main {
             $file['class'] = 'hoverprevisu vignette';
 
             if (array_key_exists($ext, \Slrfw\Model\fileManager::$_extensions['image'])) {
-                $file['path_mini']  = $file['id_gab_page'] . DS
+                $file['path_mini']  = $this->_view->prefixFileUrl 
+                                    . $file['id_gab_page'] . DS
                                     . $this->_upload_vignette . DS
                                     . $file['rewriting'];
 
@@ -223,7 +238,7 @@ class Media extends Main {
                     }
                 }
 
-                $nbre = $this->_db->query('SELECT COUNT(*) FROM `media_fichier` WHERE `suppr` = 0 AND `id_gab_page` = ' . $sous_rubrique->getMeta('id'))->fetchColumn();
+                $nbre = $this->_db->query('SELECT COUNT(*) FROM `' . $this->mediaTableName . '` WHERE `suppr` = 0 AND `id_gab_page` = ' . $sous_rubrique->getMeta('id'))->fetchColumn();
 
                 $res[] = array(
                     'attr' => array(
@@ -253,6 +268,17 @@ class Media extends Main {
     {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
+        
+        /** Permet plusieurs liste de fichier dans la meme page **/
+        $this->_view->idFilesList = null;
+        if(isset($_REQUEST['id'])) {
+            $this->_view->idFilesList = '_' . $_REQUEST['id'];
+        }
+        
+        $this->_view->prefixFileUrl = null;
+        if(isset($_REQUEST['prefix_url'])) {
+            $this->_view->prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
+        }
 
         $id_gab_page = 0;
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page']) {
@@ -271,14 +297,29 @@ class Media extends Main {
                 $id_gab_page, 0, $targetTmp, $targetDir, $vignetteDir,
                 $apercuDir);
 
-            $json['size'] = \Slrfw\Tools::format_taille($json['size']);
-            if (isset($json['minipath'])) {
-                $json['minipath'] = $json['minipath'];
-                $json['image'] = array(
-                    'url'   =>  $id_gab_page . DS . $json['filename']
-                );
-                $json['path'] = $json['path'];
+            if ($json['status'] == 'error') {
+                echo json_encode($json);
+                exit();
+            }
 
+            $json['size'] = \Slrfw\Tools::format_taille($json['size']);
+            
+            if (isset($json['mini_path'])) {
+                $json['mini_path']   = $this->_view->prefixFileUrl . $json['mini_path'];
+                $json['mini_url']   = $this->_view->prefixFileUrl . $json['mini_url'];
+                $json['image'] = array(
+                    'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
+                );
+            }
+            
+            $json['url']       = $this->_view->prefixFileUrl . $json['url'];
+            
+            if (isset($json['minipath'])) {
+                $json['minipath'] = $this->_view->prefixFileUrl . $json['minipath'];
+                $json['image'] = array(
+                    'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
+                );
+                $json['path'] = $this->_view->prefixFileUrl . $json['path'];
             }
         } else {
             if (isset($_COOKIE['id_temp'])
@@ -303,10 +344,21 @@ class Media extends Main {
 
             $json = $this->_fileManager->uploadGabPage($this->_upload_path, 0,
                 $id_temp, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
-//            $json['minipath']   = $json['minipath'];
-            $json['path']       = $json['path'];
-            $json['size']       = \Slrfw\Tools::format_taille($json['size']);
-            $json['id_temp']    = $id_temp;
+
+            
+            if ($json['status'] == 'success') {
+                if (isset($json['mini_path'])) {
+                    $json['mini_path']   = $this->_view->prefixFileUrl . $json['mini_path'];
+                    $json['mini_url']   = $this->_view->prefixFileUrl . $json['mini_url'];
+                    $json['image'] = array(
+                        'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
+                    );
+                }
+                $json['path']       = $this->_view->prefixFileUrl . $json['path'];
+                $json['url']       = $this->_view->prefixFileUrl . $json['url'];
+                $json['size']       = \Slrfw\Tools::format_taille($json['size']);
+                $json['id_temp']    = $id_temp;
+            }
         }
 
         if ($json['status'] == 'error') {
@@ -436,6 +488,28 @@ class Media extends Main {
         $json['path']           = $targetDir . DS . $target;
         $json['filename']       = $target;
         $json['filename_front'] = $targetDir . '/' . $target;
+        
+        if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
+            $path       = $json['path'];
+            $vignette   = $targetDir . DS
+                        . $this->_upload_vignette . DS
+                        . $json['filename'];
+            $serverpath = $this->_upload_path . DS
+                        . $targetDir . DS
+                        . $json['filename'];
+
+            if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
+                $sizes = getimagesize($serverpath);
+                $size = $sizes[0] . ' x ' . $sizes[1];
+                $json['vignette'] = $vignette;
+                $json['label'] = $json['filename'];
+                $json['size'] = $size;
+                $json['value'] = $json['filename'];
+                $json['utilise'] = 1;
+            }        
+            
+            
+        }
 
         exit(json_encode($json));
     }
@@ -451,13 +525,13 @@ class Media extends Main {
         $this->_view->main(FALSE);
 
         $id_media_fichier = isset($_COOKIE['id_media_fichier']) && $_COOKIE['id_media_fichier'] ? $_COOKIE['id_media_fichier'] : (isset($_REQUEST['id_media_fichier']) && $_REQUEST['id_media_fichier'] ? $_REQUEST['id_media_fichier'] : 0);
-        $query = 'UPDATE `media_fichier` SET `suppr` = NOW() WHERE `id` = ' . $id_media_fichier;
+        $query = 'UPDATE `' . $this->mediaTableName . '` SET `suppr` = NOW() WHERE `id` = ' . $id_media_fichier;
         $status = $this->_db->query($query) ? 'success' : 'error';
         $json = array('status' => $status);
         if (!$json['status']) {
-            $this->_log->logThis('Suppression de fichier échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $id_media_fichier . '<br /><span style="color:red;">Error</span>');
+            $this->_log->logThis('Suppression de fichier échouée', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $id_media_fichier . ' | <b>Table</b>' . $this->mediaTableName . '<br /><span style="color:red;">Error</span>');
         } else {
-            $this->_log->logThis('Suppression de fichier réussie', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $id_media_fichier);
+            $this->_log->logThis('Suppression de fichier réussie', $this->_utilisateur->get('id'), '<b>Id</b> : ' . $id_media_fichier . ' | <b>Table</b>' . $this->mediaTableName . '');
         }
         exit(json_encode($json));
     }
@@ -537,5 +611,10 @@ class Media extends Main {
         header('Content-type: application/json');
         echo json_encode($json);
     }
+    
+    public function setMediaTableName($mediaTableName) {
+        $this->mediaTableName = $mediaTableName;
+    }
+
 }
 

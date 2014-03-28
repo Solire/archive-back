@@ -19,16 +19,25 @@
                 ) {
                     $class = ' class="noChild"';
                 } else {
-                    $class = '';
+                    $class = ' class="solire-js-toggle"';
                 }
 ?>
                             <fieldset data-titre="<?php echo $page->getMeta('titre'); ?>" style="<?php echo isset($this->margin) ? 'margin-left:30px;' : '' ; ?>" class="<?php if ($this->utilisateur->get('niveau') == 'solire' || $gabarit['sortable']) { ?>sort-elmt<?php } ?>" id="gab_page_<?php echo $page->getMeta('id'); ?>">
                                 <legend<?php echo $htmlUrl; ?> data-ajax="<?php echo $urlAjax; ?>" title="<?php echo $page->getMeta('rewriting') ?>"<?php echo $class; ?>>
 <?php
-
-                if ($page->getMeta('nbre_enfants') > 0 && (isset($this->noChild) && $this->noChild === false || !isset($this->noChild))) {
+                $link = false;
+                if ($page->getMeta('nbre_enfants') > 0
+                    && (isset($this->noChild) && $this->noChild === false
+                        || !isset($this->noChild)
+                    )
+                ) {
 ?>
-                                    <a href="#" class="btn btn-default btn-small"><i class="icon-chevron-down"></i></a>
+                                    <i class="fa fa-folder"></i>
+<?php
+                } elseif (($this->utilisateur->get('niveau') == 'solire' || $gabarit['editable'])) {
+                    $link = true;
+?>
+                                    <a href="back/page/display.html?id_gab_page=<?php echo $page->getMeta('id'); ?>" title="Modifier '<?php echo $page->getMeta('titre'); ?>'"><i class="fa fa-file"></i>
 <?php
                 }
 ?>
@@ -43,7 +52,7 @@
 <?php
                 }
 ?>
-                                    <span class="page-info" style="color: inherit">
+                                    <span class="page-info">
 <?php
                 if ($page->getMeta('id_gabarit') != 1
                     && $page->getMeta('id_gabarit') != 2
@@ -63,7 +72,7 @@
                 }
                 $nbChild = $page->getMeta('nbre_enfants');
                 if (!empty($nbChild)) {
-                    $displayChild = $page->getMeta('aff_enfants');
+                $displayChild = $page->getMeta('aff_enfants');
                     if (empty($displayChild)) {
                         $displayChild = $page->getMeta('nbre_enfants');
                     }
@@ -73,6 +82,13 @@
                 }
 ?>
                                     </span>
+<?php
+            if ($link) {
+?>
+                                    </a>
+<?php
+            }
+?>
                                 </legend>
 
                                 <div class="sort-box" style="display:none;"></div>
@@ -91,8 +107,10 @@
                 } else {
 ?>
 <?php
-                    if ($this->utilisateur->get('niveau') == 'solire'
-                        || $page->sortable
+                    if (count($this->pages) > 1
+                        && ($this->utilisateur->get('niveau') == 'solire'
+                            || $page->sortable
+                        )
                     ) {
 ?>
                                                 <a href="#" class="btn btn-info btn-small sort-move" title="Déplacer '<?php echo $page->getMeta('titre'); ?>'"><i class="icon-retweet"></i></a>
@@ -114,7 +132,7 @@
                     ) {
                         if ((
                                 ($page->makeHidden && $page->getMeta('visible') == 1)
-                                || ($page->makeVisible && $page->getMeta('visible') == 0)
+                            || ($page->makeVisible && $page->getMeta('visible') == 0)
                             )
                             && $page->getMeta('rewriting') != ''
                         ) {

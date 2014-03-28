@@ -41,7 +41,14 @@ class Main extends \Slrfw\Controller
      * @var \Slrfw\Model\gabaritManager
      */
     protected $_gabaritManager = null;
-
+    
+    /**
+     * Manager fichiers
+     *
+     * @var \Slrfw\Model\fileManager
+     */
+    protected $_fileManager = null;
+    
     /**
      * Always execute before other method in controller
      *
@@ -145,6 +152,9 @@ class Main extends \Slrfw\Controller
         $this->_javascript->addLibrary('back/js/bootstrap/bootstrap.min.js');
         $this->_css->addLibrary('back/css/bootstrap/bootstrap.min.css');
         $this->_css->addLibrary('back/css/bootstrap/bootstrap-responsive.min.css');
+
+        /** font-awesome */
+        $this->_css->addLibrary('back/css/font-awesome/css/font-awesome.min.css');
 
         $this->_css->addLibrary('back/css/newstyle-1.3.css');
         $this->_css->addLibrary('back/css/sticky.css');
@@ -251,9 +261,19 @@ class Main extends \Slrfw\Controller
         $appList = \Slrfw\FrontController::getAppDirs();
         unset($config);
         foreach ($appList as $app) {
+           /**
+            * On recupere la configuration du module pages (Menu + liste)
+            *  En cherchant si une configuration a été définie pour l'api courante
+            * Sinon on récupère le fichier de configuration générale
+            */
             $path = new \Slrfw\Path(
-                $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+                $app['dir'] . DS . 'back/config/page-' . BACK_ID_API . '.cfg.php', \Slrfw\Path::SILENT
             );
+            if($path->get() == false) {
+                $path = new \Slrfw\Path(
+                    $app['dir'] . DS . 'back/config/page.cfg.php', \Slrfw\Path::SILENT
+                );
+            }
 
             if ($path->get() == false) {
                 continue;
