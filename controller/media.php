@@ -10,7 +10,7 @@ class Media extends Main {
      * @var page
      */
     private $_page = null;
-    
+
     protected $mediaTableName = 'media_fichier';
 
     /**
@@ -62,13 +62,13 @@ class Media extends Main {
     {
         $this->_view->main(FALSE);
         $this->_files = array();
-        
+
         /** Permet plusieurs liste de fichier dans la meme page **/
         $this->_view->idFilesList = null;
         if(isset($_REQUEST['id'])) {
             $this->_view->idFilesList = '_' . $_REQUEST['id'];
         }
-        
+
         $this->_view->prefixFileUrl = null;
         if(isset($_REQUEST['prefix_url'])) {
             $this->_view->prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
@@ -102,7 +102,7 @@ class Media extends Main {
             $file['class'] = 'hoverprevisu vignette';
 
             if (array_key_exists($ext, \Slrfw\Model\fileManager::$_extensions['image'])) {
-                $file['path_mini']  = $this->_view->prefixFileUrl 
+                $file['path_mini']  = $this->_view->prefixFileUrl
                                     . $file['id_gab_page'] . DS
                                     . $this->_upload_vignette . DS
                                     . $file['rewriting'];
@@ -268,13 +268,13 @@ class Media extends Main {
     {
         $this->_view->enable(FALSE);
         $this->_view->main(FALSE);
-        
+
         /** Permet plusieurs liste de fichier dans la meme page **/
         $this->_view->idFilesList = null;
         if(isset($_REQUEST['id'])) {
             $this->_view->idFilesList = '_' . $_REQUEST['id'];
         }
-        
+
         $this->_view->prefixFileUrl = null;
         if(isset($_REQUEST['prefix_url'])) {
             $this->_view->prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
@@ -303,7 +303,7 @@ class Media extends Main {
             }
 
             $json['size'] = \Slrfw\Tools::format_taille($json['size']);
-            
+
             if (isset($json['mini_path'])) {
                 $json['mini_path']   = $this->_view->prefixFileUrl . $json['mini_path'];
                 $json['mini_url']   = $this->_view->prefixFileUrl . $json['mini_url'];
@@ -311,9 +311,9 @@ class Media extends Main {
                     'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                 );
             }
-            
+
             $json['url']       = $this->_view->prefixFileUrl . $json['url'];
-            
+
             if (isset($json['minipath'])) {
                 $json['minipath'] = $this->_view->prefixFileUrl . $json['minipath'];
                 $json['image'] = array(
@@ -345,7 +345,7 @@ class Media extends Main {
             $json = $this->_fileManager->uploadGabPage($this->_upload_path, 0,
                 $id_temp, $targetTmp, $targetDir, $vignetteDir, $apercuDir);
 
-            
+
             if ($json['status'] == 'success') {
                 if (isset($json['mini_path'])) {
                     $json['mini_path']   = $this->_view->prefixFileUrl . $json['mini_path'];
@@ -403,7 +403,11 @@ class Media extends Main {
         $h = $_POST['h'];
 
         /* Information sur le fichier */
-        $newImageName   = \Slrfw\Tools::friendlyURL($_POST['image-name']);
+        $newImageName   = \Slrfw\Format\String::urlSlug(
+            $_POST['image-name'],
+            '-',
+            255
+        );
         $filepath       = $_POST['filepath'];
         $filename       = pathinfo($filepath, PATHINFO_BASENAME);
         $ext            = pathinfo($filename, PATHINFO_EXTENSION);
@@ -488,7 +492,7 @@ class Media extends Main {
         $json['path']           = $targetDir . DS . $target;
         $json['filename']       = $target;
         $json['filename_front'] = $targetDir . '/' . $target;
-        
+
         if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
             $path       = $json['path'];
             $vignette   = $targetDir . DS
@@ -506,9 +510,9 @@ class Media extends Main {
                 $json['size'] = $size;
                 $json['value'] = $json['filename'];
                 $json['utilise'] = 1;
-            }        
-            
-            
+            }
+
+
         }
 
         exit(json_encode($json));
@@ -611,7 +615,7 @@ class Media extends Main {
         header('Content-type: application/json');
         echo json_encode($json);
     }
-    
+
     public function setMediaTableName($mediaTableName) {
         $this->mediaTableName = $mediaTableName;
     }
