@@ -30,7 +30,7 @@ class Sign extends Main
     public function start() {
         parent::start();
 
-        $this->_view->main(false);
+        $this->_view->unsetMain();
     }
 
     /**

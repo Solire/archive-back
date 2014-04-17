@@ -60,7 +60,7 @@ class Media extends Main {
      */
     public function listAction()
     {
-        $this->_view->main(FALSE);
+        $this->_view->unsetMain();
         $this->_files = array();
 
         /** Permet plusieurs liste de fichier dans la meme page **/
@@ -186,8 +186,8 @@ class Media extends Main {
      */
     public function folderlistAction()
     {
-        $this->_view->main(FALSE);
-        $this->_view->enable(FALSE);
+        $this->_view->unsetMain();
+        $this->_view->enable(false);
 
         $res = array();
 
@@ -266,8 +266,8 @@ class Media extends Main {
      */
     public function uploadAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->unsetMain();
 
         /** Permet plusieurs liste de fichier dans la meme page **/
         $this->_view->idFilesList = null;
@@ -385,8 +385,8 @@ class Media extends Main {
      */
     public function cropAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->unsetMain();
 
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page'] > 0) {
             $id_gab_page = $_GET['id_gab_page'];
@@ -525,8 +525,8 @@ class Media extends Main {
      */
     public function deleteAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->unsetMain();
 
         $id_media_fichier = isset($_COOKIE['id_media_fichier']) && $_COOKIE['id_media_fichier'] ? $_COOKIE['id_media_fichier'] : (isset($_REQUEST['id_media_fichier']) && $_REQUEST['id_media_fichier'] ? $_REQUEST['id_media_fichier'] : 0);
         $query = 'UPDATE `' . $this->mediaTableName . '` SET `suppr` = NOW() WHERE `id` = ' . $id_media_fichier;
@@ -547,8 +547,8 @@ class Media extends Main {
      */
     public function autocompleteAction()
     {
-        $this->_view->enable(FALSE);
-        $this->_view->main(FALSE);
+        $this->_view->enable(false);
+        $this->_view->unsetMain();
 
         $prefixPath = '';
 
