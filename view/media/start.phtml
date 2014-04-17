@@ -7,7 +7,7 @@
 
 
         }
-        
+
         #tableau tr.filenotused td {
             color: #777777;
             font-style: italic;
@@ -18,7 +18,7 @@
             margin-bottom: 0px;
         }
 
-        
+
         #tableau_wrapper input {
             height: auto;
             margin-bottom: 0px;
@@ -38,7 +38,7 @@
             box-shadow: none;
             border: none;
             border-radius: 0px;
-            
+
 
         }
 
@@ -125,7 +125,7 @@
             background-color: #117ECA;
             color: #FFF;
         }
-        
+
         #tableau tr.filenotused:hover td {
             color: #FFF;
         }
@@ -146,7 +146,7 @@
 
 <h1>Gestion des fichiers</h1>
 
-<?php $this->add('breadcrumbs.phtml'); ?>
+<?php $this->add('breadcrumbs'); ?>
 
 <div id="mmenu">
     <!--    <div id="currentruntime" style="font-size:10px; color:#a1a1a1; font-style:italic; padding: 3px;"></div>-->
@@ -156,7 +156,7 @@
         <!--<a href="#" class="button vert" id="add_folder">
                                         <span class="vert">ajouter un dossier</span>
                                 </a>-->
-        
+
         <a href="#" class="btn btn-small btn-success" id="pickfiles" style="display: none;"><i class="icon-folder-open"></i> Ajouter un fichier</a>
     </div>
 
@@ -173,9 +173,9 @@
 <div id="folders" style="width: 200px; overflow: hidden; float: left"></div>
 
 <div id="colright" style="min-height: 400px; float: left; width: 75%; margin-left: 20px;display: none;">
-    
-    
+
+
     <?php echo $this->datatableRender; ?>
-    
-    
+
+
 </div>

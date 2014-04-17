@@ -9,9 +9,10 @@
 <?php
     }
 
-    $this->add('breadcrumbs.phtml');
-
-    $this->add("template/button.phtml");
+    $this
+        ->add('breadcrumbs')
+        ->add('template/button')
+    ;
 ?>
                         <div class="cb"></div>
                         <hr />
@@ -32,7 +33,7 @@
 ?>
                         <div class="sort-box" <?php echo isset($this->gabaritByGroup) && $this->gabaritByGroup ? 'style="display:none;"' : ''; ?>>
 <?php
-    $this->add("template/page_list.phtml");
+    $this->add('template/page_list');
 ?>
                         </div>
 <?php
