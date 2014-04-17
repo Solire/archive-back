@@ -79,7 +79,13 @@
         }
     }
 
-$this->add('menuadd');
+    try {
+        $this->add('menuadd-1');
+    } catch (\Slrfw\Exception\Lib $exc) {
+        if ($exc->getCode() != 300) {
+            throw $exc;
+        }
+    }
 
     if ($this->utilisateur->get("niveau") == "solire") {
         $class = '';
