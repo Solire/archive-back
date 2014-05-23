@@ -80,13 +80,16 @@ $(function(){
     });
 
     $('.autocomplete-link').livequery(function(){
+        var form = $(this).parents('form')
         var $input = $(this);
         $(this).autocomplete({
             source: function( request, response ) {
                 $.getJSON(
                     'sitemap.xml?json=1&visible=0',
                     {
-                    term : request.term
+                    term : request.term,
+                    id_version : $('[name=id_version]', form).val(),
+                    id_api : $('[name=id_api]', form).val()
                     }, function( data, status, xhr ) {
                     response( data );
                     })
