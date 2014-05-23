@@ -48,7 +48,7 @@
                     && $page->getMeta('rewriting') != ''
                 ) {
 ?>
-                                    <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta('date_modif') != '0000-00-00 00:00:00' ? Slrfw\Tools::RelativeTime(strtotime($page->getMeta('date_modif'))) : ''; ?></span>
+                                    <span class="board-human-time" style="color: inherit">Dernière édition <?php echo $page->getMeta('date_modif') != '0000-00-00 00:00:00' ? Slrfw\Format\DateTime::relativeTime($page->getMeta('date_modif'), true) : ''; ?></span>
 <?php
                 }
 ?>

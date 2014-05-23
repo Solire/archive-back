@@ -401,7 +401,7 @@ class Page extends Main
             $gabaritsList = 0;
         }
 
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $hook = new \Slrfw\Hook();
         $hook->setSubdirName('back');
@@ -639,7 +639,7 @@ class Page extends Main
      */
     public function saveAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         if (isset($_GET['edit-front']) && $_GET['edit-front'] == 1) {
@@ -871,7 +871,7 @@ class Page extends Main
     public function autocompleteAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $json = array();
         $dejaLiees = is_array($_REQUEST['deja']) ? $_REQUEST['deja'] : array();
@@ -899,7 +899,7 @@ class Page extends Main
     public function autocompleteJoinAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $idChamp    = $_GET['id_champ'];
         $idVersion  = $_GET['id_version'];
@@ -1003,7 +1003,7 @@ class Page extends Main
     public function autocompleteOldLinksAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $json = array();
         $term = $_GET['term'];
@@ -1032,7 +1032,6 @@ class Page extends Main
     public function liveSearchAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
 
         $pages = array();
 
@@ -1159,7 +1158,7 @@ class Page extends Main
      */
     public function visibleAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
@@ -1221,7 +1220,7 @@ class Page extends Main
      */
     public function deleteAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
@@ -1287,7 +1286,7 @@ class Page extends Main
     {
         $ok = true;
 
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');

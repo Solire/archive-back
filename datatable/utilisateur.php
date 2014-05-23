@@ -25,11 +25,11 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
 
     protected function beforeRunAction()
     {
-        /** 
-         * Dans le cas d'un utilisateur de noveau solire, on affiche un select 
-         * pour choisir le niveau de l'utilisateur à créer 
+        /**
+         * Dans le cas d'un utilisateur de noveau solire, on affiche un select
+         * pour choisir le niveau de l'utilisateur à créer
          */
-        
+
         if ($this->_utilisateur->getUser('niveau') == 'solire') {
             $niveaux = $this->_db->getEnumValues('utilisateur', 'niveau');
             foreach ($niveaux as $niveau) {
@@ -38,12 +38,12 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
                     'text' => $niveau,
                 );
             }
-            
+
             $niveauKey = \Slrfw\Tools::multidimensional_search(
-                    $this->config["columns"], 
+                    $this->config["columns"],
                     array("name" => "niveau")
             );
-            
+
             $this->config["columns"][$niveauKey]["creable_field"] = array(
                 "type" => "select",
                 "options" => $options,
@@ -57,7 +57,7 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
                 ),
             );
         }
-        
+
         $showButton = '<a'
                     . ' href="' . $this->url . '&amp;dt_action=sendMail&amp;index=[#id#]"'
                     . ' title="Envoyer identifiant par email"'
@@ -78,7 +78,7 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
             SELECT utilisateur.*
             FROM utilisateur
             WHERE utilisateur.id = ' . $idClient)->fetch();
-        $password = \Slrfw\Tools::random(10);
+        $password = \Slrfw\Format\String::random(10);
 
         $mail = new \Slrfw\Mail('utilisateur_identifiant');
         $mail->setMainUse();
@@ -104,7 +104,7 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
 
     public function afterAddAction($insertId)
     {
-        
+
         if ($this->_utilisateur->getUser('niveau') != 'solire') {
             $niveau = 'redacteur';
             $query  = 'UPDATE utilisateur SET'
@@ -113,7 +113,7 @@ class Utilisateur extends \Slrfw\Datatable\Datatable
             $this->_db->exec($query);
         }
 
-        
+
     }
 }
 
