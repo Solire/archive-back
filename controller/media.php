@@ -583,6 +583,10 @@ class Media extends Main {
                                 . $dir . DS
                                 . $file['rewriting'];
 
+                    if (!file_exists($serverpath)) {
+                        continue;
+                    }
+
                     $realpath = \Slrfw\Registry::get('basehref') . $dir . '/' . $file['rewriting'];
                     if (\Slrfw\Model\fileManager::isImage($file['rewriting'])) {
                         $sizes = getimagesize($serverpath);
