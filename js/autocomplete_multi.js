@@ -243,6 +243,7 @@ function html_entity_decode(texte) {
 
 $(function(){
     $(".autocomplete-multi").livequery(function(){
+        var form = $(this).parents('form')
         var $input = $(this);
         var table = $input.parent().find("input.join-table").val();
         var prePopulate = [];
@@ -250,16 +251,19 @@ $(function(){
             prePopulate = eval("(" + html_entity_decode($input.parent().find("input.prepopulate").val()) + ")");
         var idField = $input.parent().find("input.join-id_field").val();
         var labelField = $input.parent().find("input.join-label_field").val();
+        var idVersion = $('[name=id_version]', form).val();
         var idGabPage = $("input[name='id_gab_page']").val();
         var theme = $("input.automplete_multi-theme").val();
+        var id_champ = $input.attr('name').match(/champ(\d+)\[\]/).pop();
 
-        var url = "back/page/autocompletejoin.html?table=" + table + "&id_field=" + idField + "&label_field=" + labelField + "&id_gab_page=" + idGabPage + "&query_filter=&no_version=1";
+        var url = "back/page/autocompletejoin.html?table=" + table + "&id_field=" + idField + "&id_version=" + idVersion + "&label_field=" + labelField + "&id_gab_page=" + idGabPage + "&query_filter=&no_version=1" + "&id_champ=" + id_champ;
         $(this).tokenInput(url, {
             theme               : theme,
             prePopulate         : prePopulate,
+            preventDuplicates   : true,
             queryParam          : "term",
             propertyToSearch    : "label",
-            minChars            : 3,
+            minChars            : 0,
             onReady: function () {
 
             },

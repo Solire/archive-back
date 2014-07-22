@@ -912,11 +912,22 @@ class Page extends Main
                 . ' WHERE id_champ = ' . $idChamp;
         $params = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_COLUMN);
-
+        
         $idField        = $params['TABLE.FIELD.ID'];
-        $typeGabPage    = $params['TYPE.GAB.PAGE'];
-        $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
-        $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
+        if (isset($params['TYPE.GAB.PAGE'])) {
+            $typeGabPage    = $params['TYPE.GAB.PAGE'];
+        } else {
+            $typeGabPage    = 0;
+        }
+        
+        if (isset($params['QUERY.FILTER'])) {
+            $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
+            $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
+        } else {
+            $queryFilter = '';
+        }
+        
+        
         $table          = $params['TABLE.NAME'];
         $labelField     = $params['TABLE.FIELD.LABEL'];
         $gabPageJoin    = '';
