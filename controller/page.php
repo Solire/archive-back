@@ -982,10 +982,16 @@ class Page extends Main
 
         $pages = array();
         foreach ($pagesFound as $page) {
+            if (isset($page['gabarit_label'])) {
+                $gabaritLabel = $page['gabarit_label'];
+            } else {
+                $gabaritLabel = '';
+            }
+            
             $pages[] = array(
                 'label' => $page['label'],
                 'id' => $page['id'],
-                'gabarit_label' => $page['gabarit_label'],
+                'gabarit_label' => $gabaritLabel,
             );
         }
 
