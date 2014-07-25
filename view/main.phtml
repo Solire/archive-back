@@ -55,7 +55,9 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a href="back/" class="brand"><img src="app/back/img/gray_dark/home_16x16.png"> <?php echo $this->site; ?></a>
+                        <a href="back/" class="brand" style="padding:16px 7px 16px 23px; background:url(app/back/img/gray_dark/home_16x16.png) no-repeat center left; content: ">
+                            <?php echo $this->site; ?>
+                        </a>
 
                         <ul class="nav user_menu pull-right">
                             <li class="hidden-phone hidden-tablet">
@@ -136,7 +138,9 @@
     if (count($this->apis) > 1) {
 ?>
                                     <li class="dropdown">
-                                        <a data-toggle="dropdown" class="dropdown-toggle" style="font-weight:bold;padding:0" href="#"><img style="float:left;margin-top: 9px;margin-left: 4px;" width="26" src="app/back/img/api/<?php echo $this->api["name"]; ?>.png" /><span class="api-selected" style="padding: 12px 10px 11px 3px;display:inline-block"><?php echo $this->api["label"]; ?> <b class="caret"></b></span></a>
+                                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                            <?php echo $this->api["label"]; ?> <b class="caret"></b>
+                                        </a>
                                         <ul class="dropdown-menu">
 <?php
         $prefix = "../";
@@ -149,7 +153,11 @@
                 $mobile = true;
             }
 ?>
-                                            <li><a href="./back/" style="font-weight:bold;" onclick="$.cookie('api', '<?php echo $api['name']; ?>', {path : '/'});"><img style="float:left;margin-top: 5px;" width="28" src="app/back/img/api/<?php echo $api["name"]; ?>.png" /><span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span></a></li>
+                                            <li>
+                                                <a href="./back/" style="font-weight:bold;" onclick="$.cookie('api', '<?php echo $api['name']; ?>', {path : '/'});">
+                                                    <span class="api-selected" style="padding: 10px 10px 11px 14px;display:inline-block"><?php echo $api["label"]; ?></span>
+                                                </a>
+                                            </li>
 <?php
         }
 ?>
@@ -160,7 +168,7 @@
 <?php
     }
 
-    $this->add('menu-' . $this->api['id'] . '.phtml');
+    $this->add('menu-' . $this->api['id']);
 ?>
                                 </ul>
                             </nav>
