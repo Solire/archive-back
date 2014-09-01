@@ -286,6 +286,11 @@ class Media extends Main {
         } elseif (isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page']) {
             $id_gab_page = $_COOKIE['id_gab_page'];
         }
+        
+        $gabaritId = 0;
+        if(isset($_REQUEST['gabaritId'])) {
+            $gabaritId = (int)$_REQUEST['gabaritId'];
+        }
 
         if ($id_gab_page) {
             $targetTmp      = $this->_upload_temp;
@@ -353,9 +358,14 @@ class Media extends Main {
                     $json['image'] = array(
                         'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                     );
+                    
+                    // Génération de miniatures additionnelles
+                    $filePath = $this->_view->prefixFileUrl . $json['path'];
+                    $this->miniatureProcess($gabaritId, $filePath);
+                    
                 }
                 $json['path']       = $this->_view->prefixFileUrl . $json['path'];
-                $json['url']       = $this->_view->prefixFileUrl . $json['url'];
+                $json['url']        = $this->_view->prefixFileUrl . $json['url'];
                 $json['size']       = \Slrfw\Tools::format_taille($json['size']);
                 $json['id_temp']    = $id_temp;
             }
@@ -622,6 +632,77 @@ class Media extends Main {
 
     public function setMediaTableName($mediaTableName) {
         $this->mediaTableName = $mediaTableName;
+    }
+    
+    /**
+     * Génération de miniatures en fonction des paramètres des champs d'un 
+     * gabarit
+     * 
+     * @param int $gabaritId Id du gabarit
+     * 
+     * @return void
+     */
+    protected function miniatureProcess($gabaritId, $filePath)
+    {
+        if ($gabaritId) {
+            $gabarit        = $this->_gabaritManager->getGabarit($gabaritId);
+            $gabaritBlocs   = $this->_gabaritManager->getBlocs($gabarit);
+            $ext            = pathinfo($filePath, PATHINFO_EXTENSION);
+            $miniatureDir   = pathinfo($filePath, PATHINFO_DIRNAME);
+            $miniatureName  = pathinfo($filePath, PATHINFO_BASENAME);
+            $miniatureSizes = array();
+            
+            // Parcours des champs du gabarit
+            foreach ($gabarit->getChamps() as $champsGroupe) {
+                foreach ($champsGroupe as $champ) {
+                    if ($champ['type'] == 'FILE'
+                        && isset($champ['params']['MINIATURE'])
+                        && $champ['params']['MINIATURE'] != ''
+                    ) {
+                        $miniatureSizes = array_merge(
+                            $miniatureSizes, 
+                            explode(';', $champ['params']['MINIATURE'])
+                        );
+                    }
+                }
+            }
+            
+            // Parcours des champs des blocs du gabarit
+            foreach ($gabaritBlocs as $gabaritBloc) {
+                foreach ($gabaritBloc->getGabarit()->getChamps() as $champ) {
+                    if ($champ['type'] == 'FILE'
+                        && isset($champ['params']['MINIATURE'])
+                        && $champ['params']['MINIATURE'] != ''
+                    ) {
+                        $miniatureSizes = array_merge(
+                            $miniatureSizes, 
+                            explode(';', $champ['params']['MINIATURE'])
+                        );
+                    }
+                }
+            }
+            
+            $miniatureSizes = array_unique($miniatureSizes);
+            
+            foreach ($miniatureSizes as $size) {
+                list($maxWidth, $maxHeight) = explode('x', $size);
+                
+                $sizeDirectory = str_replace('*', '', $size);
+                if (!file_exists($miniatureDir . DS . $sizeDirectory)) {
+                    $this->_fileManager->createFolder($miniatureDir . DS . $sizeDirectory);
+                }
+                
+                $miniaturePath  = $miniatureDir . DS . $sizeDirectory . DS
+                                . $miniatureName;
+                
+                $this->_fileManager->vignette(
+                    $filePath,
+                    $ext,
+                    $miniaturePath,
+                    $maxWidth, $maxHeight
+                );
+            }
+        }
     }
 
 }

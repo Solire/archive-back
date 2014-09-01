@@ -52,7 +52,9 @@ $(function(){
         max_file_size       : '1000mb',
         multi_selection     : true,
 	chunk_size          : '2mb',
-        url                 : basehref + 'back/media/upload.html?id_gab_page=' + $('[name=id_gab_page]').val(),
+        url                 : basehref + 'back/media/upload.html?' 
+                            + 'id_gab_page=' + $('[name=id_gab_page]').val() + '&'
+                            + 'gabaritId=' + $('[name=id_gabarit]').val() + '&',
         flash_swf_url       : basehref + 'app/back/js/plupload/plupload.flash.swf',
         silverlight_xap_url : basehref + 'app/back/js/plupload/plupload.silverlight.xap',
         drop_element        : '#uploader_popup',
