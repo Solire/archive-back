@@ -2423,3 +2423,24 @@ form fieldset{
 form fieldset fieldset{
     margin-left:30px;
 }
+
+
+.soTable {}
+
+.soTable th, .soTable td {
+    border:1px solid #CCC;
+}
+
+.soTable th {
+    font-weight: bold;
+    min-height: 20px;
+    color: #FFF;
+    background: -moz-linear-gradient(center top , #4AB0DD 0%, #0A7ECA 100%) repeat scroll 0 0 transparent;
+    background: -webkit-linear-gradient(center top , #4AB0DD 0%, #0A7ECA 100%) repeat scroll 0 0 transparent;
+    background: -ms-linear-gradient(center top , #4AB0DD 0%, #0A7ECA 100%) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, center top, center bottom, color-stop(0, #4AB0DD), color-stop(1, #0A7ECA)) repeat scroll 0 0 transparent;
+}
+
+.soTable td {
+    
+}
