@@ -318,7 +318,8 @@ class Main extends \Slrfw\Controller
                . 'FROM gab_page gp '
                . 'WHERE rewriting = "" '
                . ' AND gp.suppr = 0 '
-               . ' AND id_version = ' . BACK_ID_VERSION . ' ';
+               . ' AND id_api = ' . BACK_ID_API
+               . ' AND id_version = ' . BACK_ID_VERSION;
 
         $this->_view->pagesNonTraduites = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_ASSOC);
