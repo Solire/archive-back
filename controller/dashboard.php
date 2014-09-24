@@ -105,7 +105,7 @@ class Dashboard extends Main
             $this->_view->breadCrumbs, $additionnalBreadCrumbs
         );
         ob_start();
-        $this->_view->add('breadcrumbs.phtml');
+        $this->_view->add('breadcrumbs');
         $sBreadCrumbs = ob_get_clean();
         return $sBreadCrumbs;
     }

@@ -43,9 +43,13 @@ $(function(){
             $(this).autocomplete(
                 autocompleteParams(join, id_champ, sortBox, id_version, id_gab_page)
             ).data("autocomplete")._renderItem = function(ul, item) {
+                var itemText = '';
+                if (item.gabarit_label) {
+                    itemText = '&nbsp; > ' + item.gabarit_label;
+                } 
                 return $("<li></li>")
                     .data("item.autocomplete", item)
-                    .append('<a><span>' + item.label + '</span><br /><span style="font-style:italic">&nbsp; > ' + item.gabarit_label + '</span></a>')
+                    .append('<a><span>' + item.label + '</span><br /><span style="font-style:italic">' + itemText + '</span></a>')
                     .appendTo(ul);
             };
 

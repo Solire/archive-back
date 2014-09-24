@@ -153,7 +153,7 @@
                         </a>
                     </td>
                     <td><?php echo $file['poids']; ?></td>
-                    <td><?php echo \Slrfw\Tools::formate_date_nombre(substr($file['date_crea'], 0, 10), '-', '/'); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
+                    <td><?php echo Slrfw\Format\DateTime::sqlTo(substr($file['date_crea'], 0, 10)); ?><br /><?php echo substr($file['date_crea'], 11); ?></td>
                     <td class="center">
                         <div class="btn-toolbar">
                             <div class="btn-group">

@@ -401,7 +401,7 @@ class Page extends Main
             $gabaritsList = 0;
         }
 
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $hook = new \Slrfw\Hook();
         $hook->setSubdirName('back');
@@ -639,7 +639,7 @@ class Page extends Main
      */
     public function saveAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         if (isset($_GET['edit-front']) && $_GET['edit-front'] == 1) {
@@ -871,7 +871,7 @@ class Page extends Main
     public function autocompleteAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $json = array();
         $dejaLiees = is_array($_REQUEST['deja']) ? $_REQUEST['deja'] : array();
@@ -899,7 +899,7 @@ class Page extends Main
     public function autocompleteJoinAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $idChamp    = $_GET['id_champ'];
         $idVersion  = $_GET['id_version'];
@@ -912,11 +912,22 @@ class Page extends Main
                 . ' WHERE id_champ = ' . $idChamp;
         $params = $this->_db->query($query)->fetchAll(
             \PDO::FETCH_UNIQUE | \PDO::FETCH_COLUMN);
-
+        
         $idField        = $params['TABLE.FIELD.ID'];
-        $typeGabPage    = $params['TYPE.GAB.PAGE'];
-        $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
-        $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
+        if (isset($params['TYPE.GAB.PAGE'])) {
+            $typeGabPage    = $params['TYPE.GAB.PAGE'];
+        } else {
+            $typeGabPage    = 0;
+        }
+        
+        if (isset($params['QUERY.FILTER'])) {
+            $queryFilter    = str_replace('[ID]', $idGabPage, $params['QUERY.FILTER']);
+            $queryFilter    = str_replace('[ID_VERSION]', $idVersion, $params['QUERY.FILTER']);
+        } else {
+            $queryFilter = '';
+        }
+        
+        
         $table          = $params['TABLE.NAME'];
         $labelField     = $params['TABLE.FIELD.LABEL'];
         $gabPageJoin    = '';
@@ -982,10 +993,16 @@ class Page extends Main
 
         $pages = array();
         foreach ($pagesFound as $page) {
+            if (isset($page['gabarit_label'])) {
+                $gabaritLabel = $page['gabarit_label'];
+            } else {
+                $gabaritLabel = '';
+            }
+            
             $pages[] = array(
                 'label' => $page['label'],
                 'id' => $page['id'],
-                'gabarit_label' => $page['gabarit_label'],
+                'gabarit_label' => $gabaritLabel,
             );
         }
 
@@ -1003,7 +1020,7 @@ class Page extends Main
     public function autocompleteOldLinksAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
+        $this->_view->unsetMain();
 
         $json = array();
         $term = $_GET['term'];
@@ -1032,7 +1049,6 @@ class Page extends Main
     public function liveSearchAction()
     {
         $this->_view->enable(false);
-        $this->_view->main(false);
 
         $pages = array();
 
@@ -1159,7 +1175,7 @@ class Page extends Main
      */
     public function visibleAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
@@ -1221,7 +1237,7 @@ class Page extends Main
      */
     public function deleteAction()
     {
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
@@ -1287,7 +1303,7 @@ class Page extends Main
     {
         $ok = true;
 
-        $this->_view->main(false);
+        $this->_view->unsetMain();
         $this->_view->enable(false);
 
         $json = array('status' => 'error');
