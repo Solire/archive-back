@@ -199,7 +199,7 @@ class Main extends \Slrfw\Controller
             }
         } elseif (isset($_POST['id_version'])) {
             $id_version = $_POST['id_version'];
-            $url = '/' . \Slrfw\Registry::get('baseroot');
+            $url = '/';
             setcookie('back_id_version', $id_version, 0, $url);
             if (!defined('BACK_ID_VERSION')) {
                 define('BACK_ID_VERSION', $id_version);
