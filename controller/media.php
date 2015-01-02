@@ -315,6 +315,10 @@ class Media extends Main {
                 $json['image'] = array(
                     'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                 );
+
+                // Génération de miniatures additionnelles
+                $filePath = $this->_view->prefixFileUrl . $json['path'];
+                $this->miniatureProcess($gabaritId, $filePath);
             }
 
             $json['url']       = $this->_view->prefixFileUrl . $json['url'];
@@ -358,7 +362,7 @@ class Media extends Main {
                     $json['image'] = array(
                         'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                     );
-                    
+
                     // Génération de miniatures additionnelles
                     $filePath = $this->_view->prefixFileUrl . $json['path'];
                     $this->miniatureProcess($gabaritId, $filePath);
@@ -397,6 +401,16 @@ class Media extends Main {
     {
         $this->_view->enable(false);
         $this->_view->unsetMain();
+
+        $gabaritId = 0;
+        if(isset($_REQUEST['gabaritId'])) {
+            $gabaritId = (int)$_REQUEST['gabaritId'];
+        }
+
+        $this->_prefixFileUrl = null;
+        if(isset($_REQUEST['prefix_url'])) {
+            $this->_prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
+        }
 
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page'] > 0) {
             $id_gab_page = $_GET['id_gab_page'];
@@ -512,7 +526,6 @@ class Media extends Main {
                         . $targetDir . DS
                         . $json['filename'];
 
-            if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
                 $sizes = getimagesize($serverpath);
                 $size = $sizes[0] . ' x ' . $sizes[1];
                 $json['vignette'] = $vignette;
@@ -520,9 +533,10 @@ class Media extends Main {
                 $json['size'] = $size;
                 $json['value'] = $json['filename'];
                 $json['utilise'] = 1;
-            }
 
-
+                // Génération de miniatures additionnelles
+                $filePath = $this->_prefixFileUrl . $this->_upload_path . DS . $json['path'];
+                $this->miniatureProcess($gabaritId, $filePath);
         }
 
         exit(json_encode($json));
