@@ -40,89 +40,6 @@ class Board extends Main
             $this->boardDatatable($this->_utilisateur->gabaritNiveau);
         }
 
-        $idUtilisateur = $this->_utilisateur->id;
-        $query  = 'SELECT board_state.cookie'
-                . ' FROM `board_state`'
-                . ' WHERE `board_state`.id_utilisateur = ' . $idUtilisateur
-                . ' AND `id_api` = ' . $this->_api['id'];
-        $boardStateCookie = $this->_db->query($query)->fetchColumn();
-
-        if ($boardStateCookie) {
-            setcookie('inettuts-widget-preferences',
-                urldecode($boardStateCookie), time() + 60 * 60 * 24 * 30);
-        }
-
-
-
-        $query  = 'SELECT `gab_gabarit`.id, count(DISTINCT gab_page.id) nbpages,'
-                . ' `gab_gabarit`.*'
-                . ' FROM `gab_gabarit`'
-                . ' LEFT JOIN gab_page ON gab_page.id_gabarit = gab_gabarit.id'
-                . ' AND gab_page.suppr = 0'
-                . ' WHERE `gab_gabarit`.`id_api` = ' . $this->_api['id']
-                . ' AND `gab_gabarit`.id NOT IN (1,2)'
-                . ' GROUP BY gab_gabarit.id'
-                . ' ORDER BY gab_gabarit.id';
-        $this->_gabarits2 = $this->_db->query($query)->fetchAll(
-            \PDO::FETCH_UNIQUE | \PDO::FETCH_ASSOC);
-        $pages = array();
-
-        $colorWidget = array(
-            'color-yellow',
-            'color-red',
-            'color-blue',
-            'color-white',
-            'color-orange',
-            'color-green',
-        );
-        $indexColor = 0;
-        $lastGabaritId = -1;
-
-        foreach ($this->_gabarits2 as $gabarit) {
-            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION,
-                $this->_api['id'], false, $gabarit['id'], false, 'date_crea',
-                'desc', 0, 3);
-
-            if (count($pagesMeta) == 0) {
-                continue;
-            }
-
-            $pages[$gabarit['id']]['gabarit'] = $gabarit;
-            foreach ($pagesMeta as $pageMeta) {
-                $page = $this->_gabaritManager->getPage(BACK_ID_VERSION,
-                    BACK_ID_API, $pageMeta->getMeta('id'));
-                $pages[$gabarit['id']]['pages'][] = $page;
-            }
-
-            $pagesMeta = $this->_gabaritManager->getList(BACK_ID_VERSION,
-                $this->_api['id'], false, $gabarit['id'], false, 'date_modif',
-                'desc', 0, 3);
-
-            if (count($pagesMeta) == 0) {
-                continue;
-            }
-
-            if ($gabarit['id_parent'] == $lastGabaritId) {
-                $indexColor--;
-            }
-            $lastGabaritId = $gabarit['id'];
-
-            $pages[$gabarit['id']]['gabarit'] = $gabarit;
-            if (!isset($colorWidget[$indexColor])) {
-                $indexColor = 0;
-            }
-
-            $pages[$gabarit['id']]['color'] = $colorWidget[$indexColor];
-
-            $indexColor++;
-            foreach ($pagesMeta as $pageMeta) {
-                $page = $this->_gabaritManager->getPage(BACK_ID_VERSION,
-                    BACK_ID_API, $pageMeta->getMeta('id'));
-                $pages[$gabarit['id']]['pages_mod'][] = $page;
-            }
-        }
-        $this->_view->pages = $pages;
-
         $this->_view->breadCrumbs[] = array(
             'label' => 'Tableau de bord',
             'url' => 'back/board/start.html',
@@ -143,7 +60,7 @@ class Board extends Main
         if (empty($opt)) {
             $gabarits = $this->_gabarits;
         } else {
-            
+
             /** Récupération de la liste de la page et des droits utilisateurs **/
             $configPageModule = $this->_configPageModule[$this->_utilisateur->gabaritNiveau];
             $gabaritsListUser = $configPageModule['gabarits'];
@@ -157,7 +74,7 @@ class Board extends Main
         $configPath = \Slrfw\FrontController::search(
             'config/datatable/' . $configName . '.cfg.php'
         );
-        
+
         $this->_gabarits = $gabarits;
 
         $datatableClassName = '\\App\\Back\\Datatable\\Board';
