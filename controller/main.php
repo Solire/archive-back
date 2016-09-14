@@ -101,7 +101,7 @@ class Main extends \Slrfw\Controller
         $this->_css->addLibrary('back/css/bootstrap/bootstrap.min.css');
         $this->_css->addLibrary('back/css/bootstrap/bootstrap-responsive.min.css');
 
-        $this->_css->addLibrary('http://www.solire.fr/style_solire_fw/css/back/newstyle-1.3.css');
+        $this->_css->addLibrary('back/css/newstyle-1.3.css');
         $this->_css->addLibrary('back/css/sticky.css');
 
         $this->_view->site = \Slrfw\Registry::get('project-name');
