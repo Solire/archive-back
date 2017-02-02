@@ -22,7 +22,7 @@ function verifieForm(elmt){
 	
 	var testdonnee = false;
 	var classes = elmt.attr('class').split(' ');
-	var oblig = classes[$.inArray('controle', classes) + 1] == 'oblig' || val != '';
+	var oblig = classes[$.inArray('controle', classes) + 1] == 'oblig' || (val != '' && val != '0');
 	var typeDonnee = classes[$.inArray('controle', classes) + 2];
 	
 	if (oblig) {

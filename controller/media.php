@@ -74,7 +74,7 @@ class Media extends Main {
             $this->_view->prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
         }
 
-        $id_gab_page = isset($_REQUEST['id_gab_page']) && $_REQUEST['id_gab_page'] ? $_REQUEST['id_gab_page'] : 0;
+        $id_gab_page = isset($_GET['id_gab_page']) && $_GET['id_gab_page'] ? $_GET['id_gab_page'] : 0;
 
         if ($id_gab_page) {
             $search = isset($_REQUEST['search']) ? $_REQUEST['search'] : '';
@@ -286,7 +286,7 @@ class Media extends Main {
         } elseif (isset($_COOKIE['id_gab_page']) && $_COOKIE['id_gab_page']) {
             $id_gab_page = $_COOKIE['id_gab_page'];
         }
-        
+
         $gabaritId = 0;
         if(isset($_REQUEST['gabaritId'])) {
             $gabaritId = (int)$_REQUEST['gabaritId'];
@@ -315,6 +315,10 @@ class Media extends Main {
                 $json['image'] = array(
                     'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                 );
+
+                // Génération de miniatures additionnelles
+                $filePath = $this->_view->prefixFileUrl . $json['path'];
+                $this->miniatureProcess($gabaritId, $filePath);
             }
 
             $json['url']       = $this->_view->prefixFileUrl . $json['url'];
@@ -358,11 +362,11 @@ class Media extends Main {
                     $json['image'] = array(
                         'url'   =>  $this->_view->prefixFileUrl . $id_gab_page . DS . $json['filename']
                     );
-                    
+
                     // Génération de miniatures additionnelles
                     $filePath = $this->_view->prefixFileUrl . $json['path'];
                     $this->miniatureProcess($gabaritId, $filePath);
-                    
+
                 }
                 $json['path']       = $this->_view->prefixFileUrl . $json['path'];
                 $json['url']        = $this->_view->prefixFileUrl . $json['url'];
@@ -397,6 +401,16 @@ class Media extends Main {
     {
         $this->_view->enable(false);
         $this->_view->unsetMain();
+
+        $gabaritId = 0;
+        if(isset($_REQUEST['gabaritId'])) {
+            $gabaritId = (int)$_REQUEST['gabaritId'];
+        }
+
+        $this->_prefixFileUrl = null;
+        if(isset($_REQUEST['prefix_url'])) {
+            $this->_prefixFileUrl = $_REQUEST['prefix_url'] . DIRECTORY_SEPARATOR;
+        }
 
         if (isset($_GET['id_gab_page']) && $_GET['id_gab_page'] > 0) {
             $id_gab_page = $_GET['id_gab_page'];
@@ -512,7 +526,6 @@ class Media extends Main {
                         . $targetDir . DS
                         . $json['filename'];
 
-            if (\Slrfw\Model\fileManager::isImage($json['filename'])) {
                 $sizes = getimagesize($serverpath);
                 $size = $sizes[0] . ' x ' . $sizes[1];
                 $json['vignette'] = $vignette;
@@ -520,9 +533,10 @@ class Media extends Main {
                 $json['size'] = $size;
                 $json['value'] = $json['filename'];
                 $json['utilise'] = 1;
-            }
 
-
+                // Génération de miniatures additionnelles
+                $filePath = $this->_prefixFileUrl . $this->_upload_path . DS . $json['path'];
+                $this->miniatureProcess($gabaritId, $filePath);
         }
 
         exit(json_encode($json));
@@ -633,13 +647,13 @@ class Media extends Main {
     public function setMediaTableName($mediaTableName) {
         $this->mediaTableName = $mediaTableName;
     }
-    
+
     /**
-     * Génération de miniatures en fonction des paramètres des champs d'un 
+     * Génération de miniatures en fonction des paramètres des champs d'un
      * gabarit
-     * 
+     *
      * @param int $gabaritId Id du gabarit
-     * 
+     *
      * @return void
      */
     protected function miniatureProcess($gabaritId, $filePath)
@@ -651,7 +665,7 @@ class Media extends Main {
             $miniatureDir   = pathinfo($filePath, PATHINFO_DIRNAME);
             $miniatureName  = pathinfo($filePath, PATHINFO_BASENAME);
             $miniatureSizes = array();
-            
+
             // Parcours des champs du gabarit
             foreach ($gabarit->getChamps() as $champsGroupe) {
                 foreach ($champsGroupe as $champ) {
@@ -660,13 +674,13 @@ class Media extends Main {
                         && $champ['params']['MINIATURE'] != ''
                     ) {
                         $miniatureSizes = array_merge(
-                            $miniatureSizes, 
+                            $miniatureSizes,
                             explode(';', $champ['params']['MINIATURE'])
                         );
                     }
                 }
             }
-            
+
             // Parcours des champs des blocs du gabarit
             foreach ($gabaritBlocs as $gabaritBloc) {
                 foreach ($gabaritBloc->getGabarit()->getChamps() as $champ) {
@@ -675,26 +689,26 @@ class Media extends Main {
                         && $champ['params']['MINIATURE'] != ''
                     ) {
                         $miniatureSizes = array_merge(
-                            $miniatureSizes, 
+                            $miniatureSizes,
                             explode(';', $champ['params']['MINIATURE'])
                         );
                     }
                 }
             }
-            
+
             $miniatureSizes = array_unique($miniatureSizes);
-            
+
             foreach ($miniatureSizes as $size) {
                 list($maxWidth, $maxHeight) = explode('x', $size);
-                
+
                 $sizeDirectory = str_replace('*', '', $size);
                 if (!file_exists($miniatureDir . DS . $sizeDirectory)) {
                     $this->_fileManager->createFolder($miniatureDir . DS . $sizeDirectory);
                 }
-                
+
                 $miniaturePath  = $miniatureDir . DS . $sizeDirectory . DS
                                 . $miniatureName;
-                
+
                 $this->_fileManager->vignette(
                     $filePath,
                     $ext,

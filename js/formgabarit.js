@@ -39,7 +39,7 @@ function verifieForm(elmt){
     if (classes.length < 3) {
         return true;
     }
-    oblig       = classes[$.inArray('form-controle', classes) + 1] === 'form-oblig' || val !== '';
+    oblig       = classes[$.inArray('form-controle', classes) + 1] === 'form-oblig' || (val != '' && val != '0');
     typeDonnee  = classes[$.inArray('form-controle', classes) + 2].replace('form-', '');
 
     if (oblig) {

@@ -90,7 +90,9 @@ $(function(){
             $('#modalCrop').modal('hide');
             return false;
         }
-        var action = 'back/' + $('.form-crop').attr('action');
+        var action = 'back/' + $('.form-crop').attr('action')
+            + '?gabaritId=' + $('[name=id_gabarit]').val();
+
         var data = $('.form-crop').serialize();
         $.post(action, data, function(response) {
             $('#modalCrop').modal('hide');
