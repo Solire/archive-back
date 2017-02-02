@@ -218,7 +218,10 @@ $(function(){
             if (!$legend.next('div').hasClass('children-loaded')) {
                 var id = $legend.parent().attr('id').split('_').pop();
 
-                var $divToLoad = $legend.next('div')
+                var $divToLoad = $legend.next('div');
+
+                $('.loading', $legend).removeClass('hidden');
+
                 $.ajax({
                     mode: 'queue',
                     port: 'ajaxWhois',
@@ -228,6 +231,7 @@ $(function(){
                         id_parent : id
                     },
                     success: function(data){
+                        $('.loading', $legend).addClass('hidden');
                         $divToLoad.html(data)
                         $divToLoad.addClass('children-loaded');
                         if (data != '') {
